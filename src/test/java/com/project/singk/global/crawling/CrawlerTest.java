@@ -1,6 +1,8 @@
 package com.project.singk.global.crawling;
 
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -8,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebElement;
 
+import com.project.singk.domain.album.dto.AlbumRequestDto;
 
 class CrawlerTest {
 
@@ -21,7 +24,6 @@ class CrawlerTest {
 		for (String id: ids) {
 			try {
 				crawler.setUrl(String.format("https://www.melon.com/album/detail.htm?albumId=%s", id));
-				System.out.println(id);
 			} catch (UnhandledAlertException e) {
 				e.getAlertText();
 			}
@@ -45,5 +47,35 @@ class CrawlerTest {
 		System.out.println(type.getText());
 
 		crawler.close();
+	}
+
+	@Test
+	public void 앨범수록곡크롤링성공() {
+		// given
+		Crawler crawler = new Crawler();
+		crawler.setUrl("https://www.melon.com/album/detail.htm?albumId=11450069");
+
+		// when
+		List<WebElement> elements = crawler.getElements(By.className("wrap_song_info"));
+
+		// then
+		for (WebElement e : elements) {
+			System.out.println(e.findElement(By.className("ellipsis")).getText());
+		}
+
+		crawler.close();
+	}
+
+	@Test
+	public void 멜론크롤링성공() {
+		// given
+		MelonCrawler crawler = new MelonCrawler(new Crawler());
+		Long melonId = 11450069L;
+		// when
+		AlbumRequestDto album = crawler.getAlbum(melonId);
+
+		// then
+		System.out.println(album);
+		assertThat(album.getMelonId()).isEqualTo(melonId);
 	}
 }
