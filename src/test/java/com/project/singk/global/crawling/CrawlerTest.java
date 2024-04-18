@@ -3,6 +3,7 @@ package com.project.singk.global.crawling;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -70,11 +71,18 @@ class CrawlerTest {
 	public void 멜론크롤링성공() {
 		// given
 		MelonCrawler crawler = new MelonCrawler(new Crawler());
-		Long melonId = 11450069L;
+		Long melonId = 11467299L;
 		// when
 		AlbumRequestDto album = crawler.getAlbum(melonId);
 
+		List<String> genres = Arrays.stream(album.getGenre().split(","))
+			.map(String::strip)
+			.toList();
+
 		// then
+		for (String genre : genres) {
+			System.out.println(genre);
+		}
 		System.out.println(album);
 		assertThat(album.getMelonId()).isEqualTo(melonId);
 	}
