@@ -8,6 +8,7 @@ import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Component;
 
+import com.project.singk.domain.album.domain.AlbumType;
 import com.project.singk.domain.album.dto.AlbumRequestDto;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ public class MelonCrawler {
 			// 앨범
 			WebElement album = crawler.getElement(By.cssSelector("#conts > div.section_info > div > div.entry"));
 
+			String type = album.findElement(By.className("gubun")).getText();
+			if (AlbumType.of(type) == null) return null;
+
 			// 수록곡
 			List<String> tracks = new ArrayList<>();
 			List<WebElement> elements = crawler.getElements(By.className("wrap_song_info"));
@@ -37,8 +41,8 @@ public class MelonCrawler {
 				.melonId(albumId)
 				.imageUrl(crawler.getElement(By.cssSelector("#d_album_org > img")).getAttribute("src"))
 				.name(album.findElement(By.className("song_name")).getText())
-				.type(album.findElement(By.className("gubun")).getText())
-				.artist(album.findElement(By.className("artist_name")).getAttribute("title"))
+				.type(type)
+				.artist(album.findElement(By.className("artist")).getText())
 				.genre(album.findElement(By.cssSelector("div.meta > dl > dd:nth-child(4)")).getText())
 				.releasedAt(album.findElement(By.cssSelector("div.meta > dl > dd:nth-child(2)")).getText())
 				.tracks(tracks)
