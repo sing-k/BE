@@ -34,14 +34,19 @@ public class AlbumService {
 
 		for (Long id = startId; id <= endId; id++) {
 			try{
-				albums.add(crawler.getAlbum(id));
+				AlbumRequestDto album = crawler.getAlbum(id);
+				if (album != null) albums.add(album);
 			} catch (UnhandledAlertException e) {
 				e.getAlertText();
 			}
 		}
 
 		for (AlbumRequestDto a : albums) {
-			Album album = albumRepository.save(a.toAlbumEntity());
+			Album album = albumRepository.findByName(a.getName()).orElse(null);
+			if (album == null) {
+				album = albumRepository.save(a.toAlbumEntity());
+			}
+
 			// TODO : save Track with cascade
 			List<String> genres = Arrays.stream(a.getGenre().split(",")).map(String::trim).toList();
 			for (String g : genres) {
