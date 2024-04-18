@@ -1,6 +1,6 @@
 package com.project.singk.domain.album.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -33,10 +33,11 @@ public class AlbumRequestDto {
 	public Album toAlbumEntity() {
 		return Album.builder()
 			.melonId(this.melonId)
+			.imageUrl(this.imageUrl)
 			.name(this.name)
 			.type(AlbumType.of(this.type))
 			.artist(this.artist)
-			.releasedAt(LocalDateTime.parse(this.releasedAt, DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+			.releasedAt(LocalDate.parse(this.releasedAt, DateTimeFormatter.ofPattern("yyyy.MM.dd")).atStartOfDay())
 			.build();
 	}
 
