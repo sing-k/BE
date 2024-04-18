@@ -1,7 +1,6 @@
 package com.project.singk.domain.album.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.project.singk.global.domain.BaseTimeEntity;
 
@@ -13,7 +12,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,27 +26,18 @@ import lombok.ToString;
 @Getter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ALBUMS")
-public class Album extends BaseTimeEntity {
+@Table(name = "ALBUM_GENRES")
+public class AlbumGenre extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "melon_id")
-	private Long melonId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "album_id")
+	private Album album;
 
-	private String name;
-
-	@Enumerated(EnumType.STRING)
-	private AlbumType type;
-
-	private String artist;
-
-	private String imageUrl;
-
-	private LocalDateTime releasedAt;
-
-	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
-	List<AlbumGenre> albumGenres;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "genre_id")
+	private Genre genre;
 }
