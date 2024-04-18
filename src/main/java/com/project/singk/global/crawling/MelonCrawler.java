@@ -6,15 +6,17 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebElement;
+import org.springframework.stereotype.Component;
 
 import com.project.singk.domain.album.dto.AlbumRequestDto;
 
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
 public class MelonCrawler {
 	private final String baseUrl = "https://www.melon.com/album/detail.htm?albumId=%d";
-	private Crawler crawler;
-	public MelonCrawler(Crawler crawler) {
-		this.crawler = crawler;
-	}
+	private final Crawler crawler;
 
 	public AlbumRequestDto getAlbum(Long albumId) {
 		try {
