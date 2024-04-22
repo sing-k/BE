@@ -1,5 +1,6 @@
 package com.project.singk.domain.album.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.project.singk.global.domain.BaseTimeEntity;
@@ -31,5 +32,5 @@ public class Genre extends BaseTimeEntity {
 	private String name;
 
 	@OneToMany(mappedBy = "genre")
-	List<AlbumGenre> albumGenres;
+	List<AlbumGenre> albumGenres = new ArrayList<>();
 }
