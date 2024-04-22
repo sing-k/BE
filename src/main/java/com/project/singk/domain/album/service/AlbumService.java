@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumGenre;
 import com.project.singk.domain.album.domain.Genre;
+import com.project.singk.domain.album.dto.AlbumListResponseDto;
 import com.project.singk.domain.album.dto.AlbumRequestDto;
 import com.project.singk.domain.album.repository.AlbumGenreRepository;
 import com.project.singk.domain.album.repository.AlbumRepository;
@@ -29,6 +30,21 @@ public class AlbumService {
 	private final AlbumGenreRepository albumGenreRepository;
 	private final MelonCrawler crawler;
 
+	public List<AlbumListResponseDto> getRandomAlbums(Long limit) {
+		List<Album> albums;
+
+		if (albumRepository.count() < limit) {
+			albums = albumRepository.findAll();
+		} else {
+			albums = albumRepository.findRandomAlbums(limit);
+		}
+
+		return albums.stream().map(album -> {
+			List<String> genres = album.getAlbumGenres().stream().map(albumGenre ->
+				albumGenre.getGenre().getName()).toList();
+			return AlbumListResponseDto.of(album, genres);
+		}).toList();
+	}
 	public void crawlingMelonAlbums (Long startId, Long endId) {
 		List<AlbumRequestDto> albums = new ArrayList<>();
 
