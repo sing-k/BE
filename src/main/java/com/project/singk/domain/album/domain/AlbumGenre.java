@@ -40,4 +40,21 @@ public class AlbumGenre extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "genre_id")
 	private Genre genre;
+
+	public void setUp (Album album, Genre genre) {
+
+		if (this.album != null) {
+			this.album.getAlbumGenres().remove(this);
+		}
+
+		this.album = album;
+		album.getAlbumGenres().add(this);
+
+		if (this.genre != null) {
+			this.genre.getAlbumGenres().remove(this);
+		}
+
+		this.genre = genre;
+		genre.getAlbumGenres().add(this);
+	}
 }
