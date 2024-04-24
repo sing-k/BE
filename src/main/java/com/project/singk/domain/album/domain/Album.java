@@ -1,6 +1,7 @@
 package com.project.singk.domain.album.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.project.singk.global.domain.BaseTimeEntity;
@@ -48,5 +49,5 @@ public class Album extends BaseTimeEntity {
 	private LocalDateTime releasedAt;
 
 	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
-	List<AlbumGenre> albumGenres;
+	List<AlbumGenre> albumGenres = new ArrayList<>();
 }
