@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.UnhandledAlertException;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import com.project.singk.domain.album.dto.AlbumRequestDto;
 import com.project.singk.domain.album.repository.AlbumGenreRepository;
 import com.project.singk.domain.album.repository.AlbumRepository;
 import com.project.singk.domain.album.repository.GenreRepository;
+import com.project.singk.global.crawling.Crawler;
 import com.project.singk.global.crawling.MelonCrawler;
 
 import jakarta.transaction.Transactional;
@@ -28,7 +30,6 @@ public class AlbumService {
 	private final AlbumRepository albumRepository;
 	private final GenreRepository genreRepository;
 	private final AlbumGenreRepository albumGenreRepository;
-	private final MelonCrawler crawler;
 
 	public List<AlbumListResponseDto> getRandomAlbums(Long limit) {
 		List<Album> albums;
@@ -46,6 +47,7 @@ public class AlbumService {
 		}).toList();
 	}
 	public void crawlingMelonAlbums (Long startId, Long endId) {
+		MelonCrawler crawler = new MelonCrawler(new Crawler());
 		List<AlbumRequestDto> albums = new ArrayList<>();
 
 		for (Long id = startId; id <= endId; id++) {

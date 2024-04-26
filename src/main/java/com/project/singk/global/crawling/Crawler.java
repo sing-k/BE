@@ -9,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 
-@Component
 public class Crawler {
 	private static final String WEB_DRIVER_NAME = "webdriver.chrome.driver";
 	private static final String WEB_DRIVER_PATH = "./chromedriver";
