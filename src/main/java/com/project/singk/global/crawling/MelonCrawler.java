@@ -13,7 +13,6 @@ import com.project.singk.domain.album.dto.AlbumRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class MelonCrawler {
 	private final String baseUrl = "https://www.melon.com/album/detail.htm?albumId=%d";
