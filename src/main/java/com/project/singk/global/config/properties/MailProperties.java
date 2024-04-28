@@ -14,11 +14,23 @@ import lombok.ToString;
 public class MailProperties {
 
 	private final Naver naver;
+	private final Google google;
+
 	@Getter @ToString
 	@AllArgsConstructor
 	public static class Naver {
-
+		private final String host;
 		private final String username;
 		private final String password;
+		private final int port;
+	}
+
+	@Getter @ToString
+	@AllArgsConstructor
+	public static class Google {
+		private final String host;
+		private final String username;
+		private final String password;
+		private final int port;
 	}
 }
