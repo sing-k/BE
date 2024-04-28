@@ -18,7 +18,7 @@ public enum AppHttpStatus {
 	 * 400 : 잘못된 문법으로 인해 요청을 이해할 수 없음
 	 */
 	BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-
+	FAILED_SEND_MAIL(40001, HttpStatus.BAD_REQUEST, "메일 전송에 실패했습니다"),
 	/**
 	 * 401 : 인증된 사용자가 아님
 	 */
