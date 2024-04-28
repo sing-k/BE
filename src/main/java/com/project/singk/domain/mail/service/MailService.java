@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.util.CodeGenerator;
 
 import jakarta.transaction.Transactional;
 
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class MailService {
 
+	private final int CODE_SIZE = 6;
 	@Autowired
 	@Qualifier("NaverMailSender")
 	private JavaMailSender naverMailSender;
@@ -41,7 +43,7 @@ public class MailService {
 
 	public String sendNaverCertificationMail(String to, String from) {
 
-		String code = "123456";
+		String code = CodeGenerator.createAuthenticationCode(CODE_SIZE);
 
 		try {
 			naverMailSender.send(createCertificationMessage(to, from, code));
@@ -54,7 +56,7 @@ public class MailService {
 
 	public String sendGoogleCertificationMail(String to, String from) {
 
-		String code = "123456";
+		String code = CodeGenerator.createAuthenticationCode(CODE_SIZE);
 
 		try {
 			googleMailSender.send(createCertificationMessage(to, from, code));
