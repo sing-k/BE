@@ -13,6 +13,6 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 	Optional<Album> findByName(String name);
 
 	// MySQL Native Query
-	@Query(value = "SELECT * FROM ALBUMS order by RAND() limit ?1",nativeQuery = true)
+	@Query(value = "SELECT * FROM singk.ALBUMS order by RAND() limit ?1",nativeQuery = true)
 	List<Album> findRandomAlbums(@Param("limit") Long limit);
 }
