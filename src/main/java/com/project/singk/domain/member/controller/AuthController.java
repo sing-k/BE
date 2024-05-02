@@ -29,4 +29,10 @@ public class AuthController {
 		return BaseResponse.ok();
 	}
 
+	@PostMapping("/email-authentication/confirm")
+	public BaseResponse<Void> confirmAuthenticationCode(@RequestBody AuthCodeRequestDto request) {
+		authService.confirmAuthenticationCode(request);
+		return BaseResponse.ok();
+	}
+
 }
