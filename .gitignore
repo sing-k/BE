@@ -43,3 +43,6 @@ out/
 
 ### Secret Key ###
 src/main/resources/application-secret.yml
+
+### Config ###
+/config/
