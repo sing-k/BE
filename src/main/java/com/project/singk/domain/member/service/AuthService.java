@@ -12,6 +12,7 @@ import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.config.properties.MailProperties;
+import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.transaction.Transactional;
@@ -27,6 +28,14 @@ public class AuthService {
 	private final MailService mailService;
 	private final RedisUtil redisUtil;
 	private final MailProperties mailProperties;
+
+	public void confirmNickname(String nickname) {
+		Member member = memberRepository.findByNickname(nickname).orElse(null);
+
+		if (member != null) {
+			throw new ApiException(AppHttpStatus.DUPLICATE_NICKNAME);
+		}
+	}
 
 	public void sendAuthenticationCode(String email) {
 		// 이메일로 조회

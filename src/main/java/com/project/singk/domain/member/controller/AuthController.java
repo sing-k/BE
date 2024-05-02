@@ -13,6 +13,7 @@ import com.project.singk.domain.member.service.AuthService;
 import com.project.singk.global.api.BaseResponse;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -22,6 +23,12 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final AuthService authService;
+
+	@PostMapping("/nickname/confirm")
+	public BaseResponse<Void> confirmNickname(@RequestBody @Size(max = 12) String nickname) {
+		authService.confirmNickname(nickname);
+		return BaseResponse.ok();
+	}
 
 	@PostMapping("/email-authentication/request")
 	public BaseResponse<Void> sendAuthenticationCode(@RequestBody @Email String email) {
