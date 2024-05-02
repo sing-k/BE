@@ -1,13 +1,13 @@
 package com.project.singk.domain.member.service;
 
-import java.time.Duration;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.singk.domain.mail.domain.MailDomain;
 import com.project.singk.domain.mail.service.MailService;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.dto.AuthCodeRequestDto;
+import com.project.singk.domain.member.dto.SignupRequestDto;
 import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
@@ -28,6 +28,12 @@ public class AuthService {
 	private final MailService mailService;
 	private final RedisUtil redisUtil;
 	private final MailProperties mailProperties;
+	private final PasswordEncoder passwordEncoder;
+
+	public PkResponseDto signup(SignupRequestDto dto) {
+		Member member = memberRepository.save(dto.toEntity(passwordEncoder));
+		return PkResponseDto.of(member.getId());
+	}
 
 	public void confirmNickname(String nickname) {
 		Member member = memberRepository.findByNickname(nickname).orElse(null);
