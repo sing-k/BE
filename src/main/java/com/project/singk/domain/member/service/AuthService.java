@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.project.singk.domain.mail.domain.MailDomain;
 import com.project.singk.domain.mail.service.MailService;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.dto.AuthCodeRequestDto;
 import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
@@ -46,5 +47,14 @@ public class AuthService {
 
 		// 인증 번호 Redis 저장
 		redisUtil.setValue(AUTH_PREFIX + email, code, mailProperties.getExpirationMillis());
+	}
+
+	public void confirmAuthenticationCode(AuthCodeRequestDto dto) {
+		String serverAuthCode = redisUtil.getValue(AUTH_PREFIX + dto.getEmail());
+
+		// 인증 코드가 만료되거나 일치하지 않는 경우
+		if (serverAuthCode == null || !serverAuthCode.equals(dto.getCode())) {
+			throw new ApiException(AppHttpStatus.FAILED_VERIFY_CODE);
+		}
 	}
 }
