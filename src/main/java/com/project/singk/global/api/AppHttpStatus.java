@@ -18,7 +18,7 @@ public enum AppHttpStatus {
 	 * 400 : 잘못된 문법으로 인해 요청을 이해할 수 없음
 	 */
 	BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-	FAILED_SEND_MAIL(40001, HttpStatus.BAD_REQUEST, "메일 전송에 실패했습니다"),
+	FAILED_VALIDATION(40001, HttpStatus.BAD_REQUEST, "유효성 검사에 실패하였습니다."),
 	DUPLICATE_MEMBER(40002, HttpStatus.BAD_REQUEST, "해당 이메일로 가입된 회원이 있습니다."),
 	FAILED_VERIFY_CODE(40003, HttpStatus.BAD_REQUEST, "인증 코드가 만료되었거나 일치하지 않습니다."),
 	NOT_SUPPORT_EMAIL_FORMAT(40004, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
@@ -41,7 +41,8 @@ public enum AppHttpStatus {
 	/**
 	 * 500 : 서버 내부에서 에러가 발생함
 	 */
-	INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 에러가 발생했습니다.");
+	INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 에러가 발생했습니다."),
+	FAILED_SEND_MAIL(50001, HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다"),;
 
 	private final int statusCode;
 	private final HttpStatus httpStatus;

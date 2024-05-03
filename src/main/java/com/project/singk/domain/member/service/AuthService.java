@@ -31,7 +31,12 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 
 	public PkResponseDto signup(SignupRequestDto dto) {
-		Member member = memberRepository.save(dto.toEntity(passwordEncoder));
+		Member member = memberRepository.findByEmail(dto.getEmail()).orElse(null);
+		if (member != null) {
+			throw new ApiException(AppHttpStatus.DUPLICATE_MEMBER);
+		}
+
+		member = memberRepository.save(dto.toEntity(passwordEncoder));
 		return PkResponseDto.of(member.getId());
 	}
 
