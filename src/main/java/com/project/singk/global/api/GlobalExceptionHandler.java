@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 	}
 	@ExceptionHandler(ConstraintViolationException.class)
 	public BaseResponse<Void> constraintViolationExceptionHandler(ConstraintViolationException e) {
-		return BaseResponse.fail(new ApiException(AppHttpStatus.BAD_REQUEST));
+		return BaseResponse.fail(new ApiException(AppHttpStatus.FAILED_VALIDATION));
 	}
 
 

@@ -15,6 +15,7 @@ public class MailProperties {
 
 	private final Naver naver;
 	private final Google google;
+	private final long expirationMillis;
 
 	@Getter @ToString
 	@AllArgsConstructor
@@ -23,6 +24,7 @@ public class MailProperties {
 		private final String username;
 		private final String password;
 		private final int port;
+		private final String from;
 	}
 
 	@Getter @ToString
@@ -32,5 +34,6 @@ public class MailProperties {
 		private final String username;
 		private final String password;
 		private final int port;
+		private final String from;
 	}
 }
