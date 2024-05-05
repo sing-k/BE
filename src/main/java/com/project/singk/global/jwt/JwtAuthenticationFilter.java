@@ -1,7 +1,5 @@
 package com.project.singk.global.jwt;
 
-import java.io.IOException;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +15,6 @@ import com.project.singk.global.domain.TokenDto;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-		Authentication authResult) throws IOException, ServletException {
-		super.successfulAuthentication(request, response, chain, authResult);
-
+		Authentication authResult) {
 		SingKUserDetails principal = (SingKUserDetails)authResult.getPrincipal();
 
 		// JWT 생성
@@ -66,15 +61,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			token.getRefreshToken(),
 			jwtProperties.getRefreshExpirationMillis()
 		);
-
-		this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
 	}
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException failed) throws IOException, ServletException {
-		super.unsuccessfulAuthentication(request, response, failed);
-
+		AuthenticationException failed) {
 		throw new ApiException(AppHttpStatus.UNAUTHORIZED);
 	}
 }
