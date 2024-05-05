@@ -27,7 +27,10 @@ public enum AppHttpStatus {
 	 * 401 : 인증된 사용자가 아님
 	 */
 	UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
-
+	INVALID_TOKEN(40101, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+	MALFORMED_TOKEN(40102, HttpStatus.UNAUTHORIZED, "손상된 토큰입니다."),
+	EXPIRED_TOKEN(40103, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+	UNSUPPORTED_TOKEN(40104, HttpStatus.UNAUTHORIZED, "지원하지 않는 토큰입니다."),
 	/**
 	 * 403 : 접근 권한이 없음
 	 */
@@ -36,7 +39,8 @@ public enum AppHttpStatus {
 	/**
 	 * 404 : 응답할 리소스가 없음
 	 */
-	NOT_FOUND(404, HttpStatus.FORBIDDEN, "존재하지 않는 리소스입니다."),
+	NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
+	NOT_FOUND_MEMBER(40401, HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 
 	/**
 	 * 500 : 서버 내부에서 에러가 발생함
