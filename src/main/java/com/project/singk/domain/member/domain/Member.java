@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,7 @@ import lombok.ToString;
 @Getter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "MEMBERS")
 public class Member extends BaseTimeEntity {
 
 	@Id
