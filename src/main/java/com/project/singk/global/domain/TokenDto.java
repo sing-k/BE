@@ -1,10 +1,16 @@
 package com.project.singk.global.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenDto {
 	private String accessToken;
 	private String refreshToken;
