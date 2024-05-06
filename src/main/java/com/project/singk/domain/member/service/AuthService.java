@@ -11,10 +11,14 @@ import com.project.singk.domain.member.dto.SignupRequestDto;
 import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.config.properties.MailProperties;
 import com.project.singk.global.domain.PkResponseDto;
+import com.project.singk.global.domain.TokenDto;
+import com.project.singk.global.jwt.JwtUtil;
 import com.project.singk.global.util.RedisUtil;
 
+import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +28,30 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
 	private final String AUTH_PREFIX = "AuthCode";
+	private final String REFRESH_PREFIX = "Refresh";
 	private final MemberRepository memberRepository;
 	private final MailService mailService;
 	private final RedisUtil redisUtil;
+	private final JwtUtil jwtUtil;
+	private final JwtProperties jwtProperties;
 	private final MailProperties mailProperties;
 	private final PasswordEncoder passwordEncoder;
+
+	public void logout(TokenDto dto) {
+		Claims claims = jwtUtil.parseClaims(dto.getRefreshToken());
+
+		// login 성공 시 저장한 Refresh + email 조회
+		String email = REFRESH_PREFIX + claims.getSubject();
+		String savedRefreshToken = redisUtil.getValue(email);
+
+		if (savedRefreshToken == null) {
+			throw new ApiException(AppHttpStatus.UNAUTHORIZED);
+		}
+
+		redisUtil.deleteValue(email);
+		// Access Token 블랙 리스트 처리
+		redisUtil.setValue(dto.getAccessToken(), "logout", jwtProperties.getAccessExpirationMillis());
+	}
 
 	public PkResponseDto signup(SignupRequestDto dto) {
 		Member member = memberRepository.findByEmail(dto.getEmail()).orElse(null);
