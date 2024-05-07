@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.project.singk.global.config.properties.CorsProperties;
 import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
 import com.project.singk.global.jwt.JwtUtil;
@@ -37,6 +38,7 @@ public class SecurityConfig {
 	private final RedisUtil redisUtil;
 	private final JwtUtil jwtUtil;
 	private final JwtProperties jwtProperties;
+	private final CorsProperties corsProperties;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -83,13 +85,16 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		// TODO : Origin 확정 시 변경 및 Properties로 관리
-		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
-		configuration.setAllowCredentials(true);
-		configuration.addExposedHeader("Authorization");
-		configuration.addExposedHeader("Refresh");
-		configuration.addAllowedHeader("*");
-		configuration.setMaxAge(3600L);
+		configuration.setAllowedOrigins(corsProperties.getAllowOrigins());
+		configuration.setAllowedMethods(corsProperties.getAllowMethods());
+		configuration.setAllowCredentials(corsProperties.isAllowCredentials());
+		for (String exposedHeader : corsProperties.getExposedHeaders()) {
+			configuration.addExposedHeader(exposedHeader);
+		}
+		for (String allowedHeader : corsProperties.getAllowedHeaders()) {
+			configuration.addAllowedHeader(allowedHeader);
+		}
+		configuration.setMaxAge(corsProperties.getMaxAge());
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
