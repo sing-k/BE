@@ -23,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.project.singk.global.config.properties.CorsProperties;
 import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
+import com.project.singk.global.jwt.JwtExceptionHandlingFilter;
 import com.project.singk.global.jwt.JwtUtil;
 import com.project.singk.global.jwt.JwtVerificationFilter;
 import com.project.singk.global.util.RedisUtil;
@@ -73,6 +74,10 @@ public class SecurityConfig {
 				jwtAuthenticationFilter(),
 				UsernamePasswordAuthenticationFilter.class
 			)
+			.addFilterBefore(
+				new JwtExceptionHandlingFilter(),
+				JwtAuthenticationFilter.class
+			)
 			.addFilterAfter(
 				new JwtVerificationFilter(
 					jwtUtil,
@@ -84,7 +89,6 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		// TODO : Origin 확정 시 변경 및 Properties로 관리
 		configuration.setAllowedOrigins(corsProperties.getAllowOrigins());
 		configuration.setAllowedMethods(corsProperties.getAllowMethods());
 		configuration.setAllowCredentials(corsProperties.isAllowCredentials());
