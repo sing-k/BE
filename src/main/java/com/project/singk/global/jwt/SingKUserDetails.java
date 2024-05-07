@@ -22,18 +22,24 @@ public class SingKUserDetails extends Member implements UserDetails {
 	private String password;
 	private Role role;
 
-	public SingKUserDetails(Member member) {
+	private SingKUserDetails(Member member) {
 		this.id = member.getId();
 		this.email = member.getEmail();
 		this.password = member.getPassword();
 		this.role = member.getRole();
 	}
 
+	private SingKUserDetails(String email, Role role) {
+		this.email = email;
+		this.role = role;
+	}
+
 	public static SingKUserDetails of(String email, String role) {
-		return (SingKUserDetails) SingKUserDetails.builder()
-			.email(email)
-			.role(Role.valueOf(role))
-			.build();
+		return new SingKUserDetails(email, Role.valueOf(role));
+	}
+
+	public static SingKUserDetails of(Member member) {
+		return new SingKUserDetails(member);
 	}
 
 	@Override

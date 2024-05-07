@@ -82,7 +82,7 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		// TODO : Origin 확정 시 변경
+		// TODO : Origin 확정 시 변경 및 Properties로 관리
 		configuration.setAllowedOrigins(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
 		configuration.setAllowCredentials(true);

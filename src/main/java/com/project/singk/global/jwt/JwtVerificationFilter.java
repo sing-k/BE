@@ -21,9 +21,12 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
 	private final List<String> EXCLUDE_URL = List.of(
 		"/",
+		"/api/auth/email-authentication/request",
+		"/api/auth/email-authentication/confirm",
+		"/api/auth/nickname/confirm",
 		"/api/auth/signup",
 		"/api/auth/login",
-		"/api/auth/refresh-token"
+		"/api/auth/access-token"
 	);
 	private final JwtUtil jwtUtil;
 	private final RedisUtil redisUtil;
@@ -33,7 +36,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String accessToken = jwtUtil.resolveAccessToken(request);
 
-		if (StringUtils.hasText(accessToken) && isLogout(accessToken) && jwtUtil.validateToken(accessToken)) {
+		if (StringUtils.hasText(accessToken) && !isLogout(accessToken) && jwtUtil.parseToken(accessToken) != null) {
 			setAuthenticationToSecurityContextHolder(accessToken);
 		}
 
@@ -42,7 +45,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		System.out.println(request.getServletPath());
 		return EXCLUDE_URL.stream()
 			.anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
 	}

@@ -14,6 +14,8 @@ import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.domain.TokenDto;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,11 @@ public class AuthController {
 
 	private final AuthService authService;
 
+	@PostMapping("/access-token")
+	public BaseResponse<Void> issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		authService.issueAccessToken(request, response);
+		return BaseResponse.ok();
+	}
 	@PostMapping("/logout")
 	public BaseResponse<Void> logout(@RequestBody TokenDto request) {
 		authService.logout(request);
