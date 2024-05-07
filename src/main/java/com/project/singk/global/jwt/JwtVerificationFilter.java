@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.project.singk.global.api.ApiException;
+import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.servlet.FilterChain;
@@ -36,10 +38,16 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String accessToken = jwtUtil.resolveAccessToken(request);
 
-		if (StringUtils.hasText(accessToken) && !isLogout(accessToken) && jwtUtil.parseToken(accessToken) != null) {
-			setAuthenticationToSecurityContextHolder(accessToken);
+		if (!StringUtils.hasText(accessToken)) {
+			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
 
+		if (isLogout(accessToken)) {
+			throw new ApiException(AppHttpStatus.BLOCKED_TOKEN);
+		}
+
+		jwtUtil.parseToken(accessToken);
+		setAuthenticationToSecurityContextHolder(accessToken);
 		filterChain.doFilter(request, response);
 	}
 

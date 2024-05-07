@@ -31,6 +31,7 @@ public enum AppHttpStatus {
 	MALFORMED_TOKEN(40102, HttpStatus.UNAUTHORIZED, "손상된 토큰입니다."),
 	EXPIRED_TOKEN(40103, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 	UNSUPPORTED_TOKEN(40104, HttpStatus.UNAUTHORIZED, "지원하지 않는 토큰입니다."),
+	BLOCKED_TOKEN(40105, HttpStatus.UNAUTHORIZED, "로그아웃 처리된 토큰입니다."),
 	/**
 	 * 403 : 접근 권한이 없음
 	 */
