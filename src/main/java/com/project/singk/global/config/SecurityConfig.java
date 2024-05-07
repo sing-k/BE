@@ -83,7 +83,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		// TODO : Origin 확정 시 변경 및 Properties로 관리
-		configuration.setAllowedOrigins(List.of("*"));
+		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
 		configuration.setAllowCredentials(true);
 		configuration.addExposedHeader("Authorization");
