@@ -20,7 +20,7 @@ public class SingKUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return memberRepository.findByEmail(email)
-			.map(SingKUserDetails::new)
+			.map(SingKUserDetails::of)
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 	}
 }

@@ -16,9 +16,12 @@ import com.project.singk.global.config.properties.MailProperties;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.domain.TokenDto;
 import com.project.singk.global.jwt.JwtUtil;
+import com.project.singk.global.jwt.SingKUserDetails;
 import com.project.singk.global.util.RedisUtil;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +40,30 @@ public class AuthService {
 	private final MailProperties mailProperties;
 	private final PasswordEncoder passwordEncoder;
 
+
+	public void issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		String clientRefreshToken = jwtUtil.resolveRefreshToken(request);
+		Claims refreshClaims = jwtUtil.parseToken(clientRefreshToken);
+		String email = REFRESH_PREFIX + refreshClaims.getSubject();
+		String serverRefreshToken = redisUtil.getValue(email);
+
+		// 서버에 refresh token이 존재하지 않거나 서버의 refresh token과 클라이언트의 refresh token이 일치하지 않는경우
+		if (serverRefreshToken == null || serverRefreshToken.equals(clientRefreshToken)) {
+			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
+		}
+
+		// TODO : Access Token이 만료되지 않더라도 발급해야 하는가 ?
+
+		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
+			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
+
+		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
+
+		// TODO: Refresh Token Rotate 구현
+		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
+	}
 	public void logout(TokenDto dto) {
-		Claims claims = jwtUtil.parseClaims(dto.getRefreshToken());
+		Claims claims = jwtUtil.parseToken(dto.getRefreshToken());
 
 		// login 성공 시 저장한 Refresh + email 조회
 		String email = REFRESH_PREFIX + claims.getSubject();
@@ -50,7 +75,11 @@ public class AuthService {
 
 		redisUtil.deleteValue(email);
 		// Access Token 블랙 리스트 처리
-		redisUtil.setValue(dto.getAccessToken(), "logout", jwtProperties.getAccessExpirationMillis());
+		redisUtil.setValue(
+			dto.getAccessToken().substring(7),
+			"logout",
+			jwtProperties.getAccessExpirationMillis()
+		);
 	}
 
 	public PkResponseDto signup(SignupRequestDto dto) {

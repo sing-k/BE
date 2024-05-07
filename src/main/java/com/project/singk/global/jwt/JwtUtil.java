@@ -43,7 +43,7 @@ public class JwtUtil {
 	@PostConstruct
 	public void init() {
 		String base64EncodedSecretKey = encodeBase64(jwtProperties.getSecretKey());
-		this.key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
+		this.key = getSecretKeyFromBase64EncodedKey(base64EncodedSecretKey);
 	}
 
 	private String encodeBase64(String target) {
@@ -51,7 +51,7 @@ public class JwtUtil {
 	}
 
 	// HS256 (HMAC with SHA-256)
-	private SecretKey getKeyFromBase64EncodedKey(String key) {
+	private SecretKey getSecretKeyFromBase64EncodedKey(String key) {
 		byte[] keyBytes = Decoders.BASE64.decode(key);
 		return new SecretKeySpec(keyBytes, Jwts.SIG.HS256.key().build().getAlgorithm());
 	}
@@ -72,6 +72,7 @@ public class JwtUtil {
 			.subject(userDetails.getEmail())
 			.expiration(getTokenExpiration(jwtProperties.getRefreshExpirationMillis()))
 			.issuedAt(issuedAt)
+			.signWith(key)
 			.compact();
 
 		return TokenDto.builder()
@@ -91,19 +92,14 @@ public class JwtUtil {
 		return claims;
 	}
 
-	// Token 복호화
-	public Claims parseClaims(String token) {
-		return Jwts.parser()
-			.verifyWith(key)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-	}
-
-	// JWT 토큰 검증
-	public boolean validateToken(String token) {
+	// JWT 토큰 복호화 및 검증
+	public Claims parseToken(String token) {
 		try {
-			parseClaims(token);
+			return Jwts.parser()
+				.verifyWith(key)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
 		} catch (MalformedJwtException e) {
 			throw new ApiException(AppHttpStatus.MALFORMED_TOKEN);
 		} catch (ExpiredJwtException e) {
@@ -113,21 +109,20 @@ public class JwtUtil {
 		} catch (Exception e) {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
-
-		return true;
 	}
 
 	// JWT 토큰으로 Authentication
 	public Authentication getAuthentication(String accessToken) {
-		Claims claims = parseClaims(accessToken);
+		Claims claims = parseToken(accessToken);
+		String role = claims.get("role").toString();
 
-		if (claims.get("role") == null) {
+		if (role == null) {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
 
 		SingKUserDetails userDetails = SingKUserDetails.of(
 			claims.getSubject(),
-			claims.get("role").toString()
+			role
 		);
 
 		return new UsernamePasswordAuthenticationToken(
