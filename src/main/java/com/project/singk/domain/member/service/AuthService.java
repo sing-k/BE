@@ -11,10 +11,17 @@ import com.project.singk.domain.member.dto.SignupRequestDto;
 import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.config.properties.MailProperties;
 import com.project.singk.global.domain.PkResponseDto;
+import com.project.singk.global.domain.TokenDto;
+import com.project.singk.global.jwt.JwtUtil;
+import com.project.singk.global.jwt.SingKUserDetails;
 import com.project.singk.global.util.RedisUtil;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +31,56 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
 	private final String AUTH_PREFIX = "AuthCode";
+	private final String REFRESH_PREFIX = "Refresh";
 	private final MemberRepository memberRepository;
 	private final MailService mailService;
 	private final RedisUtil redisUtil;
+	private final JwtUtil jwtUtil;
+	private final JwtProperties jwtProperties;
 	private final MailProperties mailProperties;
 	private final PasswordEncoder passwordEncoder;
+
+
+	public void issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		String clientRefreshToken = jwtUtil.resolveRefreshToken(request);
+		Claims refreshClaims = jwtUtil.parseToken(clientRefreshToken);
+		String email = REFRESH_PREFIX + refreshClaims.getSubject();
+		String serverRefreshToken = redisUtil.getValue(email);
+
+		// 서버에 refresh token이 존재하지 않거나 서버의 refresh token과 클라이언트의 refresh token이 일치하지 않는경우
+		if (serverRefreshToken == null || serverRefreshToken.equals(clientRefreshToken)) {
+			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
+		}
+
+		// TODO : Access Token이 만료되지 않더라도 발급해야 하는가 ?
+
+		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
+			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
+
+		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
+
+		// TODO: Refresh Token Rotate 구현
+		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
+	}
+	public void logout(TokenDto dto) {
+		Claims claims = jwtUtil.parseToken(dto.getRefreshToken());
+
+		// login 성공 시 저장한 Refresh + email 조회
+		String email = REFRESH_PREFIX + claims.getSubject();
+		String savedRefreshToken = redisUtil.getValue(email);
+
+		if (savedRefreshToken == null) {
+			throw new ApiException(AppHttpStatus.UNAUTHORIZED);
+		}
+
+		redisUtil.deleteValue(email);
+		// Access Token 블랙 리스트 처리
+		redisUtil.setValue(
+			dto.getAccessToken().substring(7),
+			"logout",
+			jwtProperties.getAccessExpirationMillis()
+		);
+	}
 
 	public PkResponseDto signup(SignupRequestDto dto) {
 		Member member = memberRepository.findByEmail(dto.getEmail()).orElse(null);

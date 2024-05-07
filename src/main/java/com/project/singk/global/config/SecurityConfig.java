@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,14 +14,29 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.project.singk.global.config.properties.JwtProperties;
+import com.project.singk.global.jwt.JwtAuthenticationFilter;
+import com.project.singk.global.jwt.JwtUtil;
+import com.project.singk.global.jwt.JwtVerificationFilter;
+import com.project.singk.global.util.RedisUtil;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+	private final AuthenticationConfiguration authenticationConfiguration;
+	private final RedisUtil redisUtil;
+	private final JwtUtil jwtUtil;
+	private final JwtProperties jwtProperties;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -45,15 +62,27 @@ public class SecurityConfig {
 			})
 			// API 인가 설정
 			.authorizeHttpRequests((authorize) -> {
-				authorize.anyRequest().permitAll();
+				authorize
+					.requestMatchers("/api/auth/**").permitAll()
+					.requestMatchers("/api/auth/logout").authenticated()
+					.anyRequest().authenticated();
 			})
+			.addFilterAt(
+				jwtAuthenticationFilter(),
+				UsernamePasswordAuthenticationFilter.class
+			)
+			.addFilterAfter(
+				new JwtVerificationFilter(
+					jwtUtil,
+					redisUtil
+				),
+				JwtAuthenticationFilter.class)
 			.build();
 	}
-
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		// TODO : Origin 확정 시 변경
+		// TODO : Origin 확정 시 변경 및 Properties로 관리
 		configuration.setAllowedOrigins(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
 		configuration.setAllowCredentials(true);
@@ -70,5 +99,21 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+		return configuration.getAuthenticationManager();
+	}
+
+	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(
+			authenticationManager(authenticationConfiguration),
+			redisUtil,
+			jwtProperties,
+			jwtUtil
+		);
+		filter.setFilterProcessesUrl("/api/auth/login");
+		return filter;
 	}
 }

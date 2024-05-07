@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -47,6 +48,7 @@ public class SignupRequestDto {
 			.birthday(LocalDate.parse(this.birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay())
 			.gender(Gender.valueOf(this.gender))
 			.name(this.name)
+			.role(Role.ROLE_USER)
 			.build();
 	}
 }

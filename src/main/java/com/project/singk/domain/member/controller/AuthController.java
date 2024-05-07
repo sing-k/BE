@@ -1,6 +1,5 @@
 package com.project.singk.domain.member.controller;
 
-import java.util.Map;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +12,10 @@ import com.project.singk.domain.member.dto.SignupRequestDto;
 import com.project.singk.domain.member.service.AuthService;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.PkResponseDto;
+import com.project.singk.global.domain.TokenDto;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,17 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final AuthService authService;
+
+	@PostMapping("/access-token")
+	public BaseResponse<Void> issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		authService.issueAccessToken(request, response);
+		return BaseResponse.ok();
+	}
+	@PostMapping("/logout")
+	public BaseResponse<Void> logout(@RequestBody TokenDto request) {
+		authService.logout(request);
+		return BaseResponse.ok();
+	}
 
 	@PostMapping("/signup")
 	public BaseResponse<PkResponseDto> signup(@RequestBody SignupRequestDto request) {
