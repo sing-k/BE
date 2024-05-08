@@ -48,7 +48,7 @@ public class AuthService {
 		String serverRefreshToken = redisUtil.getValue(email);
 
 		// 서버에 refresh token이 존재하지 않거나 서버의 refresh token과 클라이언트의 refresh token이 일치하지 않는경우
-		if (serverRefreshToken == null || serverRefreshToken.equals(clientRefreshToken)) {
+		if (serverRefreshToken == null || !serverRefreshToken.equals(clientRefreshToken)) {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
 
@@ -61,6 +61,8 @@ public class AuthService {
 
 		// Refresh Token Rotate
 		jwtUtil.setHeaderRefreshToken(token.getRefreshToken(), response);
+
+		redisUtil.deleteValue(email);
 		redisUtil.setValue(
 			email,
 			token.getRefreshToken(),
