@@ -52,15 +52,20 @@ public class AuthService {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
 
-		// TODO : Access Token이 만료되지 않더라도 발급해야 하는가 ?
-
 		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 
 		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
 
-		// TODO: Refresh Token Rotate 구현
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
+
+		// Refresh Token Rotate
+		jwtUtil.setHeaderRefreshToken(token.getRefreshToken(), response);
+		redisUtil.setValue(
+			email,
+			token.getRefreshToken(),
+			jwtProperties.getRefreshExpirationMillis()
+		);
 	}
 	public void logout(TokenDto dto) {
 		Claims claims = jwtUtil.parseToken(dto.getRefreshToken());
