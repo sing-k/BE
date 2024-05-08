@@ -55,7 +55,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		jwtUtil.setHeaderRefreshToken(token.getAccessToken(), response);
 
 		// 로그인 성공 시 Refresh Token 저장
-		// TODO : Refresh Token도 탈취당하는 케이스 고려
 		redisUtil.setValue(
 			REFRESH_PREFIX + principal.getEmail(),
 			token.getRefreshToken(),
