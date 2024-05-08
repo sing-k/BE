@@ -48,19 +48,26 @@ public class AuthService {
 		String serverRefreshToken = redisUtil.getValue(email);
 
 		// 서버에 refresh token이 존재하지 않거나 서버의 refresh token과 클라이언트의 refresh token이 일치하지 않는경우
-		if (serverRefreshToken == null || serverRefreshToken.equals(clientRefreshToken)) {
+		if (serverRefreshToken == null || !serverRefreshToken.equals(clientRefreshToken)) {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
-
-		// TODO : Access Token이 만료되지 않더라도 발급해야 하는가 ?
 
 		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 
 		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
 
-		// TODO: Refresh Token Rotate 구현
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
+
+		// Refresh Token Rotate
+		jwtUtil.setHeaderRefreshToken(token.getRefreshToken(), response);
+
+		redisUtil.deleteValue(email);
+		redisUtil.setValue(
+			email,
+			token.getRefreshToken(),
+			jwtProperties.getRefreshExpirationMillis()
+		);
 	}
 	public void logout(TokenDto dto) {
 		Claims claims = jwtUtil.parseToken(dto.getRefreshToken());
