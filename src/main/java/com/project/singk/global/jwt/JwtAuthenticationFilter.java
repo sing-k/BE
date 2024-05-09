@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		SingKUserDetails principal = (SingKUserDetails)authResult.getPrincipal();
 
 		// JWT 생성
-		TokenDto token = jwtUtil.generateTokenDto(principal);
+		TokenDto token = jwtUtil.generateTokenDto(principal.getEmail(), principal.getRole());
 
 		// Response Header 설정
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
