@@ -55,7 +55,8 @@ public class AuthService {
 		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 
-		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
+		SingKUserDetails userDetails = SingKUserDetails.of(member);
+		TokenDto token = jwtUtil.generateTokenDto(userDetails.getEmail(), userDetails.getRole());
 
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
 

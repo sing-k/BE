@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.project.singk.domain.member.domain.Role;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.properties.JwtProperties;
@@ -58,19 +59,19 @@ public class JwtUtil {
 	}
 
 	// 액세스 토큰, 리프레쉬 토큰 생성
-	public TokenDto generateTokenDto(SingKUserDetails userDetails) {
+	public TokenDto generateTokenDto(String email, Role role) {
 		Date issuedAt = new Date(System.currentTimeMillis());
 
 		String accessToken = Jwts.builder()
-			.claims(generatePublicClaims(userDetails))
-			.subject(userDetails.getEmail())
+			.claims(generatePublicClaims(role))
+			.subject(email)
 			.expiration(getTokenExpiration(jwtProperties.getAccessExpirationMillis()))
 			.issuedAt(issuedAt)
 			.signWith(key)
 			.compact();
 
 		String refreshToken = Jwts.builder()
-			.subject(userDetails.getEmail())
+			.subject(email)
 			.expiration(getTokenExpiration(jwtProperties.getRefreshExpirationMillis()))
 			.issuedAt(issuedAt)
 			.signWith(key)
@@ -87,9 +88,9 @@ public class JwtUtil {
 	}
 
 	// 공개 클레임
-	private Map<String, String> generatePublicClaims(SingKUserDetails userDetails) {
+	private Map<String, String> generatePublicClaims(Role role) {
 		Map<String, String> claims = new HashMap<>();
-		claims.put("role", userDetails.getRole().name());
+		claims.put("role", role.name());
 		return claims;
 	}
 
