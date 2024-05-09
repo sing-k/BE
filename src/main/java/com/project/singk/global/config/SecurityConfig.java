@@ -1,10 +1,9 @@
 package com.project.singk.global.config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,14 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.project.singk.global.config.properties.CorsProperties;
-import com.project.singk.global.config.properties.JwtProperties;
+import com.project.singk.global.properties.CorsProperties;
+import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
 import com.project.singk.global.jwt.JwtExceptionHandlingFilter;
 import com.project.singk.global.jwt.JwtUtil;
@@ -63,6 +61,8 @@ public class SecurityConfig {
 			.sessionManagement((session) -> {
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 			})
+			// OAuth 설정 (기본)
+			.oauth2Login(Customizer.withDefaults())
 			// API 인가 설정
 			.authorizeHttpRequests((authorize) -> {
 				authorize

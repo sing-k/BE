@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.project.singk.global.config.properties.MailProperties;
+import com.project.singk.global.properties.MailProperties;
 
 import lombok.RequiredArgsConstructor;
 
