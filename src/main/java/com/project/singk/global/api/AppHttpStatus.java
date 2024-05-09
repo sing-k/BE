@@ -23,6 +23,7 @@ public enum AppHttpStatus {
 	FAILED_VERIFY_CODE(40003, HttpStatus.BAD_REQUEST, "인증 코드가 만료되었거나 일치하지 않습니다."),
 	NOT_SUPPORT_EMAIL_FORMAT(40004, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
 	DUPLICATE_NICKNAME(40005, HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임 입니다."),
+	INVALID_OAUTH_TYPE(40006, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
 	/**
 	 * 401 : 인증된 사용자가 아님
 	 */
