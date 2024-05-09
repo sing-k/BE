@@ -15,8 +15,9 @@ import org.springframework.util.StringUtils;
 
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.config.properties.JwtProperties;
+import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.domain.TokenDto;
+import com.project.singk.domain.member.domain.SingKUserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

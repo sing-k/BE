@@ -10,8 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.singk.domain.member.dto.LoginRequestDto;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.config.properties.JwtProperties;
+import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.domain.TokenDto;
+import com.project.singk.domain.member.domain.SingKUserDetails;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.servlet.FilterChain;

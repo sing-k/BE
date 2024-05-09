@@ -1,4 +1,4 @@
-package com.project.singk.global.config.properties;
+package com.project.singk.global.properties;
 
 import java.util.List;
 
