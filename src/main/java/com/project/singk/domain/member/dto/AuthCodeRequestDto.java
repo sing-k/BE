@@ -1,6 +1,7 @@
 package com.project.singk.domain.member.dto;
 
-import jakarta.validation.constraints.Email;
+import com.project.singk.global.validator.Email;
+
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

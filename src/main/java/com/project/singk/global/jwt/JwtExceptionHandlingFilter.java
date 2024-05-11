@@ -2,29 +2,33 @@ package com.project.singk.global.jwt;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.singk.global.api.ApiException;
+import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.BaseResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtExceptionHandlingFilter extends OncePerRequestFilter {
-
+	private final String CONTENT_TYPE = "application/json;charset=UTF-8";
+	private ObjectMapper objectMapper = new ObjectMapper();
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
+		response.setContentType(CONTENT_TYPE);
 		try {
 			filterChain.doFilter(request, response);
-		} catch (ApiException e) {
-			response.setContentType("application/json;charset=UTF-8");
-			String body = objectMapper.writeValueAsString(BaseResponse.fail(e));
-			response.getWriter().write(objectMapper.writeValueAsString(body));
+		} catch (JwtException e) {
+			String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.INVALID_TOKEN, e.getMessage()));
+			response.getWriter().write(body);
 		}
 	}
 }

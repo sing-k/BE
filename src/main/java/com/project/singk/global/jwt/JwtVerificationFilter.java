@@ -12,6 +12,7 @@ import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.util.RedisUtil;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,11 +40,11 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 		String accessToken = jwtUtil.resolveAccessToken(request);
 
 		if (!StringUtils.hasText(accessToken)) {
-			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
+			throw new JwtException(AppHttpStatus.INVALID_TOKEN.getMessage());
 		}
 
 		if (isLogout(accessToken)) {
-			throw new ApiException(AppHttpStatus.BLOCKED_TOKEN);
+			throw new JwtException(AppHttpStatus.BLOCKED_TOKEN.getMessage());
 		}
 
 		jwtUtil.parseToken(accessToken);

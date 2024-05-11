@@ -1,6 +1,9 @@
 package com.project.singk.global.jwt;
 
+import java.io.IOException;
+
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -10,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.singk.domain.member.dto.LoginRequestDto;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.domain.TokenDto;
 import com.project.singk.global.util.RedisUtil;
@@ -23,6 +27,7 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final String REFRESH_PREFIX = "Refresh";
+	private final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
 	private final AuthenticationManager authenticationManager;
 	private final RedisUtil redisUtil;
@@ -64,7 +69,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException failed) {
-		throw new ApiException(AppHttpStatus.UNAUTHORIZED);
+		AuthenticationException failed) throws IOException {
+		response.setContentType(CONTENT_TYPE);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED));
+		response.getWriter().write(body);
 	}
 }
