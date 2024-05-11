@@ -17,12 +17,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public BaseResponse<Void> accessDeniedExceptionHandler(AccessDeniedException e) {
-		return BaseResponse.fail(new ApiException(AppHttpStatus.FORBIDDEN));
+		return BaseResponse.fail(AppHttpStatus.FORBIDDEN);
 	}
-	@ExceptionHandler(ConstraintViolationException.class)
+	@ExceptionHandler({ConstraintViolationException.class})
 	public BaseResponse<Void> constraintViolationExceptionHandler(ConstraintViolationException e) {
-		return BaseResponse.fail(new ApiException(AppHttpStatus.FAILED_VALIDATION));
+		return BaseResponse.fail(AppHttpStatus.BAD_REQUEST, e.getMessage());
 	}
-
 
 }
