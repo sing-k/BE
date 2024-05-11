@@ -13,10 +13,10 @@ import com.project.singk.domain.member.service.AuthService;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.domain.TokenDto;
+import com.project.singk.global.validator.Email;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 
