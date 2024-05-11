@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BaseResponse<T> {
@@ -46,20 +46,16 @@ public class BaseResponse<T> {
 			.status(e.getStatus())
 			.build();
 	}
-
-	private static <T> CustomBaseResponseBuilder<T> builder() {
-		return new CustomBaseResponseBuilder<>();
+	public static BaseResponse<Void> fail(AppHttpStatus status) {
+		return BaseResponse.<Void>builder()
+			.statusCode(status.getStatusCode())
+			.message(status.getMessage())
+			.build();
 	}
-
-	private static class CustomBaseResponseBuilder<T> extends BaseResponseBuilder<T> {
-		@Override
-		public BaseResponse<T> build() {
-			BaseResponse<T> baseResponse = super.build();
-
-			AppHttpStatus status = baseResponse.status;
-			baseResponse.statusCode = status.getStatusCode();
-			baseResponse.message = status.getMessage();
-			return baseResponse;
-		}
+	public static BaseResponse<Void> fail(AppHttpStatus status, String message) {
+		return BaseResponse.<Void>builder()
+			.statusCode(status.getStatusCode())
+			.message(message)
+			.build();
 	}
 }

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.project.singk.domain.member.domain.SingKUserDetails;
 import com.project.singk.domain.member.repository.MemberRepository;
-import com.project.singk.global.api.ApiException;
-import com.project.singk.global.api.AppHttpStatus;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,6 @@ public class SingKUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return memberRepository.findByEmail(email)
 			.map(SingKUserDetails::of)
-			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
+			.orElse(null);
 	}
 }

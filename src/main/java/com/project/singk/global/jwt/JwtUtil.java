@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.project.singk.domain.member.domain.Role;
-import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.domain.TokenDto;
@@ -22,6 +21,7 @@ import com.project.singk.domain.member.domain.SingKUserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -103,13 +103,13 @@ public class JwtUtil {
 				.parseSignedClaims(token)
 				.getPayload();
 		} catch (MalformedJwtException e) {
-			throw new ApiException(AppHttpStatus.MALFORMED_TOKEN);
+			throw new JwtException(AppHttpStatus.MALFORMED_TOKEN.getMessage());
 		} catch (ExpiredJwtException e) {
-			throw new ApiException(AppHttpStatus.EXPIRED_TOKEN);
+			throw new JwtException(AppHttpStatus.EXPIRED_TOKEN.getMessage());
 		} catch (UnsupportedJwtException e) {
-			throw new ApiException(AppHttpStatus.UNSUPPORTED_TOKEN);
+			throw new JwtException(AppHttpStatus.UNSUPPORTED_TOKEN.getMessage());
 		} catch (Exception e) {
-			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
+			throw new JwtException(AppHttpStatus.INVALID_TOKEN.getMessage());
 		}
 	}
 
@@ -119,7 +119,7 @@ public class JwtUtil {
 		String role = claims.get("role").toString();
 
 		if (role == null) {
-			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
+			throw new JwtException(AppHttpStatus.INVALID_TOKEN.getMessage());
 		}
 
 		SingKUserDetails userDetails = SingKUserDetails.of(
