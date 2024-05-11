@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.project.singk.domain.member.service.SingKOAuth2UserService;
+import com.project.singk.global.oauth.OAuthFailureHandler;
+import com.project.singk.global.oauth.OAuthSuccessHandler;
 import com.project.singk.global.properties.CorsProperties;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
@@ -40,6 +42,8 @@ public class SecurityConfig {
 	private final JwtProperties jwtProperties;
 	private final CorsProperties corsProperties;
 	private final SingKOAuth2UserService oauth2UserService;
+	private final OAuthSuccessHandler oAuthSuccessHandler;
+	private final OAuthFailureHandler oAuthFailureHandler;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -65,9 +69,10 @@ public class SecurityConfig {
 			})
 			// OAuth 설정 (기본)
 			.oauth2Login((oauth) -> {
-				oauth.userInfoEndpoint((userInfoEndpointConfig -> {
-					userInfoEndpointConfig.userService(oauth2UserService);
-				}));
+				oauth
+					.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauth2UserService))
+					.successHandler(oAuthSuccessHandler)
+					.failureHandler(oAuthFailureHandler);
 			})
 			// API 인가 설정
 			.authorizeHttpRequests((authorize) -> {
