@@ -23,27 +23,31 @@ public class BaseResponse<T> {
 
 	public static BaseResponse<Void> ok() {
 		return BaseResponse.<Void>builder()
-			.status(AppHttpStatus.OK)
+			.statusCode(AppHttpStatus.OK.getStatusCode())
+			.message(AppHttpStatus.OK.getMessage())
 			.build();
 	}
 
 	public static <T> BaseResponse<T> ok(T data) {
 		return BaseResponse.<T>builder()
-			.status(AppHttpStatus.OK)
+			.statusCode(AppHttpStatus.OK.getStatusCode())
+			.message(AppHttpStatus.OK.getMessage())
 			.data(data)
 			.build();
 	}
 
 	public static <T> BaseResponse<T> created(T data) {
 		return BaseResponse.<T>builder()
-			.status(AppHttpStatus.CREATED)
+			.statusCode(AppHttpStatus.CREATED.getStatusCode())
+			.message(AppHttpStatus.CREATED.getMessage())
 			.data(data)
 			.build();
 	}
 
 	public static BaseResponse<Void> fail(ApiException e) {
 		return BaseResponse.<Void>builder()
-			.status(e.getStatus())
+			.statusCode(e.getStatus().getStatusCode())
+			.message(e.getStatus().getMessage())
 			.build();
 	}
 	public static BaseResponse<Void> fail(AppHttpStatus status) {
