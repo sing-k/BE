@@ -15,7 +15,6 @@ import com.project.singk.domain.member.dto.oauth.KakaoResponse;
 import com.project.singk.domain.member.dto.oauth.NaverResponse;
 import com.project.singk.domain.member.dto.oauth.OAuthResponse;
 import com.project.singk.domain.member.repository.MemberRepository;
-import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,8 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
-		System.out.println(oAuth2User);
 
+		// OAuth 식별
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
 		// TODO : 리팩토링
@@ -41,8 +40,7 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
 		} else if (AuthType.KAKAO.getId().equals(registrationId)) {
 			oAuthResponse = KakaoResponse.of(oAuth2User.getAttributes());
 		} else {
-			// 문제 가능성 있음
-			throw new ApiException(AppHttpStatus.INVALID_OAUTH_TYPE);
+			throw new OAuth2AuthenticationException(new OAuth2Error(AppHttpStatus.INVALID_OAUTH_TYPE.getMessage()));
 		}
 
 		Member member = memberRepository.findByEmail(oAuthResponse.getEmail()).orElse(null);
