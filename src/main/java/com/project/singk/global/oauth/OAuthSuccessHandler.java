@@ -10,6 +10,7 @@ import com.project.singk.domain.member.domain.SingKOAuth2User;
 import com.project.singk.global.domain.TokenDto;
 import com.project.singk.global.jwt.JwtUtil;
 import com.project.singk.global.properties.JwtProperties;
+import com.project.singk.global.properties.OAuthProperties;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.servlet.ServletException;
@@ -21,12 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-	private final String LOGIN_SUCCESS_URL = "http://localhost:5500/login.html";
-	private final String SIGNUP_URL = "http://localhost:5500/register.html";
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
 	private final JwtUtil jwtUtil;
 	private final JwtProperties jwtProperties;
+	private final OAuthProperties oAuthProperties;
 	private final RedisUtil redisUtil;
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -36,7 +36,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		if (oAuthUser.isNewbie()) {
 			response.addCookie(createCookie("email", oAuthUser.getEmail()));
 			response.addCookie(createCookie("name", oAuthUser.getName()));
-			response.sendRedirect("http://localhost:5500/signup.html");
+			response.sendRedirect(oAuthProperties.getUrl().getSignup());
 		} else {
 			TokenDto token = jwtUtil.generateTokenDto(oAuthUser.getEmail(), oAuthUser.getRole());
 
@@ -49,16 +49,16 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 				jwtProperties.getRefreshExpirationMillis()
 			);
 
-			response.sendRedirect("http://localhost:5500/login.html");
+			response.sendRedirect(oAuthProperties.getUrl().getMain());
 		}
 	}
 
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(60 * 60 * 60);
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-
+		cookie.setMaxAge(oAuthProperties.getCookie().getMaxAge());
+		cookie.setPath(oAuthProperties.getCookie().getPath());
+		cookie.setHttpOnly(oAuthProperties.getCookie().isHttpOnly());
+		cookie.setSecure(oAuthProperties.getCookie().isSecure());
 		return cookie;
 	}
 }
