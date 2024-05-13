@@ -3,7 +3,6 @@ package com.project.singk.global.jwt;
 import java.io.IOException;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -11,11 +10,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.singk.domain.member.dto.LoginRequestDto;
-import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.api.BaseResponse;
-import com.project.singk.global.config.properties.JwtProperties;
 import com.project.singk.global.domain.TokenDto;
+import com.project.singk.domain.member.domain.SingKUserDetails;
 import com.project.singk.global.util.RedisUtil;
 
 import jakarta.servlet.FilterChain;
@@ -53,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		SingKUserDetails principal = (SingKUserDetails)authResult.getPrincipal();
 
 		// JWT 생성
-		TokenDto token = jwtUtil.generateTokenDto(principal);
+		TokenDto token = jwtUtil.generateTokenDto(principal.getEmail(), principal.getRole());
 
 		// Response Header 설정
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);

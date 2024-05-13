@@ -8,7 +8,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.project.singk.global.config.properties.RedisProperties;
+import com.project.singk.global.properties.RedisProperties;
 
 import lombok.RequiredArgsConstructor;
 

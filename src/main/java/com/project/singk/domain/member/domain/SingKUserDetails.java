@@ -1,4 +1,4 @@
-package com.project.singk.global.jwt;
+package com.project.singk.domain.member.domain;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,9 +6,6 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.member.domain.Role;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

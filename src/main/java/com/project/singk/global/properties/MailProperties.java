@@ -1,4 +1,4 @@
-package com.project.singk.global.config.properties;
+package com.project.singk.global.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;

@@ -11,12 +11,12 @@ import com.project.singk.domain.member.dto.SignupRequestDto;
 import com.project.singk.domain.member.repository.MemberRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.config.properties.JwtProperties;
-import com.project.singk.global.config.properties.MailProperties;
+import com.project.singk.global.properties.JwtProperties;
+import com.project.singk.global.properties.MailProperties;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.domain.TokenDto;
 import com.project.singk.global.jwt.JwtUtil;
-import com.project.singk.global.jwt.SingKUserDetails;
+import com.project.singk.domain.member.domain.SingKUserDetails;
 import com.project.singk.global.util.RedisUtil;
 
 import io.jsonwebtoken.Claims;
@@ -55,7 +55,8 @@ public class AuthService {
 		Member member = memberRepository.findByEmail(refreshClaims.getSubject())
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 
-		TokenDto token = jwtUtil.generateTokenDto(SingKUserDetails.of(member));
+		SingKUserDetails userDetails = SingKUserDetails.of(member);
+		TokenDto token = jwtUtil.generateTokenDto(userDetails.getEmail(), userDetails.getRole());
 
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
 
