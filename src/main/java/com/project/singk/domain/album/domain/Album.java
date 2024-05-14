@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.global.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -31,23 +32,15 @@ import lombok.ToString;
 public class Album extends BaseTimeEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@Column(updatable = false, length = 22)
+	private String id;
 
-	@Column(name = "melon_id")
-	private Long melonId;
-
+	@Column(name = "name")
 	private String name;
 
 	@Enumerated(EnumType.STRING)
 	private AlbumType type;
 
-	private String artist;
-
-	private String imageUrl;
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime releasedAt;
-
-	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
-	List<AlbumGenre> albumGenres = new ArrayList<>();
 }
