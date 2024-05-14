@@ -3,7 +3,6 @@ package com.project.singk.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,12 +17,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-<<<<<<< HEAD
 import com.project.singk.domain.member.service.SingKOAuth2UserService;
 import com.project.singk.global.oauth.OAuthFailureHandler;
 import com.project.singk.global.oauth.OAuthSuccessHandler;
-=======
->>>>>>> ff72ee0 (refactor : 폴더 구조 변경)
 import com.project.singk.global.properties.CorsProperties;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
@@ -71,16 +67,12 @@ public class SecurityConfig {
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 			})
 			// OAuth 설정 (기본)
-<<<<<<< HEAD
 			.oauth2Login((oauth) -> {
 				oauth
 					.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauth2UserService))
 					.successHandler(oAuthSuccessHandler)
 					.failureHandler(oAuthFailureHandler);
 			})
-=======
-			.oauth2Login(Customizer.withDefaults())
->>>>>>> ff72ee0 (refactor : 폴더 구조 변경)
 			// API 인가 설정
 			.authorizeHttpRequests((authorize) -> {
 				authorize
