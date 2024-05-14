@@ -18,22 +18,22 @@ public enum AppHttpStatus {
 	 * 400 : 잘못된 문법으로 인해 요청을 이해할 수 없음
 	 */
 	BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-	FAILED_VALIDATION(40001, HttpStatus.BAD_REQUEST, "유효성 검사에 실패하였습니다."),
-	DUPLICATE_MEMBER(40002, HttpStatus.BAD_REQUEST, "해당 이메일로 가입된 회원이 있습니다."),
-	FAILED_VERIFY_CODE(40003, HttpStatus.BAD_REQUEST, "인증 코드가 만료되었거나 일치하지 않습니다."),
-	NOT_SUPPORT_EMAIL_FORMAT(40004, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
-	DUPLICATE_NICKNAME(40005, HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임 입니다."),
-	INVALID_OAUTH_TYPE(40006, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
+	FAILED_VALIDATION(400, HttpStatus.BAD_REQUEST, "유효성 검사에 실패하였습니다."),
+	DUPLICATE_MEMBER(400, HttpStatus.BAD_REQUEST, "해당 이메일로 가입된 회원이 있습니다."),
+	FAILED_VERIFY_CODE(400, HttpStatus.BAD_REQUEST, "인증 코드가 만료되었거나 일치하지 않습니다."),
+	NOT_SUPPORT_EMAIL_FORMAT(400, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
+	DUPLICATE_NICKNAME(400, HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임 입니다."),
+	INVALID_OAUTH_TYPE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
 	/**
 	 * 401 : 인증된 사용자가 아님
 	 */
 	UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
-	INVALID_TOKEN(40101, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-	MALFORMED_TOKEN(40102, HttpStatus.UNAUTHORIZED, "손상된 토큰입니다."),
-	EXPIRED_TOKEN(40103, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
-	UNSUPPORTED_TOKEN(40104, HttpStatus.UNAUTHORIZED, "지원하지 않는 토큰입니다."),
-	BLOCKED_TOKEN(40105, HttpStatus.UNAUTHORIZED, "로그아웃 처리된 토큰입니다."),
-	OAUTH_UNAUTHORIZED(40106, HttpStatus.UNAUTHORIZED, "OAuth 로그인에 실패 했습니다."),
+	INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+	MALFORMED_TOKEN(401, HttpStatus.UNAUTHORIZED, "손상된 토큰입니다."),
+	EXPIRED_TOKEN(401, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+	UNSUPPORTED_TOKEN(401, HttpStatus.UNAUTHORIZED, "지원하지 않는 토큰입니다."),
+	BLOCKED_TOKEN(401, HttpStatus.UNAUTHORIZED, "로그아웃 처리된 토큰입니다."),
+	OAUTH_UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "OAuth 로그인에 실패 했습니다."),
 
 	/**
 	 * 403 : 접근 권한이 없음
@@ -44,14 +44,14 @@ public enum AppHttpStatus {
 	 * 404 : 응답할 리소스가 없음
 	 */
 	NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
-	NOT_FOUND_MEMBER(40401, HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+	NOT_FOUND_MEMBER(404, HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 
 	/**
 	 * 500 : 서버 내부에서 에러가 발생함
 	 */
 	INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 에러가 발생했습니다."),
-	FAILED_SEND_MAIL(50001, HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다"),
-	FAILED_AUTHENTICATION_SPOTIFY(50002, HttpStatus.INTERNAL_SERVER_ERROR, "Spotify API 인증에 실패했습니다."),;
+	FAILED_SEND_MAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다"),
+	FAILED_AUTHENTICATION_SPOTIFY(500, HttpStatus.INTERNAL_SERVER_ERROR, "Spotify API 인증에 실패했습니다."),;
 
 	private final int statusCode;
 	private final HttpStatus httpStatus;

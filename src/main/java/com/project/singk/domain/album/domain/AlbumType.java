@@ -8,8 +8,7 @@ import lombok.Getter;
 public enum AlbumType {
 	SINGLE("[싱글]", "싱글"),
 	EP("[EP]", "EP"),
-	FULL("[정규]", "정규"),
-	OST("[OST]", "OST");
+	FULL("[정규]", "정규");
 
 	private final String match;
 	private final String name;
