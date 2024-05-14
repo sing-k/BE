@@ -50,7 +50,8 @@ public enum AppHttpStatus {
 	 * 500 : 서버 내부에서 에러가 발생함
 	 */
 	INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 에러가 발생했습니다."),
-	FAILED_SEND_MAIL(50001, HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다"),;
+	FAILED_SEND_MAIL(50001, HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다"),
+	FAILED_AUTHENTICATION_SPOTIFY(50002, HttpStatus.INTERNAL_SERVER_ERROR, "Spotify API 인증에 실패했습니다."),;
 
 	private final int statusCode;
 	private final HttpStatus httpStatus;
