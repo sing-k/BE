@@ -24,10 +24,10 @@ class SpotifyTest {
 
 	@Autowired
 	SpotifyApi spotifyApi;
-	
+
 	@Test
 	public void searchAPI() {
-		final SearchAlbumsRequest request = spotifyApi.searchAlbums("Get up")
+		final SearchAlbumsRequest request = spotifyApi.searchAlbums("뉴진스")
 			.market(CountryCode.KR)
 			.build();
 
