@@ -4,24 +4,22 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
-import se.michaelthelin.spotify.model_objects.specification.Paging;
 
-public class PageResponse {
-	@Data
-	@Builder
-	public static class Spotify<T> {
-		int offset;
-		int limit;
-		int total;
-		List<T> items;
+@Data
+@Builder
+public class PageResponse<T> {
 
-		public static <T> Spotify<T> of(int offset, int limit, int total, List<T> items) {
-			return Spotify.<T>builder()
-				.offset(offset)
-				.limit(limit)
-				.total(total)
-				.items(items)
-				.build();
-		}
+	private int offset;
+	private int limit;
+	private int total;
+	private List<T> items;
+
+	public static <T> PageResponse<T> of (int offset, int limit, int total, List<T> items) {
+		return PageResponse.<T>builder()
+			.offset(offset)
+			.limit(limit)
+			.total(total)
+			.items(items)
+			.build();
 	}
 }

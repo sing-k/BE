@@ -1,6 +1,7 @@
 package com.project.singk.domain.album.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +23,19 @@ public class AlbumController {
 	private final AlbumService albumService;
 
 	@GetMapping("/search")
-	public BaseResponse<PageResponse.Spotify<AlbumResponseDto.Simple>> searchAlbums(
+	public BaseResponse<PageResponse<AlbumResponseDto.Simple>> searchAlbums(
 		@RequestParam(value = "query", required = false) String query,
 		@Min(0) @Max(1000) @RequestParam("offset") int offset,
 		@Min(0) @Max(50) @RequestParam("limit") int limit
 	) {
 		return BaseResponse.ok(albumService.searchAlbums(query, offset, limit));
 	}
+
+	@GetMapping("/{id}")
+	public BaseResponse<AlbumResponseDto.Detail> getAlbum(
+		@PathVariable("id") String id
+	) {
+		return BaseResponse.ok(albumService.getAlbums(id));
+	}
+
 }

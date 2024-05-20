@@ -6,18 +6,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum AlbumType {
-	SINGLE("[싱글]", "싱글"),
-	EP("[EP]", "EP"),
-	FULL("[정규]", "정규");
+	SINGLE("싱글"),
+	EP( "EP"),
+	FULL("정규");
 
-	private final String match;
 	private final String name;
 
-	public static AlbumType of(String type) {
-		for (AlbumType a : AlbumType.values()) {
-			if (a.match.equals(type)) return a;
+	public static AlbumType of(String type, int trackCount) {
+		if (type.equals("single")) {
+			if (trackCount >= 4) return EP;
+			else return SINGLE;
 		}
 
-		return null;
+		return FULL;
 	}
 }

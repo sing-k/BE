@@ -1,15 +1,13 @@
-package com.project.singk.domain.member.domain;
+package com.project.singk.domain.album.domain;
 
-import java.time.LocalDateTime;
 import com.project.singk.global.domain.BaseTimeEntity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,30 +20,28 @@ import lombok.ToString;
 @Getter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "MEMBERS")
-public class Member extends BaseTimeEntity {
+@Table(name = "ALBUM_IMAGES")
+public class AlbumImage extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true)
-	private String email;
-
-	private String password;
-
 	private String imageUrl;
 
-	@Column(unique = true)
-	private String nickname;
+	private int width;
 
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
+	private int height;
 
-	private String name;
+	@ManyToOne
+	@JoinColumn(name = "album_id")
+	private Album album;
 
-	private LocalDateTime birthday;
+	public void addAlbum(Album album) {
+		this.album = album;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
+		if (!album.getImages().contains(this)) {
+			album.getImages().add(this);
+		}
+	}
 }
