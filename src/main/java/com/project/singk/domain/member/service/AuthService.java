@@ -1,5 +1,6 @@
 package com.project.singk.domain.member.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,14 @@ public class AuthService {
 	private final MailProperties mailProperties;
 	private final PasswordEncoder passwordEncoder;
 
+	public Long getLoginMemberId() {
+		SingKUserDetails userDetails = (SingKUserDetails) SecurityContextHolder
+			.getContext()
+			.getAuthentication()
+			.getPrincipal();
+
+		return userDetails == null ? null : userDetails.getId();
+	}
 
 	public void issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
 		String clientRefreshToken = jwtUtil.resolveRefreshToken(request);
@@ -56,7 +65,7 @@ public class AuthService {
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 
 		SingKUserDetails userDetails = SingKUserDetails.of(member);
-		TokenDto token = jwtUtil.generateTokenDto(userDetails.getEmail(), userDetails.getRole());
+		TokenDto token = jwtUtil.generateTokenDto(userDetails.getId(), userDetails.getEmail(), userDetails.getRole());
 
 		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
 

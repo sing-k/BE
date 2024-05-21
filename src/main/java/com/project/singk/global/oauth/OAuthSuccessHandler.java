@@ -38,7 +38,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 			response.addCookie(createCookie("name", oAuthUser.getName()));
 			response.sendRedirect(oAuthProperties.getUrl().getSignup());
 		} else {
-			TokenDto token = jwtUtil.generateTokenDto(oAuthUser.getEmail(), oAuthUser.getRole());
+			TokenDto token = jwtUtil.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
 
 			response.addCookie(createCookie(AUTHORIZATION_HEADER, token.getAccessToken()));
 			response.addCookie(createCookie(REFRESH_HEADER, token.getRefreshToken()));
