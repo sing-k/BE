@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter {
-
+	private final String BEARER_PREFIX = "Bearer ";
 	private final List<String> EXCLUDE_URL = List.of(
 		"/",
 		"/api/auth/email-authentication/request",
@@ -38,8 +38,9 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String accessToken = jwtUtil.resolveAccessToken(request);
 
-		if (!StringUtils.hasText(accessToken)) {
-			throw new JwtException(AppHttpStatus.INVALID_TOKEN.getMessage());
+		if (!StringUtils.hasText(accessToken) || !accessToken.startsWith(BEARER_PREFIX)) {
+			filterChain.doFilter(request, response);
+			return;
 		}
 
 		if (isLogout(accessToken)) {

@@ -77,6 +77,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests((authorize) -> {
 				authorize
 					.requestMatchers("/api/auth/**").permitAll()
+					.requestMatchers("/api/albums/**").permitAll()
 					.requestMatchers("/api/auth/logout").authenticated()
 					.anyRequest().authenticated();
 			})
