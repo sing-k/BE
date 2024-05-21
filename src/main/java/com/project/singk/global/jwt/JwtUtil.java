@@ -59,11 +59,11 @@ public class JwtUtil {
 	}
 
 	// 액세스 토큰, 리프레쉬 토큰 생성
-	public TokenDto generateTokenDto(String email, Role role) {
+	public TokenDto generateTokenDto(Long id, String email, Role role) {
 		Date issuedAt = new Date(System.currentTimeMillis());
 
 		String accessToken = Jwts.builder()
-			.claims(generatePublicClaims(role))
+			.claims(generatePublicClaims(id, role))
 			.subject(email)
 			.expiration(getTokenExpiration(jwtProperties.getAccessExpirationMillis()))
 			.issuedAt(issuedAt)
@@ -88,8 +88,9 @@ public class JwtUtil {
 	}
 
 	// 공개 클레임
-	private Map<String, String> generatePublicClaims(Role role) {
+	private Map<String, String> generatePublicClaims(Long id, Role role) {
 		Map<String, String> claims = new HashMap<>();
+		claims.put("id", String.valueOf(id));
 		claims.put("role", role.name());
 		return claims;
 	}
@@ -116,6 +117,7 @@ public class JwtUtil {
 	// JWT 토큰으로 Authentication
 	public Authentication getAuthentication(String accessToken) {
 		Claims claims = parseToken(accessToken);
+		String id = claims.get("id").toString();
 		String role = claims.get("role").toString();
 
 		if (role == null) {
@@ -123,6 +125,7 @@ public class JwtUtil {
 		}
 
 		SingKUserDetails userDetails = SingKUserDetails.of(
+			Long.valueOf(id),
 			claims.getSubject(),
 			role
 		);

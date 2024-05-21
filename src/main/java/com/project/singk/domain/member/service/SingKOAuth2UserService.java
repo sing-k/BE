@@ -45,7 +45,7 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
 
 		Member member = memberRepository.findByEmail(oAuthResponse.getEmail()).orElse(null);
 		if (member != null) {
-			return SingKOAuth2User.of(oAuthResponse, false);
+			return SingKOAuth2User.of(member.getId(), oAuthResponse, false);
 		}
 
 		return SingKOAuth2User.of(oAuthResponse, true);

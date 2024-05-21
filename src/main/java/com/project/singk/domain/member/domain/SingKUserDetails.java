@@ -26,13 +26,14 @@ public class SingKUserDetails extends Member implements UserDetails {
 		this.role = member.getRole();
 	}
 
-	private SingKUserDetails(String email, Role role) {
+	private SingKUserDetails(Long id, String email, Role role) {
+		this.id = id;
 		this.email = email;
 		this.role = role;
 	}
 
-	public static SingKUserDetails of(String email, String role) {
-		return new SingKUserDetails(email, Role.valueOf(role));
+	public static SingKUserDetails of(Long id, String email, String role) {
+		return new SingKUserDetails(id, email, Role.valueOf(role));
 	}
 
 	public static SingKUserDetails of(Member member) {

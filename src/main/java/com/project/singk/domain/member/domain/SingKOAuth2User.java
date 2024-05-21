@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SingKOAuth2User extends Member implements OAuth2User {
+	private Long id;
 	private String email;
 	private String name;
 	private Role role;
@@ -27,8 +28,25 @@ public class SingKOAuth2User extends Member implements OAuth2User {
 		this.role = role;
 		this.isNewbie = isNewbie;
 	}
+	private SingKOAuth2User(Long id, String email, String name, Role role, boolean isNewbie) {
+		this.id = id;
+		this.email = email;
+		this.name = name;
+		this.role = role;
+		this.isNewbie = isNewbie;
+	}
 	public static SingKOAuth2User of(OAuthResponse response,boolean isNewbie) {
 		return new SingKOAuth2User(
+			response.getEmail(),
+			response.getName(),
+			Role.ROLE_USER,
+			isNewbie
+		);
+	}
+
+	public static SingKOAuth2User of(Long id, OAuthResponse response,boolean isNewbie) {
+		return new SingKOAuth2User(
+			id,
 			response.getEmail(),
 			response.getName(),
 			Role.ROLE_USER,
