@@ -26,6 +26,8 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     public final com.project.singk.domain.album.domain.QAlbum album;
 
+    public final NumberPath<Integer> consCount = createNumber("consCount", Integer.class);
+
     public final StringPath content = createString("content");
 
     //inherited
@@ -37,6 +39,8 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
+
+    public final NumberPath<Integer> prosCount = createNumber("prosCount", Integer.class);
 
     public final NumberPath<Integer> score = createNumber("score", Integer.class);
 
