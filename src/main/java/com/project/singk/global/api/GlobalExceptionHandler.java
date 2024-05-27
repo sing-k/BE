@@ -10,6 +10,10 @@ import jakarta.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	@ExceptionHandler(RuntimeException.class)
+	public BaseResponse<Void> runtimeExceptionHandler(RuntimeException e) {
+		return BaseResponse.fail(AppHttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+	}
 	@ExceptionHandler(ApiException.class)
 	public BaseResponse<Void> apiExceptionHandler(ApiException e) {
 		return BaseResponse.fail(e);
