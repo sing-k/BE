@@ -56,7 +56,6 @@ dependencies {
 
     // AWS S3
     implementation 'software.amazon.awssdk:s3'
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 
     compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
