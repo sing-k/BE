@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.singk.domain.member.dto.MemberRequestDto;
-import com.project.singk.domain.member.dto.MemberResponseDto;
-import com.project.singk.domain.member.service.MemberService;
+import com.project.singk.domain.member.controller.port.AuthService;
+import com.project.singk.domain.member.controller.port.MemberService;
+import com.project.singk.domain.member.domain.MemberUpdate;
+import com.project.singk.domain.member.controller.response.MyProfileResponse;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.PkResponseDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -25,29 +27,40 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final AuthService authService;
 
 	@GetMapping("/me")
-	public BaseResponse<MemberResponseDto.Detail> getMember() {
-		return BaseResponse.ok(memberService.getMember());
+	public BaseResponse<MyProfileResponse> getMyProfile() {
+		return BaseResponse.ok(
+			memberService.getMyProfile(
+				authService.getLoginMemberId()));
 	}
 
-	@PutMapping("/me/nickname")
-	public BaseResponse<PkResponseDto> updateNickname(
-		@RequestBody MemberRequestDto request
+	@PutMapping("/me")
+	public BaseResponse<PkResponseDto> update(
+		@Valid @RequestBody MemberUpdate request
 	) {
-		return BaseResponse.ok(memberService.updateNickname(request));
+		return BaseResponse.ok(
+			memberService.update(
+				authService.getLoginMemberId(),
+				request));
 	}
 
 	@PutMapping("/me/profile-image")
-	public BaseResponse<PkResponseDto> updateProfileImage (
+	public BaseResponse<PkResponseDto> uploadProfileImage (
 		MultipartFile image
 	) {
-		return BaseResponse.ok(memberService.updateProfileImage(image));
+		return BaseResponse.ok(
+			memberService.uploadProfileImage(
+				authService.getLoginMemberId(),
+				image));
 	}
 
 	@DeleteMapping("/me/profile-image")
 	public BaseResponse<Void> deleteProfileImage () {
-		memberService.deleteProfileImage();
+		memberService.deleteProfileImage(
+			authService.getLoginMemberId()
+		);
 		return BaseResponse.ok();
 	}
 

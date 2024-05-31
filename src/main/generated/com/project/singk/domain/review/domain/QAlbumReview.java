@@ -35,7 +35,7 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final com.project.singk.domain.member.domain.QMember member;
+    public final com.project.singk.domain.member.infrastructure.QMemberEntity member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
@@ -63,7 +63,7 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
     public QAlbumReview(Class<? extends AlbumReview> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.album = inits.isInitialized("album") ? new com.project.singk.domain.album.domain.QAlbum(forProperty("album")) : null;
-        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.domain.QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
     }
 
 }

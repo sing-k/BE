@@ -1,7 +1,7 @@
 package com.project.singk.domain.review.dto;
 
 import com.project.singk.domain.album.domain.Album;
-import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.review.domain.AlbumReview;
 
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class AlbumReviewRequestDto {
 	@NotNull
 	private int score;
 
-	public AlbumReview toEntity(Member member, Album album) {
+	public AlbumReview toEntity(MemberEntity member, Album album) {
 		return AlbumReview.builder()
 			.content(content)
 			.score(score)

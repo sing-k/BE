@@ -3,7 +3,7 @@ package com.project.singk.domain.review.domain;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.project.singk.domain.album.domain.Album;
-import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.vote.domain.VoteType;
 import com.project.singk.global.domain.BaseTimeEntity;
 
@@ -48,7 +48,7 @@ public class AlbumReview extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Member member;
+	private MemberEntity member;
 
 	@ManyToOne
 	@JoinColumn(name = "album_id")
