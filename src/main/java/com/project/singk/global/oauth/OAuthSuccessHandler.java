@@ -6,12 +6,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.project.singk.domain.member.domain.SingKOAuth2User;
 import com.project.singk.global.domain.TokenDto;
-import com.project.singk.global.jwt.JwtUtil;
+import com.project.singk.domain.member.infrastructure.JwtRepositoryImpl;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.properties.OAuthProperties;
-import com.project.singk.global.util.RedisUtil;
+import com.project.singk.domain.common.infrastructure.RedisRepositoryImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
-	private final JwtUtil jwtUtil;
+	private final JwtRepositoryImpl jwtRepositoryImpl;
 	private final JwtProperties jwtProperties;
 	private final OAuthProperties oAuthProperties;
-	private final RedisUtil redisUtil;
+	private final RedisRepositoryImpl redisUtil;
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
@@ -38,7 +37,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 			response.addCookie(createCookie("name", oAuthUser.getName()));
 			response.sendRedirect(oAuthProperties.getUrl().getSignup());
 		} else {
-			TokenDto token = jwtUtil.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
+			TokenDto token = jwtRepositoryImpl.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
 
 			response.addCookie(createCookie(AUTHORIZATION_HEADER, token.getAccessToken()));
 			response.addCookie(createCookie(REFRESH_HEADER, token.getRefreshToken()));

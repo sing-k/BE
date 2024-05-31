@@ -3,9 +3,9 @@ package com.project.singk.domain.vote.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.member.repository.MemberRepository;
-import com.project.singk.domain.member.service.AuthService;
+import com.project.singk.domain.member.infrastructure.MemberEntity;
+import com.project.singk.domain.member.infrastructure.MemberJpaRepository;
+import com.project.singk.domain.member.service.AuthServiceImpl;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.repository.AlbumReviewRepository;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
@@ -22,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class VoteService {
 
-	private final AuthService authService;
+	private final AuthServiceImpl authServiceImpl;
 	private final AlbumReviewVoteRepository albumReviewVoteRepository;
-	private final MemberRepository memberRepository;
+	private final MemberJpaRepository memberJpaRepository;
 	private final AlbumReviewRepository albumReviewRepository;
 
 	public PkResponseDto createAlbumReviewVote(Long albumReviewId, VoteRequestDto dto) {
-		Member member = memberRepository.getReferenceById(authService.getLoginMemberId());
+		MemberEntity member = memberJpaRepository.getReferenceById(authServiceImpl.getLoginMemberId());
 		AlbumReview albumReview = albumReviewRepository.findById(albumReviewId)
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM_REVIEW));
 
@@ -55,7 +55,7 @@ public class VoteService {
 	}
 
 	public void deleteAlbumReviewVote(Long albumReviewId, VoteRequestDto dto) {
-		Member member = memberRepository.getReferenceById(authService.getLoginMemberId());
+		MemberEntity member = memberJpaRepository.getReferenceById(authServiceImpl.getLoginMemberId());
 		AlbumReview albumReview = albumReviewRepository.findById(albumReviewId)
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM_REVIEW));
 

@@ -9,13 +9,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.singk.domain.member.dto.LoginRequestDto;
+import com.project.singk.domain.common.service.port.RedisRepository;
+import com.project.singk.domain.member.domain.MemberLogin;
+import com.project.singk.domain.member.service.port.JwtRepository;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.TokenDto;
-import com.project.singk.domain.member.domain.SingKUserDetails;
-import com.project.singk.global.util.RedisUtil;
+import com.project.singk.global.security.SingKUserDetails;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,42 +26,47 @@ import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-	private final String REFRESH_PREFIX = "Refresh";
+	private final String BEARER_PREFIX = "Bearer ";
+	private final String AUTHORIZATION_HEADER = "Authorization";
+	private final String REFRESH_HEADER = "Refresh";
 	private final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
 	private final AuthenticationManager authenticationManager;
-	private final RedisUtil redisUtil;
+	private final RedisRepository redisRepository;
 	private final JwtProperties jwtProperties;
-	private final JwtUtil jwtUtil;
+	private final JwtRepository jwtRepository;
 
 	@SneakyThrows
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-
 		ObjectMapper objectMapper = new ObjectMapper();
-		LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+		MemberLogin memberLogin = objectMapper.readValue(request.getInputStream(), MemberLogin.class);
 
 		UsernamePasswordAuthenticationToken authToken =
-			new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+			new UsernamePasswordAuthenticationToken(memberLogin.getEmail(), memberLogin.getPassword());
 
 		return authenticationManager.authenticate(authToken);
 	}
 
 	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-		Authentication authResult) {
+	protected void successfulAuthentication(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain chain,
+		Authentication authResult
+	) {
 		SingKUserDetails principal = (SingKUserDetails)authResult.getPrincipal();
 
 		// JWT 생성
-		TokenDto token = jwtUtil.generateTokenDto(principal.getId(), principal.getEmail(), principal.getRole());
+		TokenDto token = jwtRepository.generateTokenDto(principal.getId(), principal.getEmail(), principal.getRole());
 
 		// Response Header 설정
-		jwtUtil.setHeaderAccessToken(token.getAccessToken(), response);
-		jwtUtil.setHeaderRefreshToken(token.getAccessToken(), response);
+		response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken());
+		response.setHeader(REFRESH_HEADER, token.getRefreshToken());
 
 		// 로그인 성공 시 Refresh Token 저장
-		redisUtil.setValue(
-			REFRESH_PREFIX + principal.getEmail(),
+		redisRepository.setValue(
+			principal.getEmail(),
 			token.getRefreshToken(),
 			jwtProperties.getRefreshExpirationMillis()
 		);

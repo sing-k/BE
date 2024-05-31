@@ -11,22 +11,25 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.project.singk.domain.member.service.SingKOAuth2UserService;
+import com.project.singk.global.oauth.SingKOAuth2UserService;
 import com.project.singk.global.oauth.OAuthFailureHandler;
 import com.project.singk.global.oauth.OAuthSuccessHandler;
 import com.project.singk.global.properties.CorsProperties;
 import com.project.singk.global.properties.JwtProperties;
 import com.project.singk.global.jwt.JwtAuthenticationFilter;
 import com.project.singk.global.jwt.JwtExceptionHandlingFilter;
-import com.project.singk.global.jwt.JwtUtil;
+import com.project.singk.domain.member.infrastructure.JwtRepositoryImpl;
 import com.project.singk.global.jwt.JwtVerificationFilter;
-import com.project.singk.global.util.RedisUtil;
+import com.project.singk.domain.common.infrastructure.RedisRepositoryImpl;
+import com.project.singk.global.security.SingKAccessDeniedHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,13 +39,15 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final AuthenticationConfiguration authenticationConfiguration;
-	private final RedisUtil redisUtil;
-	private final JwtUtil jwtUtil;
+	private final RedisRepositoryImpl redisUtil;
+	private final JwtRepositoryImpl jwtRepositoryImpl;
 	private final JwtProperties jwtProperties;
 	private final CorsProperties corsProperties;
 	private final SingKOAuth2UserService oauth2UserService;
 	private final OAuthSuccessHandler oAuthSuccessHandler;
 	private final OAuthFailureHandler oAuthFailureHandler;
+	private final AccessDeniedHandler accessDeniedHandler;
+	private final AuthenticationEntryPoint authenticationEntryPoint;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -73,13 +78,17 @@ public class SecurityConfig {
 					.successHandler(oAuthSuccessHandler)
 					.failureHandler(oAuthFailureHandler);
 			})
-			// API 인가 설정
+			// API 엔트포인트 인가 설정
 			.authorizeHttpRequests((authorize) -> {
 				authorize
 					.requestMatchers("/api/auth/**").permitAll()
 					.requestMatchers("/api/albums/**").permitAll()
-					.requestMatchers("/api/auth/logout").authenticated()
 					.anyRequest().authenticated();
+			})
+			// API 엔드포인트 예외 핸들러
+			.exceptionHandling((exception) -> {
+				exception.accessDeniedHandler(accessDeniedHandler);
+				exception.authenticationEntryPoint(authenticationEntryPoint);
 			})
 			.addFilterAt(
 				jwtAuthenticationFilter(),
@@ -91,7 +100,7 @@ public class SecurityConfig {
 			)
 			.addFilterAfter(
 				new JwtVerificationFilter(
-					jwtUtil,
+					jwtRepositoryImpl,
 					redisUtil
 				),
 				JwtAuthenticationFilter.class)
@@ -131,7 +140,7 @@ public class SecurityConfig {
 			authenticationManager(authenticationConfiguration),
 			redisUtil,
 			jwtProperties,
-			jwtUtil
+			jwtRepositoryImpl
 		);
 		filter.setFilterProcessesUrl("/api/auth/login");
 		return filter;
