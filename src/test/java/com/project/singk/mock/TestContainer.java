@@ -1,5 +1,8 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.album.controller.port.AlbumService;
+import com.project.singk.domain.album.service.AlbumServiceImpl;
+import com.project.singk.domain.album.service.port.*;
 import com.project.singk.domain.common.service.port.RedisRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
@@ -20,17 +23,28 @@ public class TestContainer {
 	public final UUIDHolder uuidHolder;
 	public final PasswordEncoderHolder passwordEncoderHolder;
 	public final MemberRepository memberRepository;
+    public final AlbumRepository albumRepository;
+    public final TrackRepository trackRepository;
+    public final ArtistRepository artistRepository;
+    public final AlbumImageRepository albumImageRepository;
+    public final SpotifyRepository spotifyRepository;
 	public final S3Repository s3Repository;
 	public final RedisRepository redisRepository;
 	public final MailService mailService;
 	public final MemberService memberService;
 	public final AuthService authService;
+    public final AlbumService albumService;
 	@Builder
 	public TestContainer() {
 		this.mailSender = new FakeMailSender();
 		this.uuidHolder = new FakeUUIDHolder("uuid");
 		this.passwordEncoderHolder = new FakePasswordEncoderHolder("encodedPassword");
 		this.memberRepository = new FakeMemberRepository();
+        this.albumRepository = new FakeAlbumRepository();
+        this.trackRepository = new FakeTrackRepository();
+        this.artistRepository = new FakeArtistRepository();
+        this.albumImageRepository = new FakeAlbumImageRepository();
+        this.spotifyRepository = new FakeSpotifyRepository();
 		this.s3Repository = new FakeS3Repository();
 		this.redisRepository = new FakeRedisRepository();
 		this.mailService = MailService.builder()
@@ -47,6 +61,13 @@ public class TestContainer {
 			.s3Repository(this.s3Repository)
 			.uuidHolder(this.uuidHolder)
 			.build();
+        this.albumService = AlbumServiceImpl.builder()
+                .albumRepository(this.albumRepository)
+                .albumImageRepository(this.albumImageRepository)
+                .spotifyRepository(this.spotifyRepository)
+                .trackRepository(this.trackRepository)
+                .artistRepository(this.artistRepository)
+                .build();
 	}
 
 }

@@ -10,19 +10,18 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class Member {
-	private Long id;
-	private String email;
-	private String password;
-	private String imageUrl;
-	private String nickname;
-	private Gender gender;
-	private String name;
-	private LocalDateTime birthday;
-	private Role role;
-	private LocalDateTime createdAt;
-	private LocalDateTime modifiedAt;
+	private final Long id;
+	private final String email;
+	private final String password;
+	private final String imageUrl;
+	private final String nickname;
+	private final Gender gender;
+	private final String name;
+	private final LocalDateTime birthday;
+	private final Role role;
+	private final LocalDateTime createdAt;
+	private final LocalDateTime modifiedAt;
 
 	@Builder
 	public Member(Long id, String email, String password, String imageUrl, String nickname, Gender gender, String name,

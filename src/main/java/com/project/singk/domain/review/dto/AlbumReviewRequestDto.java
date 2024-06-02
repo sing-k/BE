@@ -1,6 +1,6 @@
 package com.project.singk.domain.review.dto;
 
-import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.infrastructure.entity.AlbumEntity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.review.domain.AlbumReview;
 
@@ -20,12 +20,12 @@ public class AlbumReviewRequestDto {
 	@NotNull
 	private int score;
 
-	public AlbumReview toEntity(MemberEntity member, Album album) {
+	public AlbumReview toEntity(MemberEntity member, AlbumEntity albumEntity) {
 		return AlbumReview.builder()
 			.content(content)
 			.score(score)
 			.member(member)
-			.album(album)
+			.albumEntity(albumEntity)
 			.build();
 	}
 }
