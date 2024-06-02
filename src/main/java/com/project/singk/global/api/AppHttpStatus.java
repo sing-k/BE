@@ -25,7 +25,8 @@ public enum AppHttpStatus {
 	DUPLICATE_NICKNAME(400, HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임 입니다."),
 	INVALID_OAUTH_TYPE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
 	INVALID_ALBUM_REVIEW_VOTE(400, HttpStatus.BAD_REQUEST, "본인이 작성한 앨범 감상평에는 공감/비공감을 추가/삭제 할 수 없습니다."),
-	DUPLICATE_ALBUM_REVIEW_VOTE(400, HttpStatus.BAD_REQUEST, "해당 앨범 감상평에 이미 공감/비공감 했습니다."),
+	NOT_MATCH_ALBUM_REVIEW_VOTE_TYPE(400, HttpStatus.BAD_REQUEST, "공감/비공감과 저장되어 있는 공감/비공감이 일치하지 않습니다."),
+    DUPLICATE_ALBUM_REVIEW_VOTE(400, HttpStatus.BAD_REQUEST, "해당 앨범 감상평에 이미 공감/비공감 했습니다."),
 	INVALID_FILE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 파일입니다."),
 	/**
 	 * 401 : 인증된 사용자가 아님

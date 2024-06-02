@@ -1,4 +1,4 @@
-package com.project.singk.domain.review.domain;
+package com.project.singk.domain.review.infrastructure;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,20 +11,20 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QAlbumReview is a Querydsl query type for AlbumReview
+ * QAlbumReviewEntity is a Querydsl query type for AlbumReviewEntity
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QAlbumReview extends EntityPathBase<AlbumReview> {
+public class QAlbumReviewEntity extends EntityPathBase<AlbumReviewEntity> {
 
-    private static final long serialVersionUID = 1411618429L;
+    private static final long serialVersionUID = 1457064927L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QAlbumReview albumReview = new QAlbumReview("albumReview");
+    public static final QAlbumReviewEntity albumReviewEntity = new QAlbumReviewEntity("albumReviewEntity");
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
-    public final com.project.singk.domain.album.infrastructure.entity.QAlbumEntity albumEntity;
+    public final com.project.singk.domain.album.infrastructure.entity.QAlbumEntity album;
 
     public final NumberPath<Integer> consCount = createNumber("consCount", Integer.class);
 
@@ -44,25 +44,25 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     public final NumberPath<Integer> score = createNumber("score", Integer.class);
 
-    public QAlbumReview(String variable) {
-        this(AlbumReview.class, forVariable(variable), INITS);
+    public QAlbumReviewEntity(String variable) {
+        this(AlbumReviewEntity.class, forVariable(variable), INITS);
     }
 
-    public QAlbumReview(Path<? extends AlbumReview> path) {
+    public QAlbumReviewEntity(Path<? extends AlbumReviewEntity> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QAlbumReview(PathMetadata metadata) {
+    public QAlbumReviewEntity(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QAlbumReview(PathMetadata metadata, PathInits inits) {
-        this(AlbumReview.class, metadata, inits);
+    public QAlbumReviewEntity(PathMetadata metadata, PathInits inits) {
+        this(AlbumReviewEntity.class, metadata, inits);
     }
 
-    public QAlbumReview(Class<? extends AlbumReview> type, PathMetadata metadata, PathInits inits) {
+    public QAlbumReviewEntity(Class<? extends AlbumReviewEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.albumEntity = inits.isInitialized("albumEntity") ? new com.project.singk.domain.album.infrastructure.entity.QAlbumEntity(forProperty("albumEntity")) : null;
+        this.album = inits.isInitialized("album") ? new com.project.singk.domain.album.infrastructure.entity.QAlbumEntity(forProperty("album")) : null;
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
     }
 
