@@ -2,7 +2,7 @@ package com.project.singk.domain.review.domain;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.infrastructure.entity.AlbumEntity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.vote.domain.VoteType;
 import com.project.singk.global.domain.BaseTimeEntity;
@@ -52,7 +52,7 @@ public class AlbumReview extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "album_id")
-	private Album album;
+	private AlbumEntity albumEntity;
 
 	public void increaseVoteCount(VoteType type) {
 		if (VoteType.PROS.equals(type)) {

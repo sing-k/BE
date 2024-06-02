@@ -24,7 +24,7 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
-    public final com.project.singk.domain.album.domain.QAlbum album;
+    public final com.project.singk.domain.album.infrastructure.entity.QAlbumEntity albumEntity;
 
     public final NumberPath<Integer> consCount = createNumber("consCount", Integer.class);
 
@@ -62,7 +62,7 @@ public class QAlbumReview extends EntityPathBase<AlbumReview> {
 
     public QAlbumReview(Class<? extends AlbumReview> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.album = inits.isInitialized("album") ? new com.project.singk.domain.album.domain.QAlbum(forProperty("album")) : null;
+        this.albumEntity = inits.isInitialized("albumEntity") ? new com.project.singk.domain.album.infrastructure.entity.QAlbumEntity(forProperty("albumEntity")) : null;
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
     }
 
