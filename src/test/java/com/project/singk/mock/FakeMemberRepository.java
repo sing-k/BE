@@ -38,7 +38,12 @@ public class FakeMemberRepository implements MemberRepository {
 		}
 	}
 
-	@Override
+    @Override
+    public List<Member> saveAll(List<Member> members) {
+        return members.stream().map(this::save).toList();
+    }
+
+    @Override
 	public Member getById(Long id) {
 		return findById(id).orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 	}

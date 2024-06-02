@@ -16,6 +16,12 @@ import com.project.singk.domain.member.service.port.MailSender;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.member.service.port.PasswordEncoderHolder;
 
+import com.project.singk.domain.review.controller.port.ReviewService;
+import com.project.singk.domain.review.service.ReviewServiceImpl;
+import com.project.singk.domain.review.service.port.AlbumReviewRepository;
+import com.project.singk.domain.vote.controller.port.VoteService;
+import com.project.singk.domain.vote.service.VoteServiceImpl;
+import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
 import lombok.Builder;
 
 public class TestContainer {
@@ -27,6 +33,8 @@ public class TestContainer {
     public final TrackRepository trackRepository;
     public final ArtistRepository artistRepository;
     public final AlbumImageRepository albumImageRepository;
+    public final AlbumReviewRepository albumReviewRepository;
+    public final AlbumReviewVoteRepository albumReviewVoteRepository;
     public final SpotifyRepository spotifyRepository;
 	public final S3Repository s3Repository;
 	public final RedisRepository redisRepository;
@@ -34,6 +42,8 @@ public class TestContainer {
 	public final MemberService memberService;
 	public final AuthService authService;
     public final AlbumService albumService;
+    public final ReviewService reviewService;
+    public final VoteService voteService;
 	@Builder
 	public TestContainer() {
 		this.mailSender = new FakeMailSender();
@@ -44,6 +54,8 @@ public class TestContainer {
         this.trackRepository = new FakeTrackRepository();
         this.artistRepository = new FakeArtistRepository();
         this.albumImageRepository = new FakeAlbumImageRepository();
+        this.albumReviewRepository = new FakeAlbumReviewRepository();
+        this.albumReviewVoteRepository = new FakeAlbumReviewVoteRepository();
         this.spotifyRepository = new FakeSpotifyRepository();
 		this.s3Repository = new FakeS3Repository();
 		this.redisRepository = new FakeRedisRepository();
@@ -67,6 +79,16 @@ public class TestContainer {
                 .spotifyRepository(this.spotifyRepository)
                 .trackRepository(this.trackRepository)
                 .artistRepository(this.artistRepository)
+                .build();
+        this.reviewService = ReviewServiceImpl.builder()
+                .albumReviewRepository(this.albumReviewRepository)
+                .albumRepository(this.albumRepository)
+                .memberRepository(this.memberRepository)
+                .build();
+        this.voteService = VoteServiceImpl.builder()
+                .albumReviewVoteRepository(this.albumReviewVoteRepository)
+                .memberRepository(this.memberRepository)
+                .albumReviewRepository(this.albumReviewRepository)
                 .build();
 	}
 

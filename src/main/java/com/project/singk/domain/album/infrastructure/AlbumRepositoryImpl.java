@@ -29,7 +29,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
 	}
 
-	@Override
+    @Override
 	public Optional<Album> findById(String id) {
 		return albumJpaRepository.findById(id).map(AlbumEntity::toModel);
 	}

@@ -1,5 +1,6 @@
 package com.project.singk.domain.member.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberJpaRepository.save(MemberEntity.from(member)).toModel();
 	}
 
-	@Override
+    @Override
+    public List<Member> saveAll(List<Member> members) {
+        return members.stream().map(this::save).toList();
+    }
+
+    @Override
 	public Member getById(Long id) {
 		return findById(id)
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
