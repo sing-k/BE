@@ -30,7 +30,7 @@ public class ReviewController {
 		@PathVariable(name = "albumId") String albumId,
 		@Valid @RequestBody AlbumReviewCreate request
 	) {
-		return BaseResponse.ok(reviewService.createAlbumReview(
+		return BaseResponse.created(reviewService.createAlbumReview(
                 authService.getLoginMemberId(),
                 albumId,
                 request

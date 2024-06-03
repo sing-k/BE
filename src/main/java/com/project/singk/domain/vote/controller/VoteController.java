@@ -31,7 +31,7 @@ public class VoteController {
 		@PathVariable(name = "albumReviewId") Long albumReviewId,
 		@Valid @RequestBody VoteCreate request
 	) {
-		return BaseResponse.ok(voteService.createAlbumReviewVote(
+		return BaseResponse.created(voteService.createAlbumReviewVote(
                 authService.getLoginMemberId(),
                 albumReviewId,
                 request
