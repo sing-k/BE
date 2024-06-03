@@ -17,44 +17,26 @@ import lombok.RequiredArgsConstructor;
 public class MailConfig {
 
 	private final MailProperties properties;
-
 	@Bean
-	@Qualifier("NaverMailSender")
-	public JavaMailSender naverMailSender() {
+	public JavaMailSender javaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-		mailSender.setHost(properties.getNaver().getHost());
-		mailSender.setUsername(properties.getNaver().getUsername());
-		mailSender.setPassword(properties.getNaver().getPassword());
-		mailSender.setPort(properties.getNaver().getPort());
+		mailSender.setHost(properties.getHost());
+		mailSender.setUsername(properties.getUsername());
+		mailSender.setPassword(properties.getPassword());
+		mailSender.setPort(properties.getPort());
 
-		mailSender.setJavaMailProperties(getMailProperties(true, false));
+		mailSender.setJavaMailProperties(getMailProperties());
 
 		return mailSender;
 	}
 
-	@Bean
-	@Qualifier("GoogleMailSender")
-	public JavaMailSender googleMailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-
-		mailSender.setHost(properties.getGoogle().getHost());
-		mailSender.setUsername(properties.getGoogle().getUsername());
-		mailSender.setPassword(properties.getGoogle().getPassword());
-		mailSender.setPort(properties.getGoogle().getPort());
-
-		mailSender.setJavaMailProperties(getMailProperties(false, true));
-
-		return mailSender;
-	}
-
-	private Properties getMailProperties(boolean isSSL, boolean isTLS) {
+	private Properties getMailProperties() {
 		Properties properties = new Properties();
 		properties.setProperty("mail.transport.protocol", "smtp"); // 프로토콜
 		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.debug", "true");
-		if (isSSL) properties.setProperty("mail.smtp.ssl.enable","true");
-		if (isTLS) properties.setProperty("mail.smtp.starttls.enable", "true");
+		properties.setProperty("mail.smtp.starttls.enable", "true");
 		return properties;
 	}
 }

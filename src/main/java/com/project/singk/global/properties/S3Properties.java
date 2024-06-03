@@ -14,16 +14,9 @@ import lombok.ToString;
 public class S3Properties {
 
 	private final String bucket;
-	private final Path path;
 	private final Credentials credentials;
 	private final Stack stack;
 	private final long expirationMillis;
-
-	@Getter @ToString
-	@AllArgsConstructor
-	public static class Path {
-		private final String profile;
-	}
 
 	@Getter @ToString
 	@AllArgsConstructor

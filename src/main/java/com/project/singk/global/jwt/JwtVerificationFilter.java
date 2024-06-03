@@ -1,15 +1,15 @@
 package com.project.singk.global.jwt;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.project.singk.domain.common.service.port.RedisRepository;
+import com.project.singk.domain.member.service.port.JwtRepository;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.util.RedisUtil;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -20,23 +20,19 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter {
-	private final List<String> EXCLUDE_URL = List.of(
-		"/",
-		"/api/auth/email-authentication/request",
-		"/api/auth/email-authentication/confirm",
-		"/api/auth/nickname/confirm",
-		"/api/auth/signup",
-		"/api/auth/login",
-		"/api/auth/access-token"
-	);
-	private final JwtUtil jwtUtil;
-	private final RedisUtil redisUtil;
+
+	private final JwtRepository jwtRepository;
+	private final RedisRepository redisRepository;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
-		String accessToken = jwtUtil.resolveAccessToken(request);
+	protected void doFilterInternal(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain
+	) throws ServletException, IOException {
+		String accessToken = jwtRepository.resolveAccessToken(request);
 
+		// Access Token 없으면 다음 필터로 넘어가기
 		if (!StringUtils.hasText(accessToken)) {
 			filterChain.doFilter(request, response);
 			return;
@@ -46,23 +42,17 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 			throw new JwtException(AppHttpStatus.BLOCKED_TOKEN.getMessage());
 		}
 
-		jwtUtil.parseToken(accessToken);
+		jwtRepository.parseToken(accessToken);
+
 		setAuthenticationToSecurityContextHolder(accessToken);
 		filterChain.doFilter(request, response);
 	}
 
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return EXCLUDE_URL.stream()
-			.anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
-	}
-
-
-	public boolean isLogout(String accessToken) {
-		return redisUtil.getValue(accessToken) != null;
+	private boolean isLogout(String accessToken) {
+		return redisRepository.getValue(accessToken) != null;
 	}
 	private void setAuthenticationToSecurityContextHolder(String accessToken) {
-		Authentication authentication = jwtUtil.getAuthentication(accessToken);
+		Authentication authentication = jwtRepository.getAuthentication(accessToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 }
