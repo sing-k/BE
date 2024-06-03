@@ -1,6 +1,7 @@
 package com.project.singk.domain.member.controller;
 
 
+import com.project.singk.global.validate.Image;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,7 @@ public class MemberController {
 
 	@PutMapping("/me/profile-image")
 	public BaseResponse<PkResponseDto> uploadProfileImage (
-		MultipartFile image
+		@Image MultipartFile image
 	) {
 		return BaseResponse.ok(
 			memberService.uploadProfileImage(

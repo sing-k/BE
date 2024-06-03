@@ -43,7 +43,7 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public BaseResponse<PkResponseDto> signup(@Valid @RequestBody MemberCreate request) {
-		return BaseResponse.ok(authService.signup(request));
+		return BaseResponse.created(authService.signup(request));
 	}
 
 	@PostMapping("/nickname/confirm")
