@@ -2,13 +2,10 @@ package com.project.singk.domain.review.controller;
 
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.domain.review.controller.port.ReviewService;
+import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.singk.domain.review.domain.AlbumReviewCreate;
 import com.project.singk.global.api.BaseResponse;
@@ -36,4 +33,13 @@ public class ReviewController {
                 request
         ));
 	}
+
+    @GetMapping("/albums/{albumId}/statistics")
+    public BaseResponse<AlbumReviewStatisticsResponse> getAlbumReviewStatistics(
+            @PathVariable(name = "albumId") String albumId
+    ) {
+        return BaseResponse.ok(reviewService.getAlbumReviewStatistics(
+                albumId
+        ));
+    }
 }

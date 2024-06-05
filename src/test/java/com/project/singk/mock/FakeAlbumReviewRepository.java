@@ -1,6 +1,8 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.review.domain.AlbumReview;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
@@ -41,6 +43,27 @@ public class FakeAlbumReviewRepository implements AlbumReviewRepository {
     @Override
     public Optional<AlbumReview> findById(Long id) {
         return data.stream().filter(item -> item.getId().equals(id)).findAny();
+    }
+
+    @Override
+    public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
+        List<AlbumReview> albumReviews = data.stream().filter(item -> item.getAlbum().getId().equals(albumId)).toList();
+
+        long totalReviewer = albumReviews.size();
+        long totalScore = (long) albumReviews.stream().map(AlbumReview::getScore).reduce(0, Integer::sum);
+
+        return AlbumReviewStatistics.builder()
+                .totalReviewer(totalReviewer)
+                .totalScore(totalScore)
+                .averageScore((double) totalScore / totalReviewer)
+                .score1Count(albumReviews.stream().filter(item -> item.getScore() == 1).count())
+                .score2Count(albumReviews.stream().filter(item -> item.getScore() == 2).count())
+                .score3Count(albumReviews.stream().filter(item -> item.getScore() == 3).count())
+                .score4Count(albumReviews.stream().filter(item -> item.getScore() == 4).count())
+                .score5Count(albumReviews.stream().filter(item -> item.getScore() == 5).count())
+                .maleCount(albumReviews.stream().filter(item -> item.getWriter().getGender() == Gender.MALE).count())
+                .femaleCount(albumReviews.stream().filter(item -> item.getWriter().getGender() == Gender.FEMALE).count())
+                .build();
     }
 
 }
