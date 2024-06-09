@@ -50,4 +50,48 @@ class AlbumTest {
                 () -> assertThat(album.getReleasedAt()).isEqualTo(LocalDateTime.of(2024,5,24, 0, 0, 0))
         );
     }
+
+    @Test
+    public void Album은_평점을_받아_총_평점을_증가시킬_수_있다() {
+        // given
+        Album album = Album.builder()
+                .totalScore(0)
+                .totalReviewer(0)
+                .build();
+        // when
+        album = album.increaseReviewScore(4);
+
+        // then
+        assertThat(album.getTotalReviewer()).isEqualTo(1);
+        assertThat(album.getTotalScore()).isEqualTo(4);
+    }
+
+    @Test
+    public void Album은_평점을_받아_총_평점을_감소시킬_수_있다() {
+        // given
+        Album album = Album.builder()
+                .totalScore(4)
+                .totalReviewer(1)
+                .build();
+        // when
+        album = album.decreaseReviewScore(4);
+
+        // then
+        assertThat(album.getTotalReviewer()).isEqualTo(0);
+        assertThat(album.getTotalScore()).isEqualTo(0);
+    }
+
+    @Test
+    public void Album은_평균_평점을_계산할_수_있다() {
+        // given
+        Album album = Album.builder()
+                .totalScore(123)
+                .totalReviewer(25)
+                .build();
+        // when
+        double result = album.calculateAverage();
+
+        // then
+        assertThat(result).isEqualTo(4.92);
+    }
 }

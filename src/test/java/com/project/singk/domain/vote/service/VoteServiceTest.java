@@ -1,10 +1,7 @@
 package com.project.singk.domain.vote.service;
 
 import com.project.singk.domain.album.domain.Album;
-import com.project.singk.domain.album.domain.AlbumType;
-import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.member.domain.Role;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
 import com.project.singk.domain.vote.domain.VoteCreate;
@@ -16,8 +13,6 @@ import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +40,7 @@ class VoteServiceTest {
         testContainer.albumReviewRepository.save(AlbumReview.builder()
                 .id(1L)
                 .album(album)
-                .writer(members.get(0))
+                .reviewer(members.get(0))
                 .build());
     }
 
@@ -64,7 +59,7 @@ class VoteServiceTest {
                         voteCreate));
 
         // then
-        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTE);
+        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTER);
     }
 
     @Test
@@ -123,7 +118,7 @@ class VoteServiceTest {
                         voteCreate));
 
         // then
-        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTE);
+        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTER);
     }
 
     @Test

@@ -44,5 +44,8 @@ out/
 ### Secret Key ###
 src/main/resources/application-secret.yml
 
+### SQL ###
+src/main/resources/*.sql
+
 ### Config ###
 /config/

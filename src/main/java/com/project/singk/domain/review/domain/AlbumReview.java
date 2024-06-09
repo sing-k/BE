@@ -9,6 +9,8 @@ import com.project.singk.global.api.AppHttpStatus;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class AlbumReview {
     private final Long id;
@@ -16,17 +18,19 @@ public class AlbumReview {
     private final int score;
     private final int prosCount;
     private final int consCount;
-    private final Member writer;
+    private final LocalDateTime createdAt;
+    private final Member reviewer;
     private final Album album;
 
     @Builder
-    public AlbumReview(Long id, String content, int score, int prosCount, int consCount, Member writer, Album album) {
+    public AlbumReview(Long id, String content, int score, int prosCount, int consCount, LocalDateTime createdAt, Member reviewer, Album album) {
         this.id = id;
         this.content = content;
         this.score = score;
         this.prosCount = prosCount;
         this.consCount = consCount;
-        this.writer = writer;
+        this.createdAt = createdAt;
+        this.reviewer = reviewer;
         this.album = album;
     }
 
@@ -40,14 +44,20 @@ public class AlbumReview {
                 .score(albumReviewCreate.getScore())
                 .prosCount(0)
                 .consCount(0)
-                .writer(writer)
+                .reviewer(writer)
                 .album(album)
                 .build();
     }
 
     public void validateVoter(Member voter) {
-        if (this.writer.getId().equals(voter.getId())) {
-            throw new ApiException(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTE);
+        if (this.reviewer.getId().equals(voter.getId())) {
+            throw new ApiException(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTER);
+        }
+    }
+
+    public void validateReviewer(Member reviewer) {
+        if (!this.reviewer.getId().equals(reviewer.getId())) {
+            throw new ApiException(AppHttpStatus.FORBIDDEN_ALBUM_REVIEW);
         }
     }
 
@@ -58,7 +68,7 @@ public class AlbumReview {
                 .score(this.score)
                 .prosCount(VoteType.PROS.equals(type) ? this.prosCount + 1 : this.prosCount)
                 .consCount(VoteType.CONS.equals(type) ? this.consCount + 1 : this.consCount)
-                .writer(this.writer)
+                .reviewer(this.reviewer)
                 .album(this.album)
                 .build();
     }
@@ -70,7 +80,7 @@ public class AlbumReview {
                 .score(this.score)
                 .prosCount(VoteType.PROS.equals(type) ? this.prosCount - 1 : this.prosCount)
                 .consCount(VoteType.CONS.equals(type) ? this.consCount - 1 : this.consCount)
-                .writer(this.writer)
+                .reviewer(this.reviewer)
                 .album(this.album)
                 .build();
     }

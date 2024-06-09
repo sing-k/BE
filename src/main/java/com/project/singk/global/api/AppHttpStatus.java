@@ -24,10 +24,11 @@ public enum AppHttpStatus {
 	NOT_SUPPORT_EMAIL_FORMAT(400, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
 	DUPLICATE_NICKNAME(400, HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임 입니다."),
 	INVALID_OAUTH_TYPE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
-	INVALID_ALBUM_REVIEW_VOTE(400, HttpStatus.BAD_REQUEST, "본인이 작성한 앨범 감상평에는 공감/비공감을 추가/삭제 할 수 없습니다."),
+	INVALID_ALBUM_REVIEW_VOTER(400, HttpStatus.BAD_REQUEST, "본인이 작성한 앨범 감상평에는 공감/비공감을 추가/삭제 할 수 없습니다."),
 	NOT_MATCH_ALBUM_REVIEW_VOTE_TYPE(400, HttpStatus.BAD_REQUEST, "공감/비공감과 저장되어 있는 공감/비공감이 일치하지 않습니다."),
     DUPLICATE_ALBUM_REVIEW_VOTE(400, HttpStatus.BAD_REQUEST, "해당 앨범 감상평에 이미 공감/비공감 했습니다."),
 	INVALID_FILE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 파일입니다."),
+    DUPLICATE_ALBUM_REVIEW(400, HttpStatus.BAD_REQUEST, "해당 앨범에 이미 감상평을 작성했습니다."),
 	/**
 	 * 401 : 인증된 사용자가 아님
 	 */
@@ -43,7 +44,7 @@ public enum AppHttpStatus {
 	 * 403 : 접근 권한이 없음
 	 */
 	FORBIDDEN(403, HttpStatus.FORBIDDEN, "권한이 없습니다."),
-
+	FORBIDDEN_ALBUM_REVIEW(403, HttpStatus.FORBIDDEN, "해당 앨범 감상평에 대한 권한이 없습니다."),
 	/**
 	 * 404 : 응답할 리소스가 없음
 	 */
