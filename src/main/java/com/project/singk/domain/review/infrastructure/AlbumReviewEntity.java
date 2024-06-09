@@ -5,7 +5,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.project.singk.domain.album.infrastructure.entity.AlbumEntity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
-import com.project.singk.domain.vote.domain.VoteType;
 import com.project.singk.global.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -16,11 +15,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "ALBUM_REVIEWS")
@@ -72,7 +69,7 @@ public class AlbumReviewEntity extends BaseTimeEntity {
                 .prosCount(albumReview.getProsCount())
                 .consCount(albumReview.getConsCount())
                 .album(AlbumEntity.from(albumReview.getAlbum()))
-                .member(MemberEntity.from(albumReview.getWriter()))
+                .member(MemberEntity.from(albumReview.getReviewer()))
                 .build();
     }
 
@@ -84,7 +81,8 @@ public class AlbumReviewEntity extends BaseTimeEntity {
                 .prosCount(this.prosCount)
                 .consCount(this.consCount)
                 .album(this.album.toModel())
-                .writer(this.member.toModel())
+                .reviewer(this.member.toModel())
+                .createdAt(this.getCreatedAt())
                 .build();
     }
 }

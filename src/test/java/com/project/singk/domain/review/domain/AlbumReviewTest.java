@@ -52,7 +52,7 @@ class AlbumReviewTest {
                 () -> assertThat(albumReview.getScore()).isEqualTo(4),
                 () -> assertThat(albumReview.getProsCount()).isEqualTo(0),
                 () -> assertThat(albumReview.getConsCount()).isEqualTo(0),
-                () -> assertThat(albumReview.getWriter().getId()).isEqualTo(1L),
+                () -> assertThat(albumReview.getReviewer().getId()).isEqualTo(1L),
                 () -> assertThat(albumReview.getAlbum().getId()).isEqualTo("0EhZEM4RRz0yioTgucDhJq")
         );
     }
@@ -60,12 +60,12 @@ class AlbumReviewTest {
     @Test
     public void AlbumReview는_작성자가_자신의_감상평에_투표를_하는지_검증할_수_있다() {
         // given
-        Member writer = Member.builder()
+        Member reviewer = Member.builder()
                 .id(1L)
                 .build();
 
         AlbumReview albumReview = AlbumReview.builder()
-                .writer(writer)
+                .reviewer(reviewer)
                 .build();
 
         Member voter = Member.builder()
@@ -77,7 +77,30 @@ class AlbumReviewTest {
                 () -> albumReview.validateVoter(voter));
 
         // then
-        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTE);
+        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.INVALID_ALBUM_REVIEW_VOTER);
+    }
+
+    @Test
+    public void AlbumReview는_작성자를_검증할_수_있다() {
+        // given
+        Member reviewer = Member.builder()
+                .id(1L)
+                .build();
+
+        AlbumReview albumReview = AlbumReview.builder()
+                .reviewer(reviewer)
+                .build();
+
+        Member member = Member.builder()
+                .id(2L)
+                .build();
+
+        // when
+        final ApiException result = assertThrows(ApiException.class,
+                () -> albumReview.validateReviewer(member));
+
+        // then
+        assertThat(result.getStatus()).isEqualTo(AppHttpStatus.FORBIDDEN_ALBUM_REVIEW);
     }
 
     @Test

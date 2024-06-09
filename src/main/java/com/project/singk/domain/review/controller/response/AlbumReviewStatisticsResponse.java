@@ -12,25 +12,59 @@ import java.util.List;
 @Builder
 @ToString
 public class AlbumReviewStatisticsResponse {
-    private long totalReviewer;
+    private long count;
+    private long totalScore;
     private double averageScore;
     private List<ScoreStatistics> scoreStatistics;
     private List<GenderStatistics> genderStatistics;
 
-    public static AlbumReviewStatisticsResponse from(AlbumReviewStatistics albumReviewStatistics) {
+    public static AlbumReviewStatisticsResponse from(AlbumReviewStatistics statistics) {
         return AlbumReviewStatisticsResponse.builder()
-                .totalReviewer(albumReviewStatistics.getTotalReviewer())
-                .averageScore(albumReviewStatistics.getAverageScore())
+                .count(statistics.getTotalReviewer())
+                .totalScore(statistics.getTotalScore())
+                .averageScore(statistics.calculateAverage(statistics.getTotalScore(), statistics.getTotalReviewer()))
                 .scoreStatistics(List.of(
-                        ScoreStatistics.builder().score(1).count(albumReviewStatistics.getScore1Count()).build(),
-                        ScoreStatistics.builder().score(2).count(albumReviewStatistics.getScore2Count()).build(),
-                        ScoreStatistics.builder().score(3).count(albumReviewStatistics.getScore3Count()).build(),
-                        ScoreStatistics.builder().score(4).count(albumReviewStatistics.getScore4Count()).build(),
-                        ScoreStatistics.builder().score(5).count(albumReviewStatistics.getScore5Count()).build()
+                        ScoreStatistics.builder()
+                                .score(1)
+                                .count(statistics.getScore1Count())
+                                .ratio(statistics.calculateRatio(statistics.getScore1Count(), statistics.getTotalReviewer()))
+                                .build(),
+                        ScoreStatistics.builder()
+                                .score(2)
+                                .count(statistics.getScore2Count())
+                                .ratio(statistics.calculateRatio(statistics.getScore2Count(), statistics.getTotalReviewer()))
+                                .build(),
+                        ScoreStatistics.builder()
+                                .score(3)
+                                .count(statistics.getScore3Count())
+                                .ratio(statistics.calculateRatio(statistics.getScore3Count(), statistics.getTotalReviewer()))
+                                .build(),
+                        ScoreStatistics.builder()
+                                .score(4)
+                                .count(statistics.getScore4Count())
+                                .ratio(statistics.calculateRatio(statistics.getScore4Count(), statistics.getTotalReviewer()))
+                                .build(),
+                        ScoreStatistics.builder()
+                                .score(5)
+                                .count(statistics.getScore5Count())
+                                .ratio(statistics.calculateRatio(statistics.getScore5Count(), statistics.getTotalReviewer()))
+                                .build()
                 ))
                 .genderStatistics(List.of(
-                        GenderStatistics.builder().gender(Gender.MALE.getName()).count(albumReviewStatistics.getMaleCount()).build(),
-                        GenderStatistics.builder().gender(Gender.FEMALE.getName()).count(albumReviewStatistics.getFemaleCount()).build()
+                        GenderStatistics.builder()
+                                .gender(Gender.MALE.getName())
+                                .count(statistics.getMaleCount())
+                                .totalScore(statistics.getMaleTotalScore())
+                                .ratio(statistics.calculateRatio(statistics.getMaleCount(), statistics.getTotalReviewer()))
+                                .averageScore(statistics.calculateAverage(statistics.getMaleTotalScore(), statistics.getMaleCount()))
+                                .build(),
+                        GenderStatistics.builder()
+                                .gender(Gender.FEMALE.getName())
+                                .count(statistics.getFemaleCount())
+                                .totalScore(statistics.getFemaleTotalScore())
+                                .ratio(statistics.calculateRatio(statistics.getFemaleCount(), statistics.getTotalReviewer()))
+                                .averageScore(statistics.calculateAverage(statistics.getFemaleTotalScore(), statistics.getFemaleCount()))
+                                .build()
                 ))
                 .build();
     }
@@ -41,6 +75,7 @@ public class AlbumReviewStatisticsResponse {
     public static class ScoreStatistics {
         private int score;
         private long count;
+        private double ratio;
     }
 
     @Getter
@@ -49,5 +84,8 @@ public class AlbumReviewStatisticsResponse {
     public static class GenderStatistics {
         private String gender;
         private long count;
+        private long totalScore;
+        private double ratio;
+        private double averageScore;
     }
 }

@@ -84,6 +84,7 @@ public class TestContainer {
                 .albumReviewRepository(this.albumReviewRepository)
                 .albumRepository(this.albumRepository)
                 .memberRepository(this.memberRepository)
+                .s3Repository(this.s3Repository)
                 .build();
         this.voteService = VoteServiceImpl.builder()
                 .albumReviewVoteRepository(this.albumReviewVoteRepository)
