@@ -33,6 +33,10 @@ public class QAlbumEntity extends EntityPathBase<AlbumEntity> {
 
     public final DateTimePath<java.time.LocalDateTime> releasedAt = createDateTime("releasedAt", java.time.LocalDateTime.class);
 
+    public final NumberPath<Long> totalReviewer = createNumber("totalReviewer", Long.class);
+
+    public final NumberPath<Long> totalScore = createNumber("totalScore", Long.class);
+
     public final EnumPath<com.project.singk.domain.album.domain.AlbumType> type = createEnum("type", com.project.singk.domain.album.domain.AlbumType.class);
 
     public QAlbumEntity(String variable) {

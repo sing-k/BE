@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "ALBUMS")
@@ -36,13 +37,23 @@ public class AlbumEntity extends BaseTimeEntity {
 	@Column(name = "released_at")
 	private LocalDateTime releasedAt;
 
-	@Builder
-	public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt) {
-		this.id = id;
-		this.name = name;
-		this.type = type;
-		this.releasedAt = releasedAt;
-	}
+    @ColumnDefault("0")
+    @Column(name = "total_reviewer")
+    private long totalReviewer;
+
+    @ColumnDefault("0")
+    @Column(name = "total_Score")
+    private long totalScore;
+
+    @Builder
+    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, long totalReviewer, long totalScore) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.releasedAt = releasedAt;
+        this.totalReviewer = totalReviewer;
+        this.totalScore = totalScore;
+    }
 
 	public static AlbumEntity from (Album album) {
 		return AlbumEntity.builder()
@@ -50,6 +61,8 @@ public class AlbumEntity extends BaseTimeEntity {
 			.name(album.getName())
 			.type(album.getType())
 			.releasedAt(album.getReleasedAt())
+            .totalReviewer(album.getTotalReviewer())
+            .totalScore(album.getTotalScore())
 			.build();
 	}
 
@@ -59,6 +72,8 @@ public class AlbumEntity extends BaseTimeEntity {
 			.name(this.name)
 			.type(this.type)
 			.releasedAt(this.releasedAt)
+            .totalReviewer(this.totalReviewer)
+            .totalScore(this.totalScore)
 			.build();
 	}
 }

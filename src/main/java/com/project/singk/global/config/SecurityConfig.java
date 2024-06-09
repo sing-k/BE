@@ -2,6 +2,7 @@ package com.project.singk.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -83,6 +84,7 @@ public class SecurityConfig {
 				authorize
 					.requestMatchers("/api/auth/**").permitAll()
 					.requestMatchers("/api/albums/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
 					.anyRequest().authenticated();
 			})
 			// API 엔드포인트 예외 핸들러
