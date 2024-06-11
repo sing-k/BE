@@ -23,11 +23,10 @@ public class ArtistSimplifiedEntity {
 			.build();
 	}
 
-	public Artist toModel(String albumId) {
+	public Artist toModel() {
 		return Artist.builder()
 			.id(this.id)
 			.name(this.name)
-            .albumId(albumId)
 			.build();
 	}
 }

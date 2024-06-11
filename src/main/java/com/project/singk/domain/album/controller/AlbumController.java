@@ -14,8 +14,6 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.api.Page;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @Validated

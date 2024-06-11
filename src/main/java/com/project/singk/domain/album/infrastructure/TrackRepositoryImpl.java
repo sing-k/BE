@@ -27,11 +27,4 @@ public class TrackRepositoryImpl implements TrackRepository {
                 .map(TrackEntity::toModel)
                 .toList();
     }
-
-    @Override
-    public List<Track> findByAlbumId(String albumId) {
-        return trackJpaRepository.findByAlbumId(albumId).stream()
-                .map(TrackEntity::toModel)
-                .toList();
-    }
 }

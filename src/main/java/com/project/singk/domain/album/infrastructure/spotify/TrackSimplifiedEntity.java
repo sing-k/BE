@@ -36,7 +36,7 @@ public class TrackSimplifiedEntity {
 			.build();
 	}
 
-	public Track toModel(String albumId) {
+	public Track toModel() {
 		return Track.builder()
 			.id(this.id)
 			.name(this.name)
@@ -44,7 +44,6 @@ public class TrackSimplifiedEntity {
 			.duration(this.duration)
 			.isPlayable(this.isPlayable)
 			.previewUrl(this.previewUrl)
-            .albumId(albumId)
 			.build();
 	}
 }

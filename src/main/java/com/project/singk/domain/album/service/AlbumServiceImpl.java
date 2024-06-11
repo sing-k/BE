@@ -32,29 +32,16 @@ public class AlbumServiceImpl implements AlbumService {
     private final AlbumImageRepository albumImageRepository;
 
 	public AlbumDetailResponse getAlbum(String albumId) {
-        // TODO : Join ??
 		Album album = albumRepository.findById(albumId).orElse(null);
-        List<Track> tracks = trackRepository.findByAlbumId(albumId);
-        List<Artist> artists = artistRepository.findByAlbumId(albumId);
-        List<AlbumImage> images = albumImageRepository.findByAlbumId(albumId);
 
 		// DB에 데이터 있는 경우
 		if (album != null) {
-			return AlbumDetailResponse.from(album, tracks, artists, images);
+			return AlbumDetailResponse.from(album);
 		}
 
 		AlbumEntity spotifyAlbum = spotifyRepository.getAlbumById(albumId);
         album = albumRepository.save(spotifyAlbum.toModel());
-        tracks = trackRepository.saveAll(spotifyAlbum.getTracks().stream()
-                .map(track -> track.toModel(albumId))
-                .toList());
-        artists = artistRepository.saveAll(spotifyAlbum.getArtists().stream()
-                .map(artist -> artist.toModel(albumId))
-                .toList());
-        images = albumImageRepository.saveAll(spotifyAlbum.getImages().stream()
-                .map(image -> image.toModel(albumId))
-                .toList());
-		return AlbumDetailResponse.from(album, tracks, artists, images);
+		return AlbumDetailResponse.from(album);
 	}
 
 	@Transactional(readOnly = true)
@@ -68,14 +55,7 @@ public class AlbumServiceImpl implements AlbumService {
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
                 spotifyAlbums.getItems().stream()
-                        .map(album -> AlbumListResponse.from(
-                                album.toModel(),
-                                album.getArtists().stream()
-                                .map(artist -> artist.toModel(album.getId()))
-                                .toList(),
-                                album.getImages().stream()
-                                .map(image -> image.toModel(album.getId()))
-                                .toList()))
+                        .map(album -> AlbumListResponse.from(album.toModel()))
                         .toList()
 
 		);

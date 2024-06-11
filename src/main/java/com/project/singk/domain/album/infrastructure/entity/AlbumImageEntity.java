@@ -32,16 +32,12 @@ public class AlbumImageEntity extends BaseTimeEntity {
 	@Column(name = "height")
 	private int height;
 
-	@Column(name = "album_id", length = 22)
-	private String albumId;
-
     @Builder
-    public AlbumImageEntity(Long id, String imageUrl, int width, int height, String albumId) {
+    public AlbumImageEntity(Long id, String imageUrl, int width, int height) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.width = width;
         this.height = height;
-        this.albumId = albumId;
     }
 
 	public static AlbumImageEntity from (AlbumImage image) {
@@ -50,7 +46,6 @@ public class AlbumImageEntity extends BaseTimeEntity {
 			.imageUrl(image.getImageUrl())
 			.width(image.getWidth())
 			.height(image.getHeight())
-			.albumId(image.getAlbumId())
 			.build();
 	}
 
@@ -60,7 +55,6 @@ public class AlbumImageEntity extends BaseTimeEntity {
 			.imageUrl(this.imageUrl)
 			.width(this.width)
 			.height(this.height)
-			.albumId(this.albumId)
 			.build();
 	}
 }

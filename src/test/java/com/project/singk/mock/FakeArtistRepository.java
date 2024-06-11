@@ -20,8 +20,4 @@ public class FakeArtistRepository implements ArtistRepository {
         return artists.stream().map(this::save).toList();
     }
 
-    @Override
-    public List<Artist> findByAlbumId(String albumId) {
-        return data.stream().filter(item -> item.getAlbumId().equals(albumId)).toList();
-    }
 }

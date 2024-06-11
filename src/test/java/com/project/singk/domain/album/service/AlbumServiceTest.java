@@ -42,50 +42,46 @@ class AlbumServiceTest {
     public void 앨범을_상세조회할_때_DB에_해당_앨범이_존재하는_경우_DB_데이터를_가져온다() {
         // given
         TestContainer testContainer = TestContainer.builder().build();
-        Album album = Album.builder()
-                .id("0EhZEM4RRz0yioTgucDhJq")
-                .name("How Sweet")
-                .type(AlbumType.EP)
-                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
-                .build();
-        testContainer.albumRepository.save(album);
         List<Track> tracks = List.of(
                 Track.builder()
                         .id("1")
                         .name("Bubble Gum")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build(),
                 Track.builder()
                         .id("2")
                         .name("How Sweet")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build(),
                 Track.builder()
                         .id("3")
                         .name("How Sweet (Instrumental)")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build(),
                 Track.builder()
                         .id("4")
                         .name("Bubble Gum (Instrumental)")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build()
         );
-        testContainer.trackRepository.saveAll(tracks);
         List<Artist> artists = List.of(
                 Artist.builder()
                         .name("NewJeans")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build()
         );
-        testContainer.artistRepository.saveAll(artists);
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()
                         .imageUrl("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
                         .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build()
         );
-        testContainer.albumImageRepository.saveAll(images);
+        Album album = Album.builder()
+                .id("0EhZEM4RRz0yioTgucDhJq")
+                .name("How Sweet")
+                .type(AlbumType.EP)
+                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .tracks(tracks)
+                .artists(artists)
+                .images(images)
+                .build();
+
+        testContainer.albumRepository.save(album);
 
         // when
         AlbumDetailResponse response = testContainer.albumService.getAlbum("0EhZEM4RRz0yioTgucDhJq");
