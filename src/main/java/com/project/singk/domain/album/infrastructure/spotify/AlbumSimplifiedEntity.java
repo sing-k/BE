@@ -53,6 +53,10 @@ public class AlbumSimplifiedEntity {
 			.id(this.id)
 			.name(this.name)
 			.releasedAt(this.releasedAt)
+            .totalReviewer(0)
+            .totalScore(0)
+            .artists(this.artists.stream().map(ArtistSimplifiedEntity::toModel).toList())
+            .images(this.images.stream().map(ImageEntity::toModel).toList())
 			.build();
 	}
 }

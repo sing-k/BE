@@ -23,8 +23,4 @@ public class FakeTrackRepository implements TrackRepository {
         return tracks.stream().map(this::save).toList();
     }
 
-    @Override
-    public List<Track> findByAlbumId(String albumId) {
-        return data.stream().filter(item -> item.getAlbumId().equals(albumId)).toList();
-    }
 }

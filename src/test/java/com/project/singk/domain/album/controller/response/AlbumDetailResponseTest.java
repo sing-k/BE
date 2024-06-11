@@ -14,12 +14,7 @@ class AlbumDetailResponseTest {
     @Test
     public void AlbumDetailResponseTest를_만들_수_있다() {
         // given
-        Album album = Album.builder()
-                .id("0EhZEM4RRz0yioTgucDhJq")
-                .name("How Sweet")
-                .type(AlbumType.EP)
-                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
-                .build();
+
         List<Track> tracks = List.of(
                 Track.builder()
                         .name("Bubble Gum")
@@ -45,8 +40,20 @@ class AlbumDetailResponseTest {
                         .build()
         );
 
+        Album album = Album.builder()
+                .id("0EhZEM4RRz0yioTgucDhJq")
+                .name("How Sweet")
+                .type(AlbumType.EP)
+                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .totalScore(20)
+                .totalReviewer(4)
+                .tracks(tracks)
+                .artists(artists)
+                .images(images)
+                .build();
+
         // when
-        final AlbumDetailResponse response = AlbumDetailResponse.from(album, tracks, artists, images);
+        final AlbumDetailResponse response = AlbumDetailResponse.from(album);
 
         // then
         assertAll(

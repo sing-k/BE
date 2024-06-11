@@ -27,12 +27,11 @@ public class ImageEntity {
 			.build();
 	}
 
-	public AlbumImage toModel(String albumId) {
+	public AlbumImage toModel() {
 		return AlbumImage.builder()
 			.imageUrl(this.imageUrl)
 			.width(this.width)
 			.height(this.height)
-            .albumId(albumId)
 			.build();
 	}
 }

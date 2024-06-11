@@ -1,6 +1,8 @@
 package com.project.singk.domain.album.domain;
 
 import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
+import com.project.singk.domain.album.infrastructure.spotify.ArtistSimplifiedEntity;
+import com.project.singk.domain.album.infrastructure.spotify.ImageEntity;
 import com.project.singk.domain.album.infrastructure.spotify.TrackSimplifiedEntity;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +33,26 @@ class AlbumTest {
                         .build()
         );
 
+        List<ArtistSimplifiedEntity> artistSimplifiedEntities = List.of(
+                ArtistSimplifiedEntity.builder()
+                        .name("NewJeans")
+                        .build()
+        );
+
+        List<ImageEntity> imageEntities = List.of(
+                ImageEntity.builder()
+                        .imageUrl("image")
+                        .build()
+        );
+
         AlbumEntity albumEntity = AlbumEntity.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .name("How Sweet")
                 .type("single")
                 .releasedAt(LocalDate.parse("2024-05-24").atStartOfDay())
                 .tracks(trackSimplifiedEntities)
+                .artists(artistSimplifiedEntities)
+                .images(imageEntities)
                 .build();
 
         // when

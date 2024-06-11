@@ -20,19 +20,23 @@ public class AlbumListResponse {
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime releasedAt;
+    private long count;
+    private double averageScore;
 	private List<ArtistResponse> artists;
 	private List<ImageResponse> images;
 
-	public static AlbumListResponse from (Album album, List<Artist> artists, List<AlbumImage> images) {
+	public static AlbumListResponse from (Album album) {
 
 		return AlbumListResponse.builder()
 			.id(album.getId())
 			.name(album.getName())
 			.releasedAt(album.getReleasedAt())
-			.artists(artists.stream()
+            .count(album.getTotalReviewer())
+            .averageScore(album.calculateAverage())
+			.artists(album.getArtists().stream()
 				.map(ArtistResponse::from)
 				.toList())
-			.images(images.stream()
+			.images(album.getImages().stream()
 				.map(ImageResponse::from)
 				.toList())
 			.build();

@@ -27,11 +27,4 @@ public class ArtistRepositoryImpl implements ArtistRepository {
                 .map(ArtistEntity::toModel)
                 .toList();
     }
-
-    @Override
-    public List<Artist> findByAlbumId(String albumId) {
-        return artistJpaRepository.findByAlbumId(albumId).stream()
-                .map(ArtistEntity::toModel)
-                .toList();
-    }
 }

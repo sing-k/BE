@@ -27,16 +27,16 @@ public class AlbumDetailResponse {
 	private List<TrackResponse> tracks;
 	private List<ImageResponse> images;
 
-	public static AlbumDetailResponse from (Album album, List<Track> tracks, List<Artist> artists, List<AlbumImage> images) {
+	public static AlbumDetailResponse from (Album album) {
 		return AlbumDetailResponse.builder()
 			.id(album.getId())
 			.name(album.getName())
             .type(album.getType().getName())
 			.releasedAt(album.getReleasedAt())
-			.trackCount(tracks.size())
-			.tracks(tracks.stream().map(TrackResponse::from).toList())
-			.images(images.stream().map(ImageResponse::from).toList())
-			.artists(artists.stream().map(ArtistResponse::from).toList())
+			.trackCount(album.getTracks().size())
+			.tracks(album.getTracks().stream().map(TrackResponse::from).toList())
+			.images(album.getImages().stream().map(ImageResponse::from).toList())
+			.artists(album.getArtists().stream().map(ArtistResponse::from).toList())
 			.build();
 	}
 }
