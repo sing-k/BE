@@ -13,13 +13,6 @@ class AlbumListResponseTest {
     @Test
     public void AlbumListResponseTest를_만들_수_있다() {
         // given
-        Album album = Album.builder()
-                .id("0EhZEM4RRz0yioTgucDhJq")
-                .name("How Sweet")
-                .type(AlbumType.EP)
-                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
-                .build();
-
         List<Artist> artists = List.of(
                 Artist.builder()
                         .name("NewJeans")
@@ -31,14 +24,26 @@ class AlbumListResponseTest {
                         .build()
         );
 
+        Album album = Album.builder()
+                .id("0EhZEM4RRz0yioTgucDhJq")
+                .name("How Sweet")
+                .type(AlbumType.EP)
+                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .totalReviewer(4)
+                .totalScore(20)
+                .artists(artists)
+                .images(images)
+                .build();
+
         // when
-        final AlbumListResponse response = AlbumListResponse.from(album, artists, images);
+        final AlbumListResponse response = AlbumListResponse.from(album);
 
         // then
         assertAll(
                 () -> assertThat(response.getId()).isEqualTo("0EhZEM4RRz0yioTgucDhJq"),
                 () -> assertThat(response.getName()).isEqualTo("How Sweet"),
                 () -> assertThat(response.getReleasedAt()).isEqualTo(LocalDateTime.of(2024, 5, 24, 0, 0, 0)),
+                () -> assertThat(response.getAverageScore()).isEqualTo(5.0),
                 () -> assertThat(response.getArtists().get(0).getName()).isEqualTo("NewJeans"),
                 () -> assertThat(response.getImages().get(0).getImageUrl()).isEqualTo("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
         );

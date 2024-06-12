@@ -1,6 +1,8 @@
 package com.project.singk.global.api;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,4 +31,16 @@ public class Page<T> {
 			.items(items)
 			.build();
 	}
+
+    public <R> Page<R> map(Function<? super T, ? extends R> converter) {
+        List<R> newItems = this.items.stream()
+                .map(converter)
+                .collect(Collectors.toList());
+        return Page.<R>builder()
+                .offset(this.offset)
+                .limit(this.limit)
+                .total(this.total)
+                .items(newItems)
+                .build();
+    }
 }

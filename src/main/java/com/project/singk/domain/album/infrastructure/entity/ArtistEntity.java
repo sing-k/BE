@@ -24,21 +24,16 @@ public class ArtistEntity extends BaseTimeEntity {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "album_id", length = 22)
-    private String  albumId;
-
     @Builder
-    public ArtistEntity(String id, String name, String albumId) {
+    public ArtistEntity(String id, String name) {
         this.id = id;
         this.name = name;
-        this.albumId = albumId;
     }
 
 	public static ArtistEntity from(Artist artist) {
 		return ArtistEntity.builder()
 			.id(artist.getId())
 			.name(artist.getName())
-			.albumId(artist.getAlbumId())
 			.build();
 	}
 
@@ -46,7 +41,6 @@ public class ArtistEntity extends BaseTimeEntity {
 		return Artist.builder()
 			.id(this.id)
 			.name(this.name)
-			.albumId(this.albumId)
 			.build();
 	}
 }

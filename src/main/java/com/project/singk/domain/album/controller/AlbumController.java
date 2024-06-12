@@ -1,5 +1,6 @@
 package com.project.singk.domain.album.controller;
 
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,6 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.api.Page;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -42,4 +41,12 @@ public class AlbumController {
 		return BaseResponse.ok(albumService.searchAlbums(query, offset, limit));
 	}
 
+    @GetMapping("/preview")
+    public BaseResponse<Page<AlbumListResponse>> getPreviewAlbumsByAlbumSort(
+            @RequestParam("sort") AlbumSort sort,
+            @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
+            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit
+            ) {
+        return BaseResponse.ok(albumService.getPreviewAlbumsByAlbumSort(sort, offset, limit));
+    }
 }

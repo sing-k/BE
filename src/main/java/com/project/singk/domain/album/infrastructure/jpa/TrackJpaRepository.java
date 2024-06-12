@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TrackJpaRepository extends JpaRepository<TrackEntity, String> {
-    List<TrackEntity> findByAlbumId(String albumId);
 }

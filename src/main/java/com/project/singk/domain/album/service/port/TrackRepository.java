@@ -7,5 +7,4 @@ import java.util.List;
 public interface TrackRepository {
     Track save(Track track);
     List<Track> saveAll(List<Track> tracks);
-    List<Track> findByAlbumId(String albumId);
 }

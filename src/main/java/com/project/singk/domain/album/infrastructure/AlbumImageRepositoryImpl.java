@@ -31,11 +31,4 @@ public class AlbumImageRepositoryImpl implements AlbumImageRepository {
                 .map(AlbumImageEntity::toModel)
                 .toList();
     }
-
-    @Override
-    public List<AlbumImage> findByAlbumId(String albumId) {
-        return albumImageJpaRepositoryJpaRepository.findByAlbumId(albumId).stream()
-                .map(AlbumImageEntity::toModel)
-                .toList();
-    }
 }

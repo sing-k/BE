@@ -21,8 +21,6 @@ public class QArtistEntity extends EntityPathBase<ArtistEntity> {
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
-    public final StringPath albumId = createString("albumId");
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 

@@ -36,18 +36,14 @@ public class TrackEntity extends BaseTimeEntity {
 	@Column(name = "preview_url")
 	private String previewUrl;
 
-    @Column(name = "album_id", length = 22)
-    private String albumId;
-
     @Builder
-    public TrackEntity(String id, String name, int trackNumber, long duration, boolean isPlayable, String previewUrl, String albumId) {
+    public TrackEntity(String id, String name, int trackNumber, long duration, boolean isPlayable, String previewUrl) {
         this.id = id;
         this.name = name;
         this.trackNumber = trackNumber;
         this.duration = duration;
         this.isPlayable = isPlayable;
         this.previewUrl = previewUrl;
-        this.albumId = albumId;
     }
 
 	public static TrackEntity from (Track track) {
@@ -58,7 +54,6 @@ public class TrackEntity extends BaseTimeEntity {
 			.duration(track.getDuration())
 			.isPlayable(track.isPlayable())
 			.previewUrl(track.getPreviewUrl())
-            .albumId(track.getAlbumId())
 			.build();
 	}
 
@@ -70,7 +65,6 @@ public class TrackEntity extends BaseTimeEntity {
 			.duration(this.duration)
 			.isPlayable(this.isPlayable)
 			.previewUrl(this.previewUrl)
-            .albumId(this.albumId)
 			.build();
 	}
 }

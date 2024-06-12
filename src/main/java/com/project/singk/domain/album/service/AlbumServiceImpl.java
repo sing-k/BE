@@ -1,11 +1,10 @@
 package com.project.singk.domain.album.service;
 
-import com.project.singk.domain.album.domain.AlbumImage;
-import com.project.singk.domain.album.domain.Artist;
-import com.project.singk.domain.album.domain.Track;
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
 import lombok.Builder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +15,6 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.global.api.Page;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Service
 @Builder
@@ -31,32 +28,21 @@ public class AlbumServiceImpl implements AlbumService {
     private final ArtistRepository artistRepository;
     private final AlbumImageRepository albumImageRepository;
 
+    @Override
 	public AlbumDetailResponse getAlbum(String albumId) {
-        // TODO : Join ??
 		Album album = albumRepository.findById(albumId).orElse(null);
-        List<Track> tracks = trackRepository.findByAlbumId(albumId);
-        List<Artist> artists = artistRepository.findByAlbumId(albumId);
-        List<AlbumImage> images = albumImageRepository.findByAlbumId(albumId);
 
 		// DB에 데이터 있는 경우
 		if (album != null) {
-			return AlbumDetailResponse.from(album, tracks, artists, images);
+			return AlbumDetailResponse.from(album);
 		}
 
 		AlbumEntity spotifyAlbum = spotifyRepository.getAlbumById(albumId);
         album = albumRepository.save(spotifyAlbum.toModel());
-        tracks = trackRepository.saveAll(spotifyAlbum.getTracks().stream()
-                .map(track -> track.toModel(albumId))
-                .toList());
-        artists = artistRepository.saveAll(spotifyAlbum.getArtists().stream()
-                .map(artist -> artist.toModel(albumId))
-                .toList());
-        images = albumImageRepository.saveAll(spotifyAlbum.getImages().stream()
-                .map(image -> image.toModel(albumId))
-                .toList());
-		return AlbumDetailResponse.from(album, tracks, artists, images);
+		return AlbumDetailResponse.from(album);
 	}
 
+    @Override
 	@Transactional(readOnly = true)
 	public Page<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
 		// 앨범 목록 API 요청 준비
@@ -68,16 +54,17 @@ public class AlbumServiceImpl implements AlbumService {
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
                 spotifyAlbums.getItems().stream()
-                        .map(album -> AlbumListResponse.from(
-                                album.toModel(),
-                                album.getArtists().stream()
-                                .map(artist -> artist.toModel(album.getId()))
-                                .toList(),
-                                album.getImages().stream()
-                                .map(image -> image.toModel(album.getId()))
-                                .toList()))
+                        .map(album -> AlbumListResponse.from(album.toModel()))
                         .toList()
 
 		);
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AlbumListResponse> getPreviewAlbumsByAlbumSort(AlbumSort sort, int offset, int limit) {
+        Page<Album> albums = albumRepository.findAllByAlbumSort(sort, offset, limit);
+        return albums.map(AlbumListResponse::from);
+    }
+
 }

@@ -1,9 +1,12 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.service.port.AlbumRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.api.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -24,5 +27,10 @@ public class FakeAlbumRepository implements AlbumRepository {
     @Override
     public Optional<Album> findById(String id) {
         return data.stream().filter(item -> item.getId().equals(id)).findAny();
+    }
+
+    @Override
+    public Page<Album> findAllByAlbumSort(AlbumSort sort, int offset, int limit) {
+        return null;
     }
 }

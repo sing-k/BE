@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AlbumImageJpaRepository extends JpaRepository<AlbumImageEntity, String> {
-    List<AlbumImageEntity> findByAlbumId(String albumId);
 }
