@@ -15,15 +15,18 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(RuntimeException.class)
 	public BaseResponse<Void> runtimeExceptionHandler(RuntimeException e) {
+        e.printStackTrace();
 		return BaseResponse.fail(AppHttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 	}
 	@ExceptionHandler(ApiException.class)
 	public BaseResponse<Void> apiExceptionHandler(ApiException e) {
+        e.printStackTrace();
 		return BaseResponse.fail(e);
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public BaseResponse<Void> accessDeniedExceptionHandler(AccessDeniedException e) {
+        e.printStackTrace();
 		return BaseResponse.fail(AppHttpStatus.FORBIDDEN);
 	}
 	@ExceptionHandler(ConstraintViolationException.class)

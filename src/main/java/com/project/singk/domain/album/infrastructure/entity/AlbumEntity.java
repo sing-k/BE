@@ -12,15 +12,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.stereotype.Indexed;
 
 @Entity
-@Table(name = "ALBUMS")
+@Table(name = "ALBUMS", indexes = {
+        @Index(name = "idx_album_modified_at", columnList = "modifiedAt"),
+        @Index(name = "idx_album_total_reviewer", columnList = "totalReviewer"),
+        @Index(name = "idx_album_total_score", columnList = "totalScore")
+})
 @Getter
 @NoArgsConstructor
 public class AlbumEntity extends BaseTimeEntity {
 
 	@Id
-	@Column(updatable = false, length = 22)
+	@Column(updatable = false)
 	private String id;
 
 	@Column(name = "name")
