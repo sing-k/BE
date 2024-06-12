@@ -1,11 +1,10 @@
 package com.project.singk.domain.album.service;
 
-import com.project.singk.domain.album.domain.AlbumImage;
-import com.project.singk.domain.album.domain.Artist;
-import com.project.singk.domain.album.domain.Track;
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
 import lombok.Builder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +15,6 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.global.api.Page;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Service
 @Builder
@@ -31,6 +28,7 @@ public class AlbumServiceImpl implements AlbumService {
     private final ArtistRepository artistRepository;
     private final AlbumImageRepository albumImageRepository;
 
+    @Override
 	public AlbumDetailResponse getAlbum(String albumId) {
 		Album album = albumRepository.findById(albumId).orElse(null);
 
@@ -44,6 +42,7 @@ public class AlbumServiceImpl implements AlbumService {
 		return AlbumDetailResponse.from(album);
 	}
 
+    @Override
 	@Transactional(readOnly = true)
 	public Page<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
 		// 앨범 목록 API 요청 준비
@@ -60,4 +59,12 @@ public class AlbumServiceImpl implements AlbumService {
 
 		);
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AlbumListResponse> getPreviewAlbumsByAlbumSort(AlbumSort sort, int offset, int limit) {
+        Page<Album> albums = albumRepository.findAllByAlbumSort(sort, offset, limit);
+        return albums.map(AlbumListResponse::from);
+    }
+
 }

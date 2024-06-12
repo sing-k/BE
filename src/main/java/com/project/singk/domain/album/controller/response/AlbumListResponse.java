@@ -4,10 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.domain.Album;
 
-import com.project.singk.domain.album.domain.AlbumImage;
-import com.project.singk.domain.album.domain.Artist;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,7 +14,6 @@ import lombok.ToString;
 @Builder
 @ToString
 public class AlbumListResponse {
-
 	private String id;
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

@@ -7,7 +7,6 @@ import org.apache.hc.core5.http.ParseException;
 import org.springframework.stereotype.Repository;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumSimplifiedEntity;
 import com.project.singk.domain.album.service.port.SpotifyRepository;

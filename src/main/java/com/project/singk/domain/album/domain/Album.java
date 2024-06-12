@@ -65,6 +65,8 @@ public class Album {
     }
 
     public double calculateAverage() {
-        return (double) this.totalScore / this.totalReviewer;
+        if (this.totalReviewer == 0) return 0.0;
+
+        return Math.round((double) this.totalScore / this.totalReviewer * 100) / 100.0;
     }
 }

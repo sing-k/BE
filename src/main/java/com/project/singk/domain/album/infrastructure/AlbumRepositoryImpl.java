@@ -1,9 +1,16 @@
 package com.project.singk.domain.album.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.entity.*;
 import com.project.singk.domain.album.infrastructure.jpa.AlbumJpaRepository;
+import com.project.singk.domain.review.controller.request.ReviewSort;
+import com.project.singk.domain.review.infrastructure.QAlbumReviewEntity;
+import com.project.singk.global.api.Page;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -48,4 +55,37 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 .fetchOne())
                 .map(AlbumEntity::toModel);
 	}
+
+    @Override
+    public Page<Album> findAllByAlbumSort(AlbumSort sort, int offset, int limit) {
+        List<Album> albums = jpaQueryFactory.select(albumEntity)
+                .from(albumEntity)
+                .orderBy(createOrderSpecifier(sort))
+                .offset(offset)
+                .limit(limit)
+                .fetch().stream()
+                .map(AlbumEntity::toModel)
+                .toList();
+
+        int count = jpaQueryFactory.select(albumEntity.count())
+                .from(albumEntity)
+                .fetchOne()
+                .intValue();
+
+        return Page.of(
+                offset,
+                limit,
+                count,
+                albums
+        );
+    }
+
+    private OrderSpecifier createOrderSpecifier(AlbumSort sort) {
+        return switch (sort) {
+            case NEW -> new OrderSpecifier(Order.DESC, albumEntity.modifiedAt);
+            case SCORES -> new OrderSpecifier(Order.DESC, albumEntity.totalScore);
+            case REVIEWERS -> new OrderSpecifier(Order.DESC, albumEntity.totalReviewer);
+        };
+    }
+
 }
