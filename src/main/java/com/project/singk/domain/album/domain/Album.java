@@ -3,13 +3,8 @@ package com.project.singk.domain.album.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.review.domain.AlbumReviewCreate;
-import com.project.singk.global.api.ApiException;
-import com.project.singk.global.api.AppHttpStatus;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public class Album {
@@ -22,9 +17,9 @@ public class Album {
     private final List<Track> tracks;
     private final List<Artist> artists;
     private final List<AlbumImage> images;
-
+    private final LocalDateTime modifiedAt;
     @Builder
-    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, long totalReviewer, long totalScore, List<Track> tracks, List<Artist> artists, List<AlbumImage> images) {
+    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, long totalReviewer, long totalScore, List<Track> tracks, List<Artist> artists, List<AlbumImage> images, LocalDateTime modifiedAt) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -34,6 +29,7 @@ public class Album {
         this.tracks = tracks;
         this.artists = artists;
         this.images = images;
+        this.modifiedAt = modifiedAt;
     }
 
     public Album increaseReviewScore(int score) {
@@ -47,6 +43,7 @@ public class Album {
                 .tracks(this.tracks)
                 .artists(this.artists)
                 .images(this.images)
+                .modifiedAt(this.modifiedAt)
                 .build();
     }
 
@@ -61,6 +58,7 @@ public class Album {
                 .tracks(this.tracks)
                 .artists(this.artists)
                 .images(this.images)
+                .modifiedAt(this.modifiedAt)
                 .build();
     }
 

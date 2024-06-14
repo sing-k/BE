@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.domain.Album;
 
 import lombok.Builder;
@@ -22,6 +21,8 @@ public class AlbumListResponse {
     private double averageScore;
 	private List<ArtistResponse> artists;
 	private List<ImageResponse> images;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
 
 	public static AlbumListResponse from (Album album) {
 
@@ -37,6 +38,7 @@ public class AlbumListResponse {
 			.images(album.getImages().stream()
 				.map(ImageResponse::from)
 				.toList())
+            .modifiedAt(album.getModifiedAt())
 			.build();
 	}
 }
