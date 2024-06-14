@@ -3,7 +3,7 @@ package com.project.singk.mock;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.SpotifyRepository;
 
-import com.project.singk.global.api.Page;
+import com.project.singk.global.api.PageResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +51,7 @@ public class FakeSpotifyRepository implements SpotifyRepository {
     }
 
     @Override
-    public Page<AlbumSimplifiedEntity> searchAlbums(String query, int offset, int limit) {
+    public PageResponse<AlbumSimplifiedEntity> searchAlbums(String query, int offset, int limit) {
         List<ArtistSimplifiedEntity> artists = List.of(
                 ArtistSimplifiedEntity.builder()
                         .id("6HvZYsbFfjnjFrWF950C9d")
@@ -74,7 +74,7 @@ public class FakeSpotifyRepository implements SpotifyRepository {
                         .images(images)
                         .build()
         );
-        return Page.of(
+        return PageResponse.of(
                 offset,
                 limit,
                 albums.size(),
