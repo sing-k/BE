@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.stereotype.Indexed;
 
 @Entity
 @Table(name = "ALBUMS", indexes = {
@@ -95,6 +94,7 @@ public class AlbumEntity extends BaseTimeEntity {
             .tracks(this.tracks.stream().map(TrackEntity::toModel).toList())
             .artists(this.artists.stream().map(ArtistEntity::toModel).toList())
             .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
+            .modifiedAt(this.getModifiedAt())
 			.build();
 	}
 }

@@ -3,8 +3,9 @@ package com.project.singk.domain.album.service;
 import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
+import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +13,8 @@ import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.controller.response.AlbumListResponse;
-import com.project.singk.global.api.Page;
 
 import lombok.RequiredArgsConstructor;
-
 @Service
 @Builder
 @RequiredArgsConstructor
@@ -44,12 +43,12 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
 	@Transactional(readOnly = true)
-	public Page<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
+	public PageResponse<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
 		// 앨범 목록 API 요청 준비
 
-		Page<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
+		PageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
 
-		return Page.of(
+		return PageResponse.of(
                 spotifyAlbums.getOffset(),
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
@@ -62,9 +61,56 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AlbumListResponse> getPreviewAlbumsByAlbumSort(AlbumSort sort, int offset, int limit) {
+    public PageResponse<AlbumListResponse> getPreviewAlbumsByAlbumSort(AlbumSort sort, int offset, int limit) {
         Page<Album> albums = albumRepository.findAllByAlbumSort(sort, offset, limit);
-        return albums.map(AlbumListResponse::from);
+        return PageResponse.of(
+                offset,
+                limit,
+                (int) albums.getTotalElements(),
+                albums.getContent().stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
+        Page<Album> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
+        return PageResponse.of(
+                (int) albums.getPageable().getOffset(),
+                limit,
+                (int) albums.getTotalElements(),
+                albums.stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
+    }
+
+    @Override
+    public PageResponse<AlbumListResponse> getAlbumsByAverageScore(String cursorId, String cursorScore, int limit) {
+        Page<Album> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
+        return PageResponse.of(
+                (int) albums.getPageable().getOffset(),
+                limit,
+                (int) albums.getTotalElements(),
+                albums.stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
+    }
+
+    @Override
+    public PageResponse<AlbumListResponse> getAlbumsByReviewCount(String cursorId, String cursorReviewCount, int limit) {
+        Page<Album> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
+        return PageResponse.of(
+                (int) albums.getPageable().getOffset(),
+                limit,
+                (int) albums.getTotalElements(),
+                albums.stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
     }
 
 }

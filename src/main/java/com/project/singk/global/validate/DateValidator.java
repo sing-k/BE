@@ -16,7 +16,7 @@ public class DateValidator implements ConstraintValidator<Date, String> {
 	@Override
 	public boolean isValid(String date, ConstraintValidatorContext context) {
 		if (date == null) {
-			return false;
+			return true;
 		}
 		return isValidFormat(date, DATE_PATTERN) || isValidFormat(date, DATETIME_PATTERN);
 	}

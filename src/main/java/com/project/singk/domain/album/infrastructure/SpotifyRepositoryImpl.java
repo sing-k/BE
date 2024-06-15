@@ -12,7 +12,7 @@ import com.project.singk.domain.album.infrastructure.spotify.AlbumSimplifiedEnti
 import com.project.singk.domain.album.service.port.SpotifyRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.api.Page;
+import com.project.singk.global.api.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -42,7 +42,7 @@ public class SpotifyRepositoryImpl implements SpotifyRepository {
 	}
 
 	@Override
-	public Page<AlbumSimplifiedEntity> searchAlbums(String query, int offset, int limit) {
+	public PageResponse<AlbumSimplifiedEntity> searchAlbums(String query, int offset, int limit) {
 		final SearchAlbumsRequest searchAlbumsRequest = spotifyApi.searchAlbums(query)
 			.limit(limit)
 			.offset(offset)
@@ -51,7 +51,7 @@ public class SpotifyRepositoryImpl implements SpotifyRepository {
 
 		try {
 			Paging<AlbumSimplified> albums = searchAlbumsRequest.execute();
-			return Page.of(
+			return PageResponse.of(
 				offset,
 				limit,
 				albums.getTotal(),
