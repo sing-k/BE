@@ -63,8 +63,6 @@ public class AlbumEntity {
                 .name(this.name)
                 .type(AlbumType.of(this.type, this.tracks.size()))
                 .releasedAt(this.releasedAt)
-                .totalReviewer(0)
-                .totalScore(0)
                 .tracks(this.tracks.stream().map(TrackSimplifiedEntity::toModel).toList())
                 .artists(this.artists.stream().map(ArtistSimplifiedEntity::toModel).toList())
                 .images(this.images.stream().map(ImageEntity::toModel).toList())

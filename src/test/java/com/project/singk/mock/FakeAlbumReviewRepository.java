@@ -85,48 +85,6 @@ public class FakeAlbumReviewRepository implements AlbumReviewRepository {
     }
 
     @Override
-    public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
-        List<AlbumReview> albumReviews = data.stream().filter(item -> item.getAlbum().getId().equals(albumId)).toList();
-
-        int totalReviewer = albumReviews.size();
-        int totalScore = albumReviews.stream().map(AlbumReview::getScore).reduce(0, Integer::sum);
-
-        return AlbumReviewStatistics.builder()
-                .totalReviewer(totalReviewer)
-                .totalScore(totalScore)
-                .score1Count((int) albumReviews.stream()
-                        .filter(item -> item.getScore() == 1)
-                        .count())
-                .score2Count((int) albumReviews.stream()
-                        .filter(item -> item.getScore() == 2)
-                        .count())
-                .score3Count((int) albumReviews.stream()
-                        .filter(item -> item.getScore() == 3)
-                        .count())
-                .score4Count((int) albumReviews.stream()
-                        .filter(item -> item.getScore() == 4)
-                        .count())
-                .score5Count((int) albumReviews.stream()
-                        .filter(item -> item.getScore() == 5)
-                        .count())
-                .maleCount((int) albumReviews.stream()
-                        .filter(item -> item.getReviewer().getGender() == Gender.MALE)
-                        .count())
-                .maleTotalScore(albumReviews.stream()
-                        .filter(item -> item.getReviewer().getGender() == Gender.MALE)
-                        .map(AlbumReview::getScore)
-                        .reduce(0, Integer::sum))
-                .femaleCount((int) albumReviews.stream()
-                        .filter(item -> item.getReviewer().getGender() == Gender.FEMALE)
-                        .count())
-                .femaleTotalScore(albumReviews.stream()
-                        .filter(item -> item.getReviewer().getGender() == Gender.FEMALE)
-                        .map(AlbumReview::getScore)
-                        .reduce(0, Integer::sum))
-                .build();
-    }
-
-    @Override
     public void delete(AlbumReview albumReview) {
         data.removeIf(item -> item.getId().equals(albumReview.getId()));
     }

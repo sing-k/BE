@@ -30,15 +30,15 @@ public class AlbumListResponse {
 			.id(album.getId())
 			.name(album.getName())
 			.releasedAt(album.getReleasedAt())
-            .count(album.getTotalReviewer())
-            .averageScore(album.calculateAverage())
 			.artists(album.getArtists().stream()
 				.map(ArtistResponse::from)
 				.toList())
 			.images(album.getImages().stream()
 				.map(ImageResponse::from)
 				.toList())
-            .modifiedAt(album.getModifiedAt())
+            .count(album.getStatistics().getTotalReviewer())
+            .averageScore(album.getStatistics().getAverageScore())
+            .modifiedAt(album.getStatistics().getModifiedAt())
 			.build();
 	}
 }

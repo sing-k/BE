@@ -4,6 +4,7 @@ import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
 import com.project.singk.domain.album.infrastructure.spotify.ArtistSimplifiedEntity;
 import com.project.singk.domain.album.infrastructure.spotify.ImageEntity;
 import com.project.singk.domain.album.infrastructure.spotify.TrackSimplifiedEntity;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -68,46 +69,32 @@ class AlbumTest {
     }
 
     @Test
-    public void Album은_평점을_받아_총_평점을_증가시킬_수_있다() {
+    public void Album은_통계를_업데이트할_수_있다() {
+
         // given
-        Album album = Album.builder()
-                .totalScore(0)
-                .totalReviewer(0)
+        AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
+                .totalScore(50)
+                .totalReviewer(10)
+                .averageScore(5.0)
+                .modifiedAt(LocalDateTime.of(2024, 6,16, 0,0,0))
                 .build();
+
+        Album album = Album.builder()
+                .id("0EhZEM4RRz0yioTgucDhJq")
+                .name("How Sweet")
+                .type(AlbumType.EP)
+                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .build();
+
         // when
-        album = album.increaseReviewScore(4);
+        album = album.updateStatistic(statistics);
 
         // then
-        assertThat(album.getTotalReviewer()).isEqualTo(1);
-        assertThat(album.getTotalScore()).isEqualTo(4);
+        assertThat(album.getStatistics()).isNotNull();
+        assertThat(album.getStatistics().getAverageScore()).isEqualTo(5.0);
+        assertThat(album.getStatistics().getTotalScore()).isEqualTo(50);
+        assertThat(album.getStatistics().getTotalReviewer()).isEqualTo(10);
     }
 
-    @Test
-    public void Album은_평점을_받아_총_평점을_감소시킬_수_있다() {
-        // given
-        Album album = Album.builder()
-                .totalScore(4)
-                .totalReviewer(1)
-                .build();
-        // when
-        album = album.decreaseReviewScore(4);
 
-        // then
-        assertThat(album.getTotalReviewer()).isEqualTo(0);
-        assertThat(album.getTotalScore()).isEqualTo(0);
-    }
-
-    @Test
-    public void Album은_평균_평점을_계산할_수_있다() {
-        // given
-        Album album = Album.builder()
-                .totalScore(123)
-                .totalReviewer(25)
-                .build();
-        // when
-        double result = album.calculateAverage();
-
-        // then
-        assertThat(result).isEqualTo(4.92);
-    }
 }

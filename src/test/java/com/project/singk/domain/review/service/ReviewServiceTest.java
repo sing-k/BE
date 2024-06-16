@@ -9,6 +9,7 @@ import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.domain.AlbumReviewCreate;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
@@ -47,6 +48,7 @@ class ReviewServiceTest {
                 .name("How Sweet")
                 .type(AlbumType.EP)
                 .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .statistics(AlbumReviewStatistics.empty())
                 .build());
     }
 
@@ -226,34 +228,21 @@ class ReviewServiceTest {
         tc.memberRepository.saveAll(members);
         Album album = tc.albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
+                .statistics(AlbumReviewStatistics.empty())
                 .build());
-
-        List<AlbumReview> albumReviews = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            albumReviews.add(AlbumReview.builder()
-                    .id((long) i)
-                    .content("감상평 내용입니다." + i)
-                    .score(i)
-                    .prosCount(i)
-                    .consCount(0)
-                    .createdAt(LocalDateTime.of(2024, 6, 6, 0, 0, i))
-                    .reviewer(members.get(i - 1))
-                    .album(album)
-                    .build());
-        }
-        albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
+        album = tc.albumRepository.save(album);
 
         // when
         AlbumReviewStatisticsResponse result = tc.reviewService.getAlbumReviewStatistics("0EhZEM4RRz0yioTgucDhJq");
 
         // then
         assertAll(
-                () -> assertThat(result.getCount()).isEqualTo(5),
-                () -> assertThat(result.getTotalScore()).isEqualTo(15),
-                () -> assertThat(result.getAverageScore()).isEqualTo(3.0),
-                () -> assertThat(result.getScoreStatistics().get(0).getRatio()).isEqualTo(20.0),
-                () -> assertThat(result.getGenderStatistics().get(0).getAverageScore()).isEqualTo(3.0),
-                () -> assertThat(result.getGenderStatistics().get(0).getRatio()).isEqualTo(40.0)
+                () -> assertThat(result.getCount()).isEqualTo(0),
+                () -> assertThat(result.getTotalScore()).isEqualTo(0),
+                () -> assertThat(result.getAverageScore()).isEqualTo(0.0),
+                () -> assertThat(result.getScoreStatistics().get(0).getRatio()).isEqualTo(0.0),
+                () -> assertThat(result.getGenderStatistics().get(0).getAverageScore()).isEqualTo(0.0),
+                () -> assertThat(result.getGenderStatistics().get(0).getRatio()).isEqualTo(0.0)
         );
     }
 }

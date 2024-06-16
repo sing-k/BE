@@ -4,6 +4,7 @@ import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
 import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
 import com.project.singk.mock.TestContainer;
 import org.checkerframework.checker.units.qual.A;
@@ -123,16 +124,21 @@ class AlbumServiceTest {
         // given
         List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 8, 18, 10, 14);
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
+
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
+                            .totalReviewer(totalReviewer.get(i - 1))
+                            .totalScore(totalScore.get(i - 1))
+                            .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                            .build();
+
             albums.add(Album.builder()
                     .id("cursor-id" + i)
-                    .totalReviewer(totalReviewer.get(i - 1))
-                    .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
@@ -164,14 +170,18 @@ class AlbumServiceTest {
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            albums.add(Album.builder()
-                    .id("cursor-id" + i)
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
                     .totalReviewer(totalReviewer.get(i - 1))
                     .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
+                    .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                    .build();
+
+            albums.add(Album.builder()
+                    .id("cursor-id" + i)
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
@@ -201,16 +211,26 @@ class AlbumServiceTest {
         // given
         List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 8, 18, 10, 14);
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
+        List<Double> totalAverage = List.of(3.5, 3.12, 4.17, 3.67, 3.0, 4.5, 3.5, 4.17, 3.2, 4.23);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
+            int reviewer = totalReviewer.get(i - 1);
+            int score = totalScore.get(i - 1);
+            double average = totalAverage.get(i - 1);
+
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
+                    .totalReviewer(reviewer)
+                    .totalScore(score)
+                    .averageScore(average)
+                    .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                    .build();
+
             albums.add(Album.builder()
                     .id("cursor-id" + i)
-                    .totalReviewer(totalReviewer.get(i - 1))
-                    .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
@@ -240,16 +260,26 @@ class AlbumServiceTest {
         // given
         List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 8, 18, 10, 14);
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
+        List<Double> totalAverage = List.of(3.5, 3.12, 4.17, 3.67, 3.0, 4.5, 3.5, 4.17, 3.2, 4.23);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
+            int reviewer = totalReviewer.get(i - 1);
+            int score = totalScore.get(i - 1);
+            double average = totalAverage.get(i - 1);
+
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
+                    .totalReviewer(reviewer)
+                    .totalScore(score)
+                    .averageScore(average)
+                    .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                    .build();
+
             albums.add(Album.builder()
                     .id("cursor-id" + i)
-                    .totalReviewer(totalReviewer.get(i - 1))
-                    .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
@@ -281,14 +311,18 @@ class AlbumServiceTest {
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            albums.add(Album.builder()
-                    .id("cursor-id" + i)
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
                     .totalReviewer(totalReviewer.get(i - 1))
                     .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
+                    .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                    .build();
+
+            albums.add(Album.builder()
+                    .id("cursor-id" + i)
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
@@ -320,14 +354,18 @@ class AlbumServiceTest {
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            albums.add(Album.builder()
-                    .id("cursor-id" + i)
+            AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
                     .totalReviewer(totalReviewer.get(i - 1))
                     .totalScore(totalScore.get(i - 1))
-                    .modifiedAt(LocalDateTime.of(2024,6,i,0,0,0 ))
+                    .modifiedAt(LocalDateTime.of(2024, 6, i, 0, 0, 0))
+                    .build();
+
+            albums.add(Album.builder()
+                    .id("cursor-id" + i)
                     .tracks(new ArrayList<>())
                     .artists(new ArrayList<>())
                     .images(new ArrayList<>())
+                    .statistics(statistics)
                     .build()
             );
         }
