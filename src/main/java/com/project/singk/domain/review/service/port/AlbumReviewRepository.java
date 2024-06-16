@@ -4,7 +4,6 @@ import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.domain.review.domain.AlbumReview;
-import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +15,5 @@ public interface AlbumReviewRepository {
     Optional<AlbumReview> findById(Long id);
     boolean existsByMemberAndAlbum(Member member, Album album);
     List<AlbumReview> getAllByAlbumId(String albumId, ReviewSort sort);
-    AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId);
     void delete(AlbumReview albumReview);
 }

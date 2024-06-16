@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.project.singk.domain.album.domain.Album;
 
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import lombok.Builder;
 import lombok.Getter;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
@@ -53,10 +54,9 @@ public class AlbumSimplifiedEntity {
 			.id(this.id)
 			.name(this.name)
 			.releasedAt(this.releasedAt)
-            .totalReviewer(0)
-            .totalScore(0)
             .artists(this.artists.stream().map(ArtistSimplifiedEntity::toModel).toList())
             .images(this.images.stream().map(ImageEntity::toModel).toList())
+            .statistics(AlbumReviewStatistics.empty())
 			.build();
 	}
 }

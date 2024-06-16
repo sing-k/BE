@@ -1,6 +1,5 @@
 package com.project.singk.domain.review.controller.port;
 
-import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import com.project.singk.domain.review.domain.AlbumReviewCreate;
