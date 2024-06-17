@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumType;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
+import com.project.singk.domain.review.infrastructure.AlbumReviewStatisticsEntity;
 import com.project.singk.global.domain.BaseTimeEntity;
 
 import jakarta.persistence.*;
@@ -14,11 +16,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "ALBUMS", indexes = {
-        @Index(name = "idx_album_modified_at", columnList = "modifiedAt"),
-        @Index(name = "idx_album_total_reviewer", columnList = "totalReviewer"),
-        @Index(name = "idx_album_total_score", columnList = "totalScore")
-})
+@Table(name = "ALBUMS")
 @Getter
 @NoArgsConstructor
 public class AlbumEntity extends BaseTimeEntity {
@@ -37,14 +35,6 @@ public class AlbumEntity extends BaseTimeEntity {
 	@Column(name = "released_at")
 	private LocalDateTime releasedAt;
 
-    @ColumnDefault("0")
-    @Column(name = "total_reviewer")
-    private long totalReviewer;
-
-    @ColumnDefault("0")
-    @Column(name = "total_Score")
-    private long totalScore;
-
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrackEntity> tracks;
@@ -57,29 +47,32 @@ public class AlbumEntity extends BaseTimeEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlbumImageEntity> images;
 
+    @JoinColumn(name = "statistic_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private AlbumReviewStatisticsEntity statistics;
+
     @Builder
-    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, long totalReviewer, long totalScore, List<TrackEntity> tracks, List<ArtistEntity> artists, List<AlbumImageEntity> images) {
+    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, List<TrackEntity> tracks, List<ArtistEntity> artists, List<AlbumImageEntity> images, AlbumReviewStatisticsEntity statistics) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.releasedAt = releasedAt;
-        this.totalReviewer = totalReviewer;
-        this.totalScore = totalScore;
         this.tracks = tracks;
         this.artists = artists;
         this.images = images;
+        this.statistics = statistics;
     }
+
 	public static AlbumEntity from (Album album) {
 		return AlbumEntity.builder()
 			.id(album.getId())
 			.name(album.getName())
 			.type(album.getType())
 			.releasedAt(album.getReleasedAt())
-            .totalReviewer(album.getTotalReviewer())
-            .totalScore(album.getTotalScore())
             .tracks(album.getTracks().stream().map(TrackEntity::from).toList())
             .artists(album.getArtists().stream().map(ArtistEntity::from).toList())
             .images(album.getImages().stream().map(AlbumImageEntity::from).toList())
+            .statistics(AlbumReviewStatisticsEntity.from(album.getStatistics()))
 			.build();
 	}
 
@@ -89,12 +82,10 @@ public class AlbumEntity extends BaseTimeEntity {
 			.name(this.name)
 			.type(this.type)
 			.releasedAt(this.releasedAt)
-            .totalReviewer(this.totalReviewer)
-            .totalScore(this.totalScore)
             .tracks(this.tracks.stream().map(TrackEntity::toModel).toList())
             .artists(this.artists.stream().map(ArtistEntity::toModel).toList())
             .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
-            .modifiedAt(this.getModifiedAt())
+            .statistics(this.statistics.toModel())
 			.build();
 	}
 }

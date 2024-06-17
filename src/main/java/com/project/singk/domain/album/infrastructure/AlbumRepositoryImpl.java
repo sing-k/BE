@@ -1,20 +1,14 @@
 package com.project.singk.domain.album.infrastructure;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.entity.*;
 import com.project.singk.domain.album.infrastructure.jpa.AlbumJpaRepository;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -34,6 +28,7 @@ import static com.project.singk.domain.album.infrastructure.entity.QAlbumEntity.
 import static com.project.singk.domain.album.infrastructure.entity.QAlbumImageEntity.albumImageEntity;
 import static com.project.singk.domain.album.infrastructure.entity.QArtistEntity.artistEntity;
 import static com.project.singk.domain.album.infrastructure.entity.QTrackEntity.trackEntity;
+import static com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity.albumReviewStatisticsEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -58,6 +53,33 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 	}
 
     @Override
+    public Album getByIdWithStatistics(String albumId) {
+        return findByIdWithStatistics(albumId)
+                .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
+    }
+
+    @Override
+    public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
+
+        return jpaQueryFactory.select(albumReviewStatisticsEntity)
+                .from(albumEntity)
+                .leftJoin(albumEntity.statistics, albumReviewStatisticsEntity)
+                .where(albumEntity.id.eq(albumId))
+                .fetchOne()
+                .toModel();
+    }
+
+    @Override
+    public Optional<Album> findByIdWithStatistics(String albumId) {
+        return Optional.ofNullable(jpaQueryFactory.select(albumEntity)
+                .from(albumEntity).fetchJoin()
+                .where(albumEntity.id.eq(albumId))
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
+                .fetchOne())
+                .map(AlbumEntity::toModel);
+    }
+
+    @Override
 	public Optional<Album> findById(String id) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(albumEntity)
@@ -71,30 +93,12 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 	}
 
     @Override
-    public Page<Album> findAllByAlbumSort(AlbumSort sort, int offset, int limit) {
-        List<Album> albums = jpaQueryFactory.select(albumEntity)
-                .from(albumEntity)
-                .orderBy(createOrderSpecifier(sort))
-                .offset(offset)
-                .limit(limit)
-                .fetch().stream()
-                .map(AlbumEntity::toModel)
-                .toList();
-
-        JPAQuery<Long> count = jpaQueryFactory.select(albumEntity.count())
-                .from(albumEntity);
-
-        Pageable pageable = PageRequest.of(offset / limit, limit);
-
-        return PageableExecutionUtils.getPage(albums, pageable, count::fetchOne);
-    }
-
-    @Override
     public Page<Album> findAllByModifiedAt(String cursorId, String cursorDate, int limit) {
         List<Album> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByDate(cursorId, cursorDate))
-                .orderBy(albumEntity.modifiedAt.desc())
+                .orderBy(albumReviewStatisticsEntity.modifiedAt.desc())
                 .limit(limit)
                 .fetch().stream()
                 .map(AlbumEntity::toModel)
@@ -111,13 +115,11 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public Page<Album> findAllByAverageScore(String cursorId, String cursorScore, int limit) {
 
-        NumberTemplate<Double> averageScore = Expressions.numberTemplate(Double.class,
-                "CAST(ROUND(CASE WHEN {1} = 0 THEN NULL ELSE {0} / {1} END, 2) AS DOUBLE)", albumEntity.totalScore, albumEntity.totalReviewer);
-
         List<Album> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
-                .where(cursorByAverage(cursorId, cursorScore, averageScore))
-                .orderBy(averageScore.desc().nullsLast())
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
+                .where(cursorByAverage(cursorId, cursorScore))
+                .orderBy(albumReviewStatisticsEntity.averageScore.desc())
                 .limit(limit)
                 .fetch().stream()
                 .map(AlbumEntity::toModel)
@@ -135,8 +137,9 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     public Page<Album> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
         List<Album> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByReviewCount(cursorId, cursorReviewCount))
-                .orderBy(albumEntity.totalReviewer.desc())
+                .orderBy(albumReviewStatisticsEntity.totalReviewer.desc())
                 .limit(limit)
                 .fetch().stream()
                 .map(AlbumEntity::toModel)
@@ -153,21 +156,21 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         if (cursorId == null || cursorReviewCount == null) {
             return null;
         }
-        long reviewCount = Long.parseLong(cursorReviewCount);
+        int reviewCount = Integer.parseInt(cursorReviewCount);
 
-        return albumEntity.totalReviewer.eq(reviewCount)
-                .and(albumEntity.id.ne(cursorId))
-                .or(albumEntity.totalReviewer.lt(reviewCount));
+        return albumReviewStatisticsEntity.totalReviewer.eq(reviewCount)
+                .and(albumEntity.id.lt(cursorId))
+                .or(albumReviewStatisticsEntity.totalReviewer.lt(reviewCount));
     }
-    private BooleanExpression cursorByAverage(String cursorId, String cursorScore, NumberTemplate<Double> averageScore) {
+    private BooleanExpression cursorByAverage(String cursorId, String cursorScore) {
         if (cursorId == null || cursorScore == null) {
             return null;
         }
 
         double score = Double.parseDouble(cursorScore);
-        return averageScore.eq(score)
-                .and(albumEntity.id.ne(cursorId))
-                .or(averageScore.lt(score));
+        return albumReviewStatisticsEntity.averageScore.eq(score)
+                .and(albumEntity.id.lt(cursorId))
+                .or(albumReviewStatisticsEntity.averageScore.lt(score));
     }
 
     private BooleanExpression cursorByDate(String cursorId, String cursorDate) {
@@ -178,17 +181,8 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime date = LocalDateTime.parse(cursorDate, formatter);
 
-        return albumEntity.modifiedAt.eq(date)
-                .and(albumEntity.id.ne(cursorId))
-                .or(albumEntity.modifiedAt.lt(date));
+        return albumReviewStatisticsEntity.modifiedAt.eq(date)
+                .and(albumEntity.id.lt(cursorId))
+                .or(albumReviewStatisticsEntity.modifiedAt.lt(date));
     }
-
-    private OrderSpecifier createOrderSpecifier(AlbumSort sort) {
-        return switch (sort) {
-            case NEW -> new OrderSpecifier(Order.DESC, albumEntity.modifiedAt);
-            case SCORES -> new OrderSpecifier(Order.DESC, albumEntity.totalScore);
-            case REVIEWERS -> new OrderSpecifier(Order.DESC, albumEntity.totalReviewer);
-        };
-    }
-
 }

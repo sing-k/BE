@@ -24,6 +24,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.project.singk.domain.album.infrastructure.entity.QAlbumEntity.albumEntity;
+import static com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity.albumReviewStatisticsEntity;
+
 @Repository
 @RequiredArgsConstructor
 public class AlbumReviewRepositoryImpl implements AlbumReviewRepository {
@@ -62,7 +65,7 @@ public class AlbumReviewRepositoryImpl implements AlbumReviewRepository {
     public List<AlbumReview> getAllByAlbumId(String albumId, ReviewSort sort) {
         QAlbumReviewEntity albumReview = QAlbumReviewEntity.albumReviewEntity;
         QMemberEntity member = QMemberEntity.memberEntity;
-        QAlbumEntity album = QAlbumEntity.albumEntity;
+        QAlbumEntity album = albumEntity;
 
         return jpaQueryFactory.select(Projections.fields(AlbumReviewEntity.class,
                     albumReview.id,
@@ -90,33 +93,6 @@ public class AlbumReviewRepositoryImpl implements AlbumReviewRepository {
             case NEW -> new OrderSpecifier(Order.DESC, albumReview.createdAt);
             case LIKES -> new OrderSpecifier(Order.DESC, albumReview.prosCount);
         };
-    }
-
-    @Override
-    public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
-        QAlbumReviewEntity albumReview = QAlbumReviewEntity.albumReviewEntity;
-        QMemberEntity member = QMemberEntity.memberEntity;
-        QAlbumEntity album = QAlbumEntity.albumEntity;
-
-        return jpaQueryFactory.select(new QAlbumReviewStatistics(
-                albumReview.count().as("totalReviewer"),
-                albumReview.score.sum().as("totalScore"),
-                albumReview.score.when(1).then(1).otherwise(0).sum().as("score1Count"),
-                albumReview.score.when(2).then(1).otherwise(0).sum().as("score2Count"),
-                albumReview.score.when(3).then(1).otherwise(0).sum().as("score3Count"),
-                albumReview.score.when(4).then(1).otherwise(0).sum().as("score4Count"),
-                albumReview.score.when(5).then(1).otherwise(0).sum().as("score5Count"),
-                member.gender.when(Gender.MALE).then(1).otherwise(0).sum().as("maleCount"),
-                member.gender.when(Gender.MALE).then(albumReview.score).otherwise(0).sum().as("maleTotalScore"),
-                member.gender.when(Gender.FEMALE).then(1).otherwise(0).sum().as("femaleCount"),
-                member.gender.when(Gender.FEMALE).then(albumReview.score).otherwise(0).sum().as("femaleTotalScore")
-                ))
-                .from(albumReview)
-                .leftJoin(albumReview.member, member)
-                .leftJoin(albumReview.album, album)
-                .where(album.id.eq(albumId))
-                .groupBy(album.id)
-                .fetchOne();
     }
 
     @Override

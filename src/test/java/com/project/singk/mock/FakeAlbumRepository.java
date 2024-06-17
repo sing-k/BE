@@ -1,14 +1,15 @@
 package com.project.singk.mock;
 
-import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.service.port.AlbumRepository;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,13 +35,29 @@ public class FakeAlbumRepository implements AlbumRepository {
     }
 
     @Override
-    public Optional<Album> findById(String id) {
-        return data.stream().filter(item -> item.getId().equals(id)).findAny();
+    public Album getByIdWithStatistics(String albumId) {
+        return findByIdWithStatistics(albumId)
+                .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
     }
 
     @Override
-    public Page<Album> findAllByAlbumSort(AlbumSort sort, int offset, int limit) {
-        return null;
+    public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
+        return data.stream()
+                .filter(item -> item.getId().equals(albumId))
+                .findAny()
+                .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM)).getStatistics();
+    }
+
+    @Override
+    public Optional<Album> findByIdWithStatistics(String albumId) {
+        return data.stream()
+                .filter(item -> item.getId().equals(albumId))
+                .findAny();
+    }
+
+    @Override
+    public Optional<Album> findById(String id) {
+        return data.stream().filter(item -> item.getId().equals(id)).findAny();
     }
 
     @Override
@@ -49,7 +66,7 @@ public class FakeAlbumRepository implements AlbumRepository {
 
         List<Album> albums = data.stream()
                 .filter(item -> cursorByDate(cursorId, cursorDate, item))
-                .sorted(Comparator.comparing(Album::getModifiedAt).reversed())
+                .sorted((a, b) -> b.getStatistics().getModifiedAt().compareTo(a.getStatistics().getModifiedAt()))
                 .limit(limit)
                 .toList();
 
@@ -68,8 +85,8 @@ public class FakeAlbumRepository implements AlbumRepository {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         );
 
-        return (item.getModifiedAt().equals(date) && !item.getId().equals(cursorId))
-                || item.getModifiedAt().isBefore(date);
+        return (item.getStatistics().getModifiedAt().equals(date) && !item.getId().equals(cursorId))
+                || item.getStatistics().getModifiedAt().isBefore(date);
     }
 
     @Override
@@ -77,7 +94,15 @@ public class FakeAlbumRepository implements AlbumRepository {
 
         List<Album> albums = data.stream()
                 .filter(item -> cursorByAverage(cursorId, cursorScore, item))
-                .sorted(Comparator.comparing(Album::calculateAverage).reversed())
+                .sorted((a, b) -> {
+                    if(b.getStatistics().getAverageScore() > a.getStatistics().getAverageScore()) {
+                        return 1;
+                    } else if (b.getStatistics().getAverageScore() == a.getStatistics().getAverageScore()) {
+                        return 0;
+                    } else {
+                        return  -1;
+                    }
+                })
                 .limit(limit)
                 .toList();
 
@@ -93,14 +118,14 @@ public class FakeAlbumRepository implements AlbumRepository {
 
         double score = Double.parseDouble(cursorScore);
 
-        return (item.calculateAverage() == score && !item.getId().equals(cursorId))
-                || item.calculateAverage() < score;
+        return (item.getStatistics().getAverageScore() == score && !item.getId().equals(cursorId))
+                || item.getStatistics().getAverageScore() < score;
     }
     @Override
     public Page<Album> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
         List<Album> albums = data.stream()
                 .filter(item -> cursorByReviewCount(cursorId, cursorReviewCount, item))
-                .sorted(Comparator.comparing(Album::getTotalReviewer).reversed())
+                .sorted((a, b) -> b.getStatistics().getTotalReviewer() - a.getStatistics().getTotalReviewer())
                 .limit(limit)
                 .toList();
 
@@ -116,7 +141,7 @@ public class FakeAlbumRepository implements AlbumRepository {
 
         long count = Long.parseLong(cursorReviewCount);
 
-        return (item.getTotalReviewer() == count && !item.getId().equals(cursorId))
-                || item.getTotalReviewer() < count;
+        return (item.getStatistics().getTotalReviewer() == count && !item.getId().equals(cursorId))
+                || item.getStatistics().getTotalReviewer() < count;
     }
 }

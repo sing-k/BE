@@ -3,6 +3,7 @@ package com.project.singk.domain.album.service;
 import com.project.singk.domain.album.controller.request.AlbumSort;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,11 @@ public class AlbumServiceImpl implements AlbumService {
 		}
 
 		AlbumEntity spotifyAlbum = spotifyRepository.getAlbumById(albumId);
-        album = albumRepository.save(spotifyAlbum.toModel());
+        AlbumReviewStatistics statistics = AlbumReviewStatistics.empty();
+        album = spotifyAlbum.toModel();
+        album = album.updateStatistic(statistics);
+        album = albumRepository.save(album);
+
 		return AlbumDetailResponse.from(album);
 	}
 
@@ -58,20 +63,6 @@ public class AlbumServiceImpl implements AlbumService {
 
 		);
 	}
-
-    @Override
-    @Transactional(readOnly = true)
-    public PageResponse<AlbumListResponse> getPreviewAlbumsByAlbumSort(AlbumSort sort, int offset, int limit) {
-        Page<Album> albums = albumRepository.findAllByAlbumSort(sort, offset, limit);
-        return PageResponse.of(
-                offset,
-                limit,
-                (int) albums.getTotalElements(),
-                albums.getContent().stream()
-                        .map(AlbumListResponse::from)
-                        .toList()
-        );
-    }
 
     @Override
     @Transactional(readOnly = true)

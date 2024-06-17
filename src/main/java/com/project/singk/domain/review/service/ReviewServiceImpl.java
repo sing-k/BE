@@ -49,7 +49,10 @@ public class ReviewServiceImpl implements ReviewService {
 		albumReview = albumReviewRepository.save(albumReview);
 
         // 앨범 평점 수정
-        album = album.increaseReviewScore(albumReviewCreate.getScore());
+        AlbumReviewStatistics statistics = album.getStatistics();
+        statistics = statistics.update(member, albumReview, false);
+
+        album = album.updateStatistic(statistics);
         album = albumRepository.save(album);
 
 		return PkResponseDto.of(albumReview.getId());
@@ -65,7 +68,10 @@ public class ReviewServiceImpl implements ReviewService {
         albumReview.validateReviewer(member);
 
         // 앨범 평점 수정
-        album = album.decreaseReviewScore(albumReview.getScore());
+        AlbumReviewStatistics statistics = album.getStatistics();
+        statistics = statistics.update(member, albumReview, true);
+
+        album = album.updateStatistic(statistics);
         album = albumRepository.save(album);
 
         albumReviewRepository.delete(albumReview);
@@ -84,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public AlbumReviewStatisticsResponse getAlbumReviewStatistics(String albumId) {
-        AlbumReviewStatistics albumReviewStatistics = albumReviewRepository.getAlbumReviewStatisticsByAlbumId(albumId);
+        AlbumReviewStatistics albumReviewStatistics = albumRepository.getAlbumReviewStatisticsByAlbumId(albumId);
 
         return AlbumReviewStatisticsResponse.from(albumReviewStatistics);
     }

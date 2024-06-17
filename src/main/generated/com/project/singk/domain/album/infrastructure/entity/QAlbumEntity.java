@@ -18,6 +18,8 @@ public class QAlbumEntity extends EntityPathBase<AlbumEntity> {
 
     private static final long serialVersionUID = -142787L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QAlbumEntity albumEntity = new QAlbumEntity("albumEntity");
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
@@ -38,24 +40,31 @@ public class QAlbumEntity extends EntityPathBase<AlbumEntity> {
 
     public final DateTimePath<java.time.LocalDateTime> releasedAt = createDateTime("releasedAt", java.time.LocalDateTime.class);
 
-    public final NumberPath<Long> totalReviewer = createNumber("totalReviewer", Long.class);
-
-    public final NumberPath<Long> totalScore = createNumber("totalScore", Long.class);
+    public final com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity statistics;
 
     public final ListPath<TrackEntity, QTrackEntity> tracks = this.<TrackEntity, QTrackEntity>createList("tracks", TrackEntity.class, QTrackEntity.class, PathInits.DIRECT2);
 
     public final EnumPath<com.project.singk.domain.album.domain.AlbumType> type = createEnum("type", com.project.singk.domain.album.domain.AlbumType.class);
 
     public QAlbumEntity(String variable) {
-        super(AlbumEntity.class, forVariable(variable));
+        this(AlbumEntity.class, forVariable(variable), INITS);
     }
 
     public QAlbumEntity(Path<? extends AlbumEntity> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QAlbumEntity(PathMetadata metadata) {
-        super(AlbumEntity.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QAlbumEntity(PathMetadata metadata, PathInits inits) {
+        this(AlbumEntity.class, metadata, inits);
+    }
+
+    public QAlbumEntity(Class<? extends AlbumEntity> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.statistics = inits.isInitialized("statistics") ? new com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity(forProperty("statistics")) : null;
     }
 
 }

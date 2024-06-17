@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AlbumDetailResponseTest {
 
     @Test
-    public void AlbumDetailResponseTest를_만들_수_있다() {
+    public void Album으로_AlbumDetailResponseTest를_만들_수_있다() {
         // given
 
         List<Track> tracks = List.of(
@@ -45,8 +45,6 @@ class AlbumDetailResponseTest {
                 .name("How Sweet")
                 .type(AlbumType.EP)
                 .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
-                .totalScore(20)
-                .totalReviewer(4)
                 .tracks(tracks)
                 .artists(artists)
                 .images(images)

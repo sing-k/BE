@@ -1,6 +1,7 @@
 package com.project.singk.domain.album.controller.response;
 
 import com.project.singk.domain.album.domain.*;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -24,15 +25,21 @@ class AlbumListResponseTest {
                         .build()
         );
 
+        AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
+                .totalScore(50)
+                .totalReviewer(10)
+                .averageScore(5.0)
+                .modifiedAt(LocalDateTime.of(2024, 6,16, 0,0,0))
+                .build();
+
         Album album = Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .name("How Sweet")
                 .type(AlbumType.EP)
                 .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
-                .totalReviewer(4)
-                .totalScore(20)
                 .artists(artists)
                 .images(images)
+                .statistics(statistics)
                 .build();
 
         // when
@@ -44,6 +51,8 @@ class AlbumListResponseTest {
                 () -> assertThat(response.getName()).isEqualTo("How Sweet"),
                 () -> assertThat(response.getReleasedAt()).isEqualTo(LocalDateTime.of(2024, 5, 24, 0, 0, 0)),
                 () -> assertThat(response.getAverageScore()).isEqualTo(5.0),
+                () -> assertThat(response.getCount()).isEqualTo(10),
+                () -> assertThat(response.getModifiedAt()).isEqualTo(LocalDateTime.of(2024, 6,16,0,0,0)),
                 () -> assertThat(response.getArtists().get(0).getName()).isEqualTo("NewJeans"),
                 () -> assertThat(response.getImages().get(0).getImageUrl()).isEqualTo("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
         );
