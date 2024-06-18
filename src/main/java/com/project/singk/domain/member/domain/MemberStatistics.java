@@ -20,11 +20,26 @@ public class MemberStatistics {
         this.totalReviewScore = totalReviewScore;
     }
 
+    public double calculateAverage(long a, long b) {
+        if (b == 0) return 0.0;
+
+        return Math.round((double) a / b * 100) / 100.0;
+    }
+
     public static MemberStatistics empty() {
         return MemberStatistics.builder()
                 .totalActivityScore(0)
                 .totalReview(0)
                 .totalReviewScore(0)
+                .build();
+    }
+
+    public MemberStatistics updateActivity(ActivityHistory activityHistory) {
+        return MemberStatistics.builder()
+                .id(this.id)
+                .totalActivityScore(this.totalActivityScore + activityHistory.getScore())
+                .totalReview(this.totalReview)
+                .totalReviewScore(this.totalReviewScore)
                 .build();
     }
 
