@@ -5,16 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
+import com.project.singk.domain.member.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.project.singk.domain.member.controller.response.MyProfileResponse;
-import com.project.singk.domain.member.domain.Gender;
-import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.member.domain.MemberUpdate;
-import com.project.singk.domain.member.domain.Role;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
@@ -36,6 +33,7 @@ class MemberServiceTest {
 			.birthday(LocalDate.of(1999, 12, 30).atStartOfDay())
 			.gender(Gender.MALE)
 			.role(Role.ROLE_USER)
+            .statistics(MemberStatistics.empty())
 			.build());
 	}
 

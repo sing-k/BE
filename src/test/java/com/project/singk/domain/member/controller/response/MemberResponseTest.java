@@ -2,6 +2,7 @@ package com.project.singk.domain.member.controller.response;
 
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.domain.Role;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +25,7 @@ class MemberResponseTest {
                 .birthday(LocalDate.of(1999, 12, 30).atStartOfDay())
                 .gender(Gender.MALE)
                 .role(Role.ROLE_USER)
+                .statistics(MemberStatistics.empty())
                 .build();
 
         String imageUrl = "imageUrl";
@@ -36,7 +38,8 @@ class MemberResponseTest {
                 () -> assertThat(memberResponse.getId()).isEqualTo(1L),
                 () -> assertThat(memberResponse.getImageUrl()).isEqualTo(imageUrl),
                 () -> assertThat(memberResponse.getNickname()).isEqualTo("SingK"),
-                () -> assertThat(memberResponse.getGender()).isEqualTo("남성")
+                () -> assertThat(memberResponse.getGender()).isEqualTo("남성"),
+                () -> assertThat(memberResponse.getStatistics().getTotalActivityScore()).isEqualTo(0)
         );
     }
 
