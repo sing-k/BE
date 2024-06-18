@@ -16,12 +16,14 @@ public class MemberResponse {
 	private String imageUrl;
 	private String nickname;
 	private String gender;
+    private MemberStatisticsResponse statistics;
 	public static MemberResponse from(Member member, String imageUrl) {
 		return MemberResponse.builder()
 			.id(member.getId())
 			.imageUrl(imageUrl)
 			.nickname(member.getNickname())
 			.gender(member.getGender().getName())
+            .statistics(MemberStatisticsResponse.from(member.getStatistics()))
 			.build();
 	}
 }
