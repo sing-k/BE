@@ -1,6 +1,10 @@
 package com.project.singk.domain.vote.service;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
@@ -28,17 +32,18 @@ public class VoteServiceImpl implements VoteService {
 	private final AlbumReviewVoteRepository albumReviewVoteRepository;
 	private final MemberRepository memberRepository;
 	private final AlbumReviewRepository albumReviewRepository;
+    private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
 	public PkResponseDto createAlbumReviewVote(Long memberId, Long albumReviewId, VoteCreate voteCreate) {
-		Member member = memberRepository.getById(memberId);
+		Member voter = memberRepository.getById(memberId);
 		AlbumReview albumReview = albumReviewRepository.getById(albumReviewId);
 
 		// 자신의 리뷰에는 공감/비공감 불가
-		albumReview.validateVoter(member);
+		albumReview.validateVoter(voter);
 
 		// 이미 공감/비공감 했는 지 확인
-		if (albumReviewVoteRepository.existsByMemberAndAlbumReview(member, albumReview)) {
+		if (albumReviewVoteRepository.existsByMemberAndAlbumReview(voter, albumReview)) {
 			throw new ApiException(AppHttpStatus.DUPLICATE_ALBUM_REVIEW_VOTE);
 		}
 
@@ -46,8 +51,30 @@ public class VoteServiceImpl implements VoteService {
 		albumReview = albumReview.vote(VoteType.valueOf(voteCreate.getType()));
         albumReview = albumReviewRepository.save(albumReview);
 
-        AlbumReviewVote albumReviewVote = AlbumReviewVote.from(voteCreate, member, albumReview);
+        AlbumReviewVote albumReviewVote = AlbumReviewVote.from(voteCreate, voter, albumReview);
         albumReviewVote = albumReviewVoteRepository.save(albumReviewVote);
+
+        // 감상평 작성자 활동 점수 반영
+        Member reviewer = albumReview.getReviewer();
+        ActivityHistory reviewerActivity = ActivityHistory.from(ActivityType.RECOMMENDED_ALBUM_REVIEW, reviewer);
+        reviewerActivity = activityHistoryRepository.save(reviewerActivity);
+
+        MemberStatistics reviewerStatistics = reviewer.getStatistics();
+        reviewerStatistics = reviewerStatistics.updateActivity(reviewerActivity);
+
+        reviewer = reviewer.updateStatistic(reviewerStatistics);
+        reviewer = memberRepository.save(reviewer);
+
+        // 감상평 투표자 활동 점수 반영
+        ActivityHistory voterActivity = ActivityHistory.from(ActivityType.REACT_ALBUM_REVIEW, voter);
+        voterActivity = activityHistoryRepository.save(voterActivity);
+
+        MemberStatistics voterStatistics = voter.getStatistics();
+        voterStatistics = voterStatistics.updateActivity(voterActivity);
+
+        voter = voter.updateStatistic(voterStatistics);
+        voter = memberRepository.save(voter);
+
 		return PkResponseDto.of(albumReviewVote.getId());
 	}
 
