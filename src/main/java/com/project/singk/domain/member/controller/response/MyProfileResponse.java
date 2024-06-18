@@ -21,6 +21,7 @@ public class MyProfileResponse {
 	private String gender;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime birthday;
+    private MemberStatisticsResponse statistics;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime createdAt;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -34,6 +35,7 @@ public class MyProfileResponse {
 			.name(member.getName())
 			.gender(member.getGender().getName())
 			.birthday(member.getBirthday())
+            .statistics(MemberStatisticsResponse.from(member.getStatistics()))
 			.createdAt(member.getCreatedAt())
 			.modifiedAt(member.getModifiedAt())
 			.build();
