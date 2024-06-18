@@ -7,19 +7,10 @@ import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.Role;
 import com.project.singk.global.domain.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "MEMBERS")
@@ -57,9 +48,13 @@ public class MemberEntity extends BaseTimeEntity {
 	@Column(name = "role")
 	private Role role;
 
+    @JoinColumn(name = "statistic_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private MemberStatisticsEntity statistics;
+
 	@Builder
 	public MemberEntity(Long id, String email, String password, String imageUrl, String nickname, Gender gender,
-		String name, LocalDateTime birthday, Role role) {
+		String name, LocalDateTime birthday, Role role, MemberStatisticsEntity statistics) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -69,6 +64,7 @@ public class MemberEntity extends BaseTimeEntity {
 		this.name = name;
 		this.birthday = birthday;
 		this.role = role;
+        this.statistics = statistics;
 	}
 
 	public static MemberEntity from (Member member) {
@@ -82,6 +78,7 @@ public class MemberEntity extends BaseTimeEntity {
 			.name(member.getName())
 			.birthday(member.getBirthday())
 			.role(member.getRole())
+            .statistics(MemberStatisticsEntity.from(member.getStatistics()))
 			.build();
 	}
 
@@ -96,6 +93,7 @@ public class MemberEntity extends BaseTimeEntity {
 			.name(this.name)
 			.birthday(this.birthday)
 			.role(this.role)
+            .statistics(this.statistics.toModel())
 			.createdAt(this.getCreatedAt())
 			.modifiedAt(this.getModifiedAt())
 			.build();

@@ -1,9 +1,13 @@
 package com.project.singk.domain.review.service;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.service.port.AlbumRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.controller.port.ReviewService;
 import com.project.singk.domain.review.controller.request.ReviewSort;
@@ -35,6 +39,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final AlbumReviewRepository albumReviewRepository;
 	private final MemberRepository memberRepository;
 	private final AlbumRepository albumRepository;
+    private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
 	public PkResponseDto createAlbumReview(Long memberId, String albumId, AlbumReviewCreate albumReviewCreate) {
@@ -49,11 +54,21 @@ public class ReviewServiceImpl implements ReviewService {
 		albumReview = albumReviewRepository.save(albumReview);
 
         // 앨범 평점 수정
-        AlbumReviewStatistics statistics = album.getStatistics();
-        statistics = statistics.update(member, albumReview, false);
-
-        album = album.updateStatistic(statistics);
+        AlbumReviewStatistics reviewStatistics = album.getStatistics();
+        reviewStatistics = reviewStatistics.update(member, albumReview, false);
+        album = album.updateStatistic(reviewStatistics);
         album = albumRepository.save(album);
+
+        // 활동 점수 부여
+        ActivityHistory activity = ActivityHistory.from(ActivityType.WRITE_ALBUM_REVIEW, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 수정
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateReview(albumReview, activity, false);
+
+        member = member.updateStatistic(memberStatistics);
+        member = memberRepository.save(member);
 
 		return PkResponseDto.of(albumReview.getId());
 	}
@@ -73,6 +88,17 @@ public class ReviewServiceImpl implements ReviewService {
 
         album = album.updateStatistic(statistics);
         album = albumRepository.save(album);
+
+        // 활동 점수 부여
+        ActivityHistory activity = ActivityHistory.from(ActivityType.DELETE_ALBUM_REVIEW, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 수정
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateReview(albumReview, activity, true);
+
+        member = member.updateStatistic(memberStatistics);
+        member = memberRepository.save(member);
 
         albumReviewRepository.delete(albumReview);
     }
