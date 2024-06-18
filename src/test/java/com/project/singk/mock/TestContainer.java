@@ -95,6 +95,7 @@ public class TestContainer {
                 .albumReviewVoteRepository(this.albumReviewVoteRepository)
                 .memberRepository(this.memberRepository)
                 .albumReviewRepository(this.albumReviewRepository)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
 	}
 

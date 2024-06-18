@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
+import com.project.singk.domain.member.domain.MemberStatistics;
 import org.junit.jupiter.api.Test;
 
 import com.project.singk.domain.member.domain.Gender;
@@ -25,6 +26,7 @@ class MyProfileResponseTest {
 			.birthday(LocalDate.of(1999, 12, 30).atStartOfDay())
 			.gender(Gender.MALE)
 			.role(Role.ROLE_USER)
+            .statistics(MemberStatistics.empty())
 			.build();
 		String imageUrl = "imageUrl";
 
@@ -38,7 +40,8 @@ class MyProfileResponseTest {
 			() -> assertThat(myProfileResponse.getNickname()).isEqualTo("SingK"),
 			() -> assertThat(myProfileResponse.getName()).isEqualTo("김철수"),
 			() -> assertThat(myProfileResponse.getBirthday()).isEqualTo("1999-12-30T00:00"),
-			() -> assertThat(myProfileResponse.getGender()).isEqualTo("남성")
+			() -> assertThat(myProfileResponse.getGender()).isEqualTo("남성"),
+			() -> assertThat(myProfileResponse.getStatistics().getTotalActivityScore()).isEqualTo(0)
 		);
 	}
 }
