@@ -2,6 +2,7 @@ package com.project.singk.domain.review.domain;
 
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,5 +108,16 @@ class AlbumReviewStatisticsTest {
         assertThat(statistics.getFemaleCount()).isEqualTo(0);
         assertThat(statistics.getFemaleTotalScore()).isEqualTo(0);
     }
+    @Test
+    public void AlbumReviewStatistics는_평균을_계산할_수_있다() {
+        // given
+        int a = 25;
+        int b = 5;
 
+        // when
+        double average = AlbumReviewStatistics.empty().calculateAverage(a, b);
+
+        // then
+        assertThat(average).isEqualTo(5.0);
+    }
 }

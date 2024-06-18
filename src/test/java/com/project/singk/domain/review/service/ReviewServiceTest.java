@@ -4,6 +4,7 @@ import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumType;
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.domain.Role;
 import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
@@ -42,6 +43,7 @@ class ReviewServiceTest {
                 .birthday(LocalDate.of(1999, 12, 30).atStartOfDay())
                 .gender(Gender.MALE)
                 .role(Role.ROLE_USER)
+                .statistics(MemberStatistics.empty())
                 .build());
         testContainer.albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
@@ -139,6 +141,7 @@ class ReviewServiceTest {
                     .id(i)
                     .nickname("닉네임" + i)
                     .gender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE)
+                    .statistics(MemberStatistics.empty())
                     .build());
         }
         tc.memberRepository.saveAll(members);
@@ -181,6 +184,7 @@ class ReviewServiceTest {
                     .id(i)
                     .nickname("닉네임" + i)
                     .gender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE)
+                    .statistics(MemberStatistics.empty())
                     .build());
         }
         tc.memberRepository.saveAll(members);

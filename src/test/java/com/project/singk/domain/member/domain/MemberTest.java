@@ -24,8 +24,14 @@ class MemberTest {
 			.gender("MALE")
 			.build();
 
+        MemberStatistics statistics = MemberStatistics.empty();
+
 		// when
-		Member member = Member.from(memberCreate, new FakePasswordEncoderHolder("encodedPassword"));
+		Member member = Member.from(
+                memberCreate,
+                statistics,
+                new FakePasswordEncoderHolder("encodedPassword")
+        );
 
 		// then
 		assertAll(
@@ -129,4 +135,36 @@ class MemberTest {
 		assertThat(member.getGender()).isEqualTo(Gender.MALE);
 		assertThat(member.getRole()).isEqualTo(Role.ROLE_USER);
 	}
+
+    @Test
+    public void Member는_MemberStatistics를_수정할_수_있다() {
+        // given
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("singk@gmail.com")
+                .password("encodedPassword")
+                .name("김철수")
+                .nickname("SingK")
+                .birthday(LocalDate.of(1999, 12, 30).atStartOfDay())
+                .gender(Gender.MALE)
+                .role(Role.ROLE_USER)
+                .build();
+
+        MemberStatistics statistics = MemberStatistics.builder()
+                .totalActivityScore(50)
+                .totalReview(1)
+                .totalReviewScore(5)
+                .build();
+
+        // when
+        member = member.updateStatistic(statistics);
+
+        // then
+
+        assertThat(member.getStatistics()).isNotNull();
+        assertThat(member.getStatistics().getTotalActivityScore()).isEqualTo(50);
+        assertThat(member.getStatistics().getTotalReview()).isEqualTo(1);
+        assertThat(member.getStatistics().getTotalReviewScore()).isEqualTo(5);
+    }
 }

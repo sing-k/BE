@@ -63,7 +63,7 @@ public class MemberStatistics {
     private MemberStatistics deleteReview(AlbumReview review, ActivityHistory activityHistory) {
         return MemberStatistics.builder()
                 .id(this.id)
-                .totalActivityScore(this.totalActivityScore - activityHistory.getScore())
+                .totalActivityScore(this.totalActivityScore + activityHistory.getScore())
                 .totalReview(this.totalReview - 1)
                 .totalReviewScore(this.totalReviewScore - review.getScore())
                 .build();

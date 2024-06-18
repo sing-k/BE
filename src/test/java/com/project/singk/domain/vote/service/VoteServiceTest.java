@@ -2,6 +2,7 @@ package com.project.singk.domain.vote.service;
 
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
 import com.project.singk.domain.vote.domain.VoteCreate;
@@ -28,11 +29,14 @@ class VoteServiceTest {
         List<Member> members = testContainer.memberRepository.saveAll(List.of(
                 Member.builder()
                         .id(1L)
+                        .statistics(MemberStatistics.empty())
                         .build(),
                 Member.builder()
                         .id(2L)
+                        .statistics(MemberStatistics.empty())
                         .build()
         ));
+
         Album album = testContainer.albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .build());
