@@ -10,12 +10,13 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "ARTISTS")
 @Getter
 @NoArgsConstructor
-public class ArtistEntity extends BaseTimeEntity {
+public class ArtistEntity extends BaseTimeEntity implements Persistable<String> {
 
 	@Id
 	@Column(updatable = false, length = 22)
@@ -41,6 +42,12 @@ public class ArtistEntity extends BaseTimeEntity {
 		return Artist.builder()
 			.id(this.id)
 			.name(this.name)
+            .createdAt(this.getCreatedAt())
 			.build();
 	}
+
+    @Override
+    public boolean isNew() {
+        return this.getCreatedAt() == null;
+    }
 }
