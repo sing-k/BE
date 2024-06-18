@@ -22,10 +22,11 @@ public class Member {
 	private final Role role;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime modifiedAt;
+    private final MemberStatistics statistics;
 
 	@Builder
 	public Member(Long id, String email, String password, String imageUrl, String nickname, Gender gender, String name,
-		LocalDateTime birthday, Role role, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+		LocalDateTime birthday, Role role, LocalDateTime createdAt, LocalDateTime modifiedAt, MemberStatistics statistics) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -37,10 +38,12 @@ public class Member {
 		this.role = role;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
+        this.statistics = statistics;
 	}
 
 	public static Member from(
 		MemberCreate memberCreate,
+        MemberStatistics statistics,
 		PasswordEncoderHolder passwordEncoderHolder
 	) {
 		return Member.builder()
@@ -51,6 +54,7 @@ public class Member {
 			.name(memberCreate.getName())
 			.birthday(LocalDate.parse(memberCreate.getBirthday(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay())
 			.role(Role.ROLE_USER)
+            .statistics(statistics)
 			.build();
 
 	}
@@ -67,6 +71,7 @@ public class Member {
 			.role(this.role)
 			.createdAt(this.createdAt)
 			.modifiedAt(this.modifiedAt)
+            .statistics(this.statistics)
 			.build();
 	}
 
@@ -83,7 +88,25 @@ public class Member {
 			.role(this.role)
 			.createdAt(this.createdAt)
 			.modifiedAt(this.modifiedAt)
+            .statistics(this.statistics)
 			.build();
 	}
+
+    public Member updateStatistic(MemberStatistics statistics) {
+        return Member.builder()
+                .id(this.id)
+                .email(this.email)
+                .password(this.password)
+                .imageUrl(imageUrl)
+                .nickname(this.nickname)
+                .gender(this.gender)
+                .name(this.name)
+                .birthday(this.birthday)
+                .role(this.role)
+                .createdAt(this.createdAt)
+                .modifiedAt(this.modifiedAt)
+                .statistics(statistics)
+                .build();
+    }
 
 }
