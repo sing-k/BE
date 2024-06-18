@@ -1,5 +1,7 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.service.AlbumServiceImpl;
 import com.project.singk.domain.album.service.port.*;
@@ -35,6 +37,7 @@ public class TestContainer {
     public final AlbumImageRepository albumImageRepository;
     public final AlbumReviewRepository albumReviewRepository;
     public final AlbumReviewVoteRepository albumReviewVoteRepository;
+    public final ActivityHistoryRepository activityHistoryRepository;
     public final SpotifyRepository spotifyRepository;
 	public final S3Repository s3Repository;
 	public final RedisRepository redisRepository;
@@ -56,6 +59,7 @@ public class TestContainer {
         this.albumImageRepository = new FakeAlbumImageRepository();
         this.albumReviewRepository = new FakeAlbumReviewRepository();
         this.albumReviewVoteRepository = new FakeAlbumReviewVoteRepository();
+        this.activityHistoryRepository = new FakeActivityHistoryRepository();
         this.spotifyRepository = new FakeSpotifyRepository();
 		this.s3Repository = new FakeS3Repository();
 		this.redisRepository = new FakeRedisRepository();
@@ -83,6 +87,7 @@ public class TestContainer {
         this.reviewService = ReviewServiceImpl.builder()
                 .albumReviewRepository(this.albumReviewRepository)
                 .albumRepository(this.albumRepository)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .memberRepository(this.memberRepository)
                 .s3Repository(this.s3Repository)
                 .build();
