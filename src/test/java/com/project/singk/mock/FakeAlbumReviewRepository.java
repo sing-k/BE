@@ -9,6 +9,10 @@ import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -61,27 +65,39 @@ public class FakeAlbumReviewRepository implements AlbumReviewRepository {
     }
 
     @Override
-    public List<AlbumReview> getAllByAlbumId(String albumId, ReviewSort sort) {
-
-        switch (sort) {
-            case NEW -> {
-                return data.stream()
-                        .filter(item -> item.getAlbum().getId().equals(albumId))
-                        .sorted(Comparator.comparing(AlbumReview::getCreatedAt).reversed())
-                        .toList();
-            }
-            case LIKES -> {
-                return data.stream()
-                        .filter(item -> item.getAlbum().getId().equals(albumId))
-                        .sorted(Comparator.comparing(AlbumReview::getProsCount).reversed())
-                        .toList();
-            }
-        }
-
-        return data.stream()
+    public Page<AlbumReview> getAllByAlbumId(String albumId, int offset, int limit, String sort) {
+        List<AlbumReview> reviews = data.stream()
+                .sorted(sortBy(ReviewSort.valueOf(sort)))
                 .filter(item -> item.getAlbum().getId().equals(albumId))
-                .sorted(Comparator.comparing(AlbumReview::getCreatedAt).reversed())
+                .skip(offset)
+                .limit(limit)
                 .toList();
+
+        long count = data.stream()
+                .filter(item -> item.getAlbum().getId().equals(albumId))
+                .count();
+
+        Pageable pageable = PageRequest.ofSize(limit);
+
+        return new PageImpl<>(reviews, pageable, count);
+    }
+
+    @Override
+    public Page<AlbumReview> getAllByMemberId(Long memberId, int offset, int limit, String sort) {
+        List<AlbumReview> reviews = data.stream()
+                .sorted(sortBy(ReviewSort.valueOf(sort)))
+                .filter(item -> item.getReviewer().getId().equals(memberId))
+                .skip(offset)
+                .limit(limit)
+                .toList();
+
+        long count = data.stream()
+                .filter(item -> item.getReviewer().getId().equals(memberId))
+                .count();
+
+        Pageable pageable = PageRequest.ofSize(limit);
+
+        return new PageImpl<>(reviews, pageable, count);
     }
 
     @Override
@@ -89,4 +105,10 @@ public class FakeAlbumReviewRepository implements AlbumReviewRepository {
         data.removeIf(item -> item.getId().equals(albumReview.getId()));
     }
 
+    private Comparator<AlbumReview> sortBy(ReviewSort sort) {
+        return switch (sort) {
+            case NEW -> Comparator.comparing(AlbumReview::getCreatedAt).reversed();
+            case LIKES -> Comparator.comparing(AlbumReview::getProsCount).reversed();
+        };
+    }
 }
