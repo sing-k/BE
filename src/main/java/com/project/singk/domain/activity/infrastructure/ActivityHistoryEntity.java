@@ -19,7 +19,7 @@ public class ActivityHistoryEntity extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "activity_type", unique = true)
+	@Column(name = "activity_type")
     @Enumerated(EnumType.STRING)
 	private ActivityType type;
 

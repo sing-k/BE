@@ -13,12 +13,15 @@ import com.project.singk.domain.review.controller.port.ReviewService;
 import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
+import com.project.singk.domain.review.controller.response.MyAlbumReviewResponse;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
+import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,13 +107,19 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<AlbumReviewResponse> getAlbumReviews(String albumId, String sort) {
-        List<AlbumReview> reviews = albumReviewRepository.getAllByAlbumId(albumId, ReviewSort.valueOf(sort));
+    @Transactional(readOnly = true)
+    public PageResponse<AlbumReviewResponse> getAlbumReviews(String albumId, int offset, int limit, String sort) {
+        Page<AlbumReview> reviews = albumReviewRepository.getAllByAlbumId(albumId, offset, limit, sort);
 
-        return reviews.stream().map(review -> AlbumReviewResponse.from(
-                review,
-                s3Repository.getPreSignedGetUrl(review.getReviewer().getImageUrl())
-        )).toList();
+        return PageResponse.of(
+                offset,
+                limit,
+                (int) reviews.getTotalElements(),
+                reviews.stream().map(review -> AlbumReviewResponse.from(
+                        review,
+                        s3Repository.getPreSignedGetUrl(review.getReviewer().getImageUrl())
+                )).toList()
+        );
     }
 
     @Override
@@ -119,5 +128,19 @@ public class ReviewServiceImpl implements ReviewService {
         AlbumReviewStatistics albumReviewStatistics = albumRepository.getAlbumReviewStatisticsByAlbumId(albumId);
 
         return AlbumReviewStatisticsResponse.from(albumReviewStatistics);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<MyAlbumReviewResponse> getMyAlbumReview(Long memberId, int offset, int limit, String sort) {
+        Page<AlbumReview> reviews = albumReviewRepository.getAllByMemberId(memberId, offset, limit, sort);
+        return PageResponse.of(
+                offset,
+                limit,
+                (int) reviews.getTotalElements(),
+                reviews.stream()
+                        .map(MyAlbumReviewResponse::from)
+                        .toList()
+        );
     }
 }
