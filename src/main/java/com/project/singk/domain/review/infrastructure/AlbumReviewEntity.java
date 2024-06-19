@@ -1,20 +1,13 @@
 package com.project.singk.domain.review.infrastructure;
 
 import com.project.singk.domain.review.domain.AlbumReview;
+import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.project.singk.domain.album.infrastructure.entity.AlbumEntity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.global.domain.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,11 +35,11 @@ public class AlbumReviewEntity extends BaseTimeEntity {
 	@Column(name = "cons_count")
 	private int consCount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id")
 	private AlbumEntity album;
 
