@@ -2,6 +2,7 @@ package com.project.singk.domain.review.controller.response;
 
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.review.domain.AlbumReview;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ class AlbumReviewResponseTest {
                 .id(1L)
                 .nickname("SingK")
                 .gender(Gender.MALE)
+                .statistics(MemberStatistics.empty())
                 .build();
 
         String imageUrl = "imageUrl";

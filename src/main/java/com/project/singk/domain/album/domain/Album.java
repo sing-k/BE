@@ -17,8 +17,9 @@ public class Album {
     private final List<Artist> artists;
     private final List<AlbumImage> images;
     private final AlbumReviewStatistics statistics;
+    private final LocalDateTime createdAt;
     @Builder
-    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, List<Track> tracks, List<Artist> artists, List<AlbumImage> images, AlbumReviewStatistics statistics) {
+    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, List<Track> tracks, List<Artist> artists, List<AlbumImage> images, AlbumReviewStatistics statistics, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -27,6 +28,7 @@ public class Album {
         this.artists = artists;
         this.images = images;
         this.statistics = statistics;
+        this.createdAt = createdAt;
     }
 
     public Album updateStatistic(AlbumReviewStatistics statistics) {
@@ -39,6 +41,7 @@ public class Album {
                 .artists(this.artists)
                 .images(this.images)
                 .statistics(statistics)
+                .createdAt(this.createdAt)
                 .build();
     }
 }

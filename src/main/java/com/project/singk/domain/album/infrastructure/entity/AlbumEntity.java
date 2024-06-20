@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumType;
-import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.infrastructure.AlbumReviewStatisticsEntity;
 import com.project.singk.global.domain.BaseTimeEntity;
 
@@ -13,13 +12,13 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "ALBUMS")
 @Getter
 @NoArgsConstructor
-public class AlbumEntity extends BaseTimeEntity {
+public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 
 	@Id
 	@Column(updatable = false)
@@ -36,23 +35,25 @@ public class AlbumEntity extends BaseTimeEntity {
 	private LocalDateTime releasedAt;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<TrackEntity> tracks;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ArtistEntity> artists;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<AlbumImageEntity> images;
 
     @JoinColumn(name = "statistic_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private AlbumReviewStatisticsEntity statistics;
 
+    @Transient
+    private LocalDateTime isNew;
     @Builder
-    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, List<TrackEntity> tracks, List<ArtistEntity> artists, List<AlbumImageEntity> images, AlbumReviewStatisticsEntity statistics) {
+    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, List<TrackEntity> tracks, List<ArtistEntity> artists, List<AlbumImageEntity> images, AlbumReviewStatisticsEntity statistics, LocalDateTime isNew) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -61,6 +62,7 @@ public class AlbumEntity extends BaseTimeEntity {
         this.artists = artists;
         this.images = images;
         this.statistics = statistics;
+        this.isNew = isNew;
     }
 
 	public static AlbumEntity from (Album album) {
@@ -73,6 +75,7 @@ public class AlbumEntity extends BaseTimeEntity {
             .artists(album.getArtists().stream().map(ArtistEntity::from).toList())
             .images(album.getImages().stream().map(AlbumImageEntity::from).toList())
             .statistics(AlbumReviewStatisticsEntity.from(album.getStatistics()))
+            .isNew(album.getCreatedAt())
 			.build();
 	}
 
@@ -86,6 +89,12 @@ public class AlbumEntity extends BaseTimeEntity {
             .artists(this.artists.stream().map(ArtistEntity::toModel).toList())
             .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
             .statistics(this.statistics.toModel())
+            .createdAt(this.getCreatedAt())
 			.build();
 	}
+
+    @Override
+    public boolean isNew() {
+        return this.getCreatedAt() == null && this.isNew == null;
+    }
 }

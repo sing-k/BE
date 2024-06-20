@@ -1,4 +1,4 @@
-package com.project.singk.domain.review.infrastructure;
+package com.project.singk.domain.activity.infrastructure;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,24 +11,18 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QAlbumReviewEntity is a Querydsl query type for AlbumReviewEntity
+ * QActivityHistoryEntity is a Querydsl query type for ActivityHistoryEntity
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QAlbumReviewEntity extends EntityPathBase<AlbumReviewEntity> {
+public class QActivityHistoryEntity extends EntityPathBase<ActivityHistoryEntity> {
 
-    private static final long serialVersionUID = 1457064927L;
+    private static final long serialVersionUID = 511365862L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QAlbumReviewEntity albumReviewEntity = new QAlbumReviewEntity("albumReviewEntity");
+    public static final QActivityHistoryEntity activityHistoryEntity = new QActivityHistoryEntity("activityHistoryEntity");
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
-
-    public final com.project.singk.domain.album.infrastructure.entity.QAlbumEntity album;
-
-    public final NumberPath<Integer> consCount = createNumber("consCount", Integer.class);
-
-    public final StringPath content = createString("content");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -40,29 +34,28 @@ public class QAlbumReviewEntity extends EntityPathBase<AlbumReviewEntity> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
-    public final NumberPath<Integer> prosCount = createNumber("prosCount", Integer.class);
-
     public final NumberPath<Integer> score = createNumber("score", Integer.class);
 
-    public QAlbumReviewEntity(String variable) {
-        this(AlbumReviewEntity.class, forVariable(variable), INITS);
+    public final EnumPath<com.project.singk.domain.activity.domain.ActivityType> type = createEnum("type", com.project.singk.domain.activity.domain.ActivityType.class);
+
+    public QActivityHistoryEntity(String variable) {
+        this(ActivityHistoryEntity.class, forVariable(variable), INITS);
     }
 
-    public QAlbumReviewEntity(Path<? extends AlbumReviewEntity> path) {
+    public QActivityHistoryEntity(Path<? extends ActivityHistoryEntity> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QAlbumReviewEntity(PathMetadata metadata) {
+    public QActivityHistoryEntity(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QAlbumReviewEntity(PathMetadata metadata, PathInits inits) {
-        this(AlbumReviewEntity.class, metadata, inits);
+    public QActivityHistoryEntity(PathMetadata metadata, PathInits inits) {
+        this(ActivityHistoryEntity.class, metadata, inits);
     }
 
-    public QAlbumReviewEntity(Class<? extends AlbumReviewEntity> type, PathMetadata metadata, PathInits inits) {
+    public QActivityHistoryEntity(Class<? extends ActivityHistoryEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.album = inits.isInitialized("album") ? new com.project.singk.domain.album.infrastructure.entity.QAlbumEntity(forProperty("album"), inits.get("album")) : null;
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member"), inits.get("member")) : null;
     }
 

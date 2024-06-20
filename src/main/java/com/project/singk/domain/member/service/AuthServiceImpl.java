@@ -1,5 +1,6 @@
 package com.project.singk.domain.member.service;
 
+import com.project.singk.domain.member.domain.MemberStatistics;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -106,7 +107,8 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public PkResponseDto signup(MemberCreate memberCreate) {
-		Member member = Member.from(memberCreate, passwordEncoderHolder);
+        MemberStatistics statistics = MemberStatistics.empty();
+		Member member = Member.from(memberCreate, statistics, passwordEncoderHolder);
 
 		if (memberRepository.existsByEmail(member.getEmail())) {
 			throw new ApiException(AppHttpStatus.DUPLICATE_MEMBER);
