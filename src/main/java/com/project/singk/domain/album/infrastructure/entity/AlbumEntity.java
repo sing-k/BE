@@ -40,11 +40,11 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<ArtistEntity> artists;
+    private List<AlbumImageEntity> images;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<AlbumImageEntity> images;
+    private List<AlbumArtistEntity> artists;
 
     @JoinColumn(name = "statistic_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -53,14 +53,14 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
     @Transient
     private LocalDateTime isNew;
     @Builder
-    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, List<TrackEntity> tracks, List<ArtistEntity> artists, List<AlbumImageEntity> images, AlbumReviewStatisticsEntity statistics, LocalDateTime isNew) {
+    public AlbumEntity(String id, String name, AlbumType type, LocalDateTime releasedAt, List<TrackEntity> tracks, List<AlbumImageEntity> images, List<AlbumArtistEntity> artists, AlbumReviewStatisticsEntity statistics, LocalDateTime isNew) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.releasedAt = releasedAt;
         this.tracks = tracks;
-        this.artists = artists;
         this.images = images;
+        this.artists = artists;
         this.statistics = statistics;
         this.isNew = isNew;
     }
@@ -72,8 +72,8 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 			.type(album.getType())
 			.releasedAt(album.getReleasedAt())
             .tracks(album.getTracks().stream().map(TrackEntity::from).toList())
-            .artists(album.getArtists().stream().map(ArtistEntity::from).toList())
             .images(album.getImages().stream().map(AlbumImageEntity::from).toList())
+            .artists(album.getArtists().stream().map(AlbumArtistEntity::from).toList())
             .statistics(AlbumReviewStatisticsEntity.from(album.getStatistics()))
             .isNew(album.getCreatedAt())
 			.build();
@@ -86,8 +86,8 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 			.type(this.type)
 			.releasedAt(this.releasedAt)
             .tracks(this.tracks.stream().map(TrackEntity::toModel).toList())
-            .artists(this.artists.stream().map(ArtistEntity::toModel).toList())
             .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
+            .artists(this.artists.stream().map(AlbumArtistEntity::toModel).toList())
             .statistics(this.statistics.toModel())
             .createdAt(this.getCreatedAt())
 			.build();

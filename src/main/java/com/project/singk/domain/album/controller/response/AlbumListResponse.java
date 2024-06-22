@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.album.domain.Album;
 
+import com.project.singk.domain.album.domain.AlbumArtist;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -31,6 +32,7 @@ public class AlbumListResponse {
 			.name(album.getName())
 			.releasedAt(album.getReleasedAt())
 			.artists(album.getArtists().stream()
+                .map(AlbumArtist::getArtist)
 				.map(ArtistResponse::from)
 				.toList())
 			.images(album.getImages().stream()

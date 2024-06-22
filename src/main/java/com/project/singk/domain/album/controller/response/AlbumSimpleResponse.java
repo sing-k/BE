@@ -1,6 +1,7 @@
 package com.project.singk.domain.album.controller.response;
 
 import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.AlbumArtist;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -22,6 +23,7 @@ public class AlbumSimpleResponse {
                 .id(album.getId())
                 .name(album.getName())
                 .artists(album.getArtists().stream()
+                        .map(AlbumArtist::getArtist)
                         .map(ArtistResponse::from)
                         .toList())
                 .images(album.getImages().stream()
