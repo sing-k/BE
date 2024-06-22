@@ -1,8 +1,11 @@
 package com.project.singk.domain.album.service;
 
 import com.project.singk.domain.album.controller.request.AlbumSort;
+import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.Artist;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
+import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
@@ -38,9 +41,21 @@ public class AlbumServiceImpl implements AlbumService {
 		}
 
 		AlbumEntity spotifyAlbum = spotifyRepository.getAlbumById(albumId);
+
+        // 앨범 통계 생성
         AlbumReviewStatistics statistics = AlbumReviewStatistics.empty();
         album = spotifyAlbum.toModel();
+
         album = album.updateStatistic(statistics);
+
+        // 아티스트 생성
+        for (AlbumArtist artist : album.getArtists()) {
+            System.out.println(artist.getArtist().getName());
+            if (!artistRepository.existById(artist.getArtist().getId())) {
+                artistRepository.save(artist.getArtist());
+            }
+        }
+
         album = albumRepository.save(album);
 
 		return AlbumDetailResponse.from(album);

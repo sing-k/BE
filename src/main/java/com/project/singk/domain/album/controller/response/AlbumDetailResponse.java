@@ -6,9 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.album.domain.Album;
 
-import com.project.singk.domain.album.domain.AlbumImage;
-import com.project.singk.domain.album.domain.Artist;
-import com.project.singk.domain.album.domain.Track;
+import com.project.singk.domain.album.domain.AlbumArtist;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -34,9 +32,16 @@ public class AlbumDetailResponse {
             .type(album.getType().getName())
 			.releasedAt(album.getReleasedAt())
 			.trackCount(album.getTracks().size())
-			.tracks(album.getTracks().stream().map(TrackResponse::from).toList())
-			.images(album.getImages().stream().map(ImageResponse::from).toList())
-			.artists(album.getArtists().stream().map(ArtistResponse::from).toList())
+			.tracks(album.getTracks().stream()
+                    .map(TrackResponse::from)
+                    .toList())
+			.images(album.getImages().stream()
+                    .map(ImageResponse::from)
+                    .toList())
+			.artists(album.getArtists().stream()
+                    .map(AlbumArtist::getArtist)
+                    .map(ArtistResponse::from)
+                    .toList())
 			.build();
 	}
 }
