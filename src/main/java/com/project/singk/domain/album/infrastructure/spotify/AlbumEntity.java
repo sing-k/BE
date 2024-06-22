@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.AlbumArtist;
 import com.project.singk.domain.album.domain.AlbumType;
 
 import lombok.Builder;
@@ -64,7 +65,10 @@ public class AlbumEntity {
                 .type(AlbumType.of(this.type, this.tracks.size()))
                 .releasedAt(this.releasedAt)
                 .tracks(this.tracks.stream().map(TrackSimplifiedEntity::toModel).toList())
-                .artists(this.artists.stream().map(ArtistSimplifiedEntity::toModel).toList())
+                .artists(this.artists.stream()
+                        .map(ArtistSimplifiedEntity::toModel)
+                        .map(AlbumArtist::from)
+                        .toList())
                 .images(this.images.stream().map(ImageEntity::toModel).toList())
                 .build();
     }

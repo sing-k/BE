@@ -3,14 +3,13 @@ package com.project.singk.domain.album.infrastructure.entity;
 import com.project.singk.domain.album.domain.Artist;
 import com.project.singk.global.domain.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ARTISTS")
@@ -25,16 +24,21 @@ public class ArtistEntity extends BaseTimeEntity implements Persistable<String> 
 	@Column(name = "name")
 	private String name;
 
+    @Transient
+    private LocalDateTime isNew;
+
     @Builder
-    public ArtistEntity(String id, String name) {
+    public ArtistEntity(String id, String name, LocalDateTime isNew) {
         this.id = id;
         this.name = name;
+        this.isNew = isNew;
     }
 
 	public static ArtistEntity from(Artist artist) {
 		return ArtistEntity.builder()
 			.id(artist.getId())
 			.name(artist.getName())
+            .isNew(artist.getCreatedAt())
 			.build();
 	}
 
@@ -48,6 +52,6 @@ public class ArtistEntity extends BaseTimeEntity implements Persistable<String> 
 
     @Override
     public boolean isNew() {
-        return this.getCreatedAt() == null;
+        return this.getCreatedAt() == null && this.isNew == null;
     }
 }

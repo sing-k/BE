@@ -24,9 +24,9 @@ import com.project.singk.global.api.AppHttpStatus;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.project.singk.domain.album.infrastructure.entity.QAlbumArtistEntity.albumArtistEntity;
 import static com.project.singk.domain.album.infrastructure.entity.QAlbumEntity.albumEntity;
 import static com.project.singk.domain.album.infrastructure.entity.QAlbumImageEntity.albumImageEntity;
-import static com.project.singk.domain.album.infrastructure.entity.QArtistEntity.artistEntity;
 import static com.project.singk.domain.album.infrastructure.entity.QTrackEntity.trackEntity;
 import static com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity.albumReviewStatisticsEntity;
 
@@ -63,7 +63,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
         return jpaQueryFactory.select(albumReviewStatisticsEntity)
                 .from(albumEntity)
-                .leftJoin(albumEntity.statistics, albumReviewStatisticsEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
                 .where(albumEntity.id.eq(albumId))
                 .fetchOne()
                 .toModel();
@@ -72,9 +72,9 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public Optional<Album> findByIdWithStatistics(String albumId) {
         return Optional.ofNullable(jpaQueryFactory.select(albumEntity)
-                .from(albumEntity).fetchJoin()
+                .from(albumEntity)
                 .where(albumEntity.id.eq(albumId))
-                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .fetchOne())
                 .map(AlbumEntity::toModel);
     }
@@ -82,12 +82,11 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
 	public Optional<Album> findById(String id) {
         return Optional.ofNullable(jpaQueryFactory
-                .select(albumEntity)
-                .from(albumEntity)
+                .selectFrom(albumEntity)
                 .where(albumEntity.id.eq(id))
-                .innerJoin(albumEntity.tracks, trackEntity)
-                .innerJoin(albumEntity.artists, artistEntity)
-                .innerJoin(albumEntity.images, albumImageEntity)
+                .leftJoin(albumEntity.tracks, trackEntity)
+                .leftJoin(albumEntity.images, albumImageEntity)
+                .leftJoin(albumEntity.artists, albumArtistEntity)
                 .fetchOne())
                 .map(AlbumEntity::toModel);
 	}

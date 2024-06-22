@@ -14,12 +14,12 @@ public class Album {
 	private final AlbumType type;
 	private final LocalDateTime releasedAt;
     private final List<Track> tracks;
-    private final List<Artist> artists;
+    private final List<AlbumArtist> artists;
     private final List<AlbumImage> images;
     private final AlbumReviewStatistics statistics;
     private final LocalDateTime createdAt;
     @Builder
-    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, List<Track> tracks, List<Artist> artists, List<AlbumImage> images, AlbumReviewStatistics statistics, LocalDateTime createdAt) {
+    public Album(String id, String name, AlbumType type, LocalDateTime releasedAt, List<Track> tracks, List<AlbumArtist> artists, List<AlbumImage> images, AlbumReviewStatistics statistics, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.type = type;

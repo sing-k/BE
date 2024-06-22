@@ -7,4 +7,5 @@ import java.util.List;
 public interface ArtistRepository {
     Artist save(Artist artist);
     List<Artist> saveAll(List<Artist> artists);
+    boolean existById(String artistId);
 }

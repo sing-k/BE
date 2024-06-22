@@ -29,10 +29,10 @@ class AlbumDetailResponseTest {
                         .name("Bubble Gum (Instrumental)")
                         .build()
         );
-        List<Artist> artists = List.of(
-                Artist.builder()
+        List<AlbumArtist> artists = List.of(
+                AlbumArtist.from(Artist.builder()
                         .name("NewJeans")
-                        .build()
+                        .build())
         );
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()

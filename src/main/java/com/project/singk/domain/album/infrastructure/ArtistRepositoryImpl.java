@@ -27,4 +27,9 @@ public class ArtistRepositoryImpl implements ArtistRepository {
                 .map(ArtistEntity::toModel)
                 .toList();
     }
+
+    @Override
+    public boolean existById(String artistId) {
+        return artistJpaRepository.existsById(artistId);
+    }
 }
