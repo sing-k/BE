@@ -72,4 +72,9 @@ public class FakeMemberRepository implements MemberRepository {
 	public boolean existsByNickname(String nickname) {
 		return data.stream().anyMatch(item -> item.getNickname().equals(nickname));
 	}
+
+    @Override
+    public void deleteById(Long memberId) {
+        data.removeIf(item -> item.getId().equals(memberId));
+    }
 }

@@ -30,6 +30,12 @@ public class FakeAlbumRepository implements AlbumRepository {
     }
 
     @Override
+    public boolean existsById(String albumId) {
+        return data.stream()
+                .anyMatch(item -> item.getId().equals(albumId));
+    }
+
+    @Override
     public Album getById(String id) {
         return findById(id).orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
     }
