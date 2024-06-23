@@ -85,6 +85,7 @@ public class SecurityConfig {
 					.requestMatchers("/api/auth/**").permitAll()
 					.requestMatchers("/api/albums/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
 					.anyRequest().authenticated();
 			})
 			// API 엔드포인트 예외 핸들러

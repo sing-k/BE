@@ -14,10 +14,10 @@ class AlbumListResponseTest {
     @Test
     public void AlbumListResponseTest를_만들_수_있다() {
         // given
-        List<Artist> artists = List.of(
-                Artist.builder()
+        List<AlbumArtist> artists = List.of(
+                AlbumArtist.from(Artist.builder()
                         .name("NewJeans")
-                        .build()
+                        .build())
         );
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()

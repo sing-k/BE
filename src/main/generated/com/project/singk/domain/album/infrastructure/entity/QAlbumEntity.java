@@ -24,7 +24,7 @@ public class QAlbumEntity extends EntityPathBase<AlbumEntity> {
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
-    public final ListPath<ArtistEntity, QArtistEntity> artists = this.<ArtistEntity, QArtistEntity>createList("artists", ArtistEntity.class, QArtistEntity.class, PathInits.DIRECT2);
+    public final ListPath<AlbumArtistEntity, QAlbumArtistEntity> artists = this.<AlbumArtistEntity, QAlbumArtistEntity>createList("artists", AlbumArtistEntity.class, QAlbumArtistEntity.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;

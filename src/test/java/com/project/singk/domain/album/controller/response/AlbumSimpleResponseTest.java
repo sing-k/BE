@@ -1,9 +1,6 @@
 package com.project.singk.domain.album.controller.response;
 
-import com.project.singk.domain.album.domain.Album;
-import com.project.singk.domain.album.domain.AlbumImage;
-import com.project.singk.domain.album.domain.AlbumType;
-import com.project.singk.domain.album.domain.Artist;
+import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import org.junit.jupiter.api.Test;
 
@@ -17,10 +14,10 @@ class AlbumSimpleResponseTest {
     @Test
     public void Album으로_AlbumSimpleResponseTest를_만들_수_있다() {
         // given
-        List<Artist> artists = List.of(
-                Artist.builder()
+        List<AlbumArtist> artists = List.of(
+                AlbumArtist.from(Artist.builder()
                         .name("NewJeans")
-                        .build()
+                        .build())
         );
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()
