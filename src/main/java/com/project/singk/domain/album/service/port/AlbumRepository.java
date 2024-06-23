@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 public interface AlbumRepository {
 	Album save(Album album);
     List<Album> saveAll(List<Album> albums);
+    boolean existsById(String albumId);
 	Album getById(String albumId);
     Album getByIdWithStatistics(String albumId);
     AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId);

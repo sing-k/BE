@@ -47,6 +47,11 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     @Override
+    public boolean existsById(String albumId) {
+        return albumJpaRepository.existsById(albumId);
+    }
+
+    @Override
 	public Album getById(String id) {
 		return findById(id)
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
