@@ -20,15 +20,19 @@ public class FakeSpotifyRepository implements SpotifyRepository {
         List<TrackSimplifiedEntity> tracks = List.of(
                 TrackSimplifiedEntity.builder()
                         .name("Bubble Gum")
+                        .artists(artists)
                         .build(),
                 TrackSimplifiedEntity.builder()
                         .name("How Sweet")
+                        .artists(artists)
                         .build(),
                 TrackSimplifiedEntity.builder()
                         .name("How Sweet (Instrumental)")
+                        .artists(artists)
                         .build(),
                 TrackSimplifiedEntity.builder()
                         .name("Bubble Gum (Instrumental)")
+                        .artists(artists)
                         .build()
         );
         List<ImageEntity> images = List.of(
