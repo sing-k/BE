@@ -1,6 +1,6 @@
 package com.project.singk.domain.album.service;
 
-import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
@@ -12,10 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
-import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.controller.response.AlbumListResponse;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 @Builder
 @RequiredArgsConstructor
@@ -46,10 +49,18 @@ public class AlbumServiceImpl implements AlbumService {
         album = album.updateStatistic(statistics);
 
         // 아티스트 생성
-        for (AlbumArtist artist : album.getArtists()) {
+        Set<Artist> artists = new HashSet<>();
+        for (Track track : album.getTracks()) {
+            artists.addAll(track.getArtists().stream()
+                    .map(TrackArtist::getArtist)
+                    .toList());
+        }
 
-            if (!artistRepository.existById(artist.getArtist().getId())) {
-                artistRepository.save(artist.getArtist());
+        System.out.println(artists.size());
+
+        for (Artist artist : artists) {
+            if (!artistRepository.existById(artist.getId())) {
+                artistRepository.save(artist);
             }
         }
 

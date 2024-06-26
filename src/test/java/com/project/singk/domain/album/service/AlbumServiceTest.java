@@ -45,29 +45,44 @@ class AlbumServiceTest {
     public void 앨범을_상세조회할_때_DB에_해당_앨범이_존재하는_경우_DB_데이터를_가져온다() {
         // given
         TestContainer testContainer = TestContainer.builder().build();
+
+        List<Artist> artists = List.of(
+                Artist.builder()
+                        .name("NewJeans")
+                        .build()
+        );
+
         List<Track> tracks = List.of(
                 Track.builder()
                         .id("1")
                         .name("Bubble Gum")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
                         .build(),
                 Track.builder()
                         .id("2")
                         .name("How Sweet")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
                         .build(),
                 Track.builder()
                         .id("3")
                         .name("How Sweet (Instrumental)")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
                         .build(),
                 Track.builder()
                         .id("4")
                         .name("Bubble Gum (Instrumental)")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
                         .build()
         );
-        List<AlbumArtist> artists = List.of(
-                AlbumArtist.from(Artist.builder()
-                        .name("NewJeans")
-                        .build())
-        );
+
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()
                         .imageUrl("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
@@ -80,8 +95,11 @@ class AlbumServiceTest {
                 .type(AlbumType.EP)
                 .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
                 .tracks(tracks)
-                .artists(artists)
+                .artists(artists.stream()
+                        .map(AlbumArtist::from)
+                        .toList())
                 .images(images)
+                .statistics(AlbumReviewStatistics.empty())
                 .build();
 
         testContainer.albumRepository.save(album);

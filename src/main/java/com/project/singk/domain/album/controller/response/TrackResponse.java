@@ -2,10 +2,13 @@ package com.project.singk.domain.album.controller.response;
 
 import com.project.singk.domain.album.domain.Track;
 
+import com.project.singk.domain.album.domain.TrackArtist;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,6 +20,7 @@ public class TrackResponse {
 	private long duration;
 	private boolean isPlayable;
 	private String previewUrl;
+    private List<ArtistResponse> artists;
 
 	public static TrackResponse from (Track track) {
 		return TrackResponse.builder()
@@ -26,6 +30,10 @@ public class TrackResponse {
 			.duration(track.getDuration())
 			.isPlayable(track.isPlayable())
 			.previewUrl(track.getPreviewUrl())
+            .artists(track.getArtists().stream()
+                    .map(TrackArtist::getArtist)
+                    .map(ArtistResponse::from)
+                    .toList())
 			.build();
 	}
 
