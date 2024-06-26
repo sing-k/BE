@@ -21,6 +21,8 @@ public class AlbumDetailResponse {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime releasedAt;
 	private int trackCount;
+    private long count;
+    private double averageScore;
 	private List<ArtistResponse> artists;
 	private List<TrackResponse> tracks;
 	private List<ImageResponse> images;
@@ -32,6 +34,8 @@ public class AlbumDetailResponse {
             .type(album.getType().getName())
 			.releasedAt(album.getReleasedAt())
 			.trackCount(album.getTracks().size())
+            .count(album.getStatistics().getTotalReviewer())
+            .averageScore(album.getStatistics().getAverageScore())
 			.tracks(album.getTracks().stream()
                     .map(TrackResponse::from)
                     .toList())

@@ -1,8 +1,12 @@
 package com.project.singk.domain.album.controller.response;
 
 
+import com.project.singk.domain.album.domain.Artist;
 import com.project.singk.domain.album.domain.Track;
+import com.project.singk.domain.album.domain.TrackArtist;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -12,6 +16,12 @@ class TrackResponseTest {
     @Test
     public void Track으로_응답을_생성할_수_있다() {
         // given
+        List<Artist> artists = List.of(
+                Artist.builder()
+                        .name("NewJeans")
+                        .build()
+        );
+
         Track track = Track.builder()
                 .id("19D8LNpWwIPpi6hs9BG7dq")
                 .name("Bubble Gum")
@@ -19,6 +29,9 @@ class TrackResponseTest {
                 .duration(200266L)
                 .previewUrl("https://p.scdn.co/mp3-preview/6209f0f9f4f3432fd0fce127fec7e27bd22f6223?cid=abcfcd8269394fd7af92b59a576f5033")
                 .isPlayable(true)
+                .artists(artists.stream()
+                        .map(TrackArtist::from)
+                        .toList())
                 .build();
 
         // when
@@ -31,7 +44,8 @@ class TrackResponseTest {
                 () -> assertThat(response.getTrackNumber()).isEqualTo(2),
                 () -> assertThat(response.getDuration()).isEqualTo(200266L),
                 () -> assertThat(response.getPreviewUrl()).isEqualTo("https://p.scdn.co/mp3-preview/6209f0f9f4f3432fd0fce127fec7e27bd22f6223?cid=abcfcd8269394fd7af92b59a576f5033"),
-                () -> assertThat(response.isPlayable()).isEqualTo(true)
+                () -> assertThat(response.isPlayable()).isEqualTo(true),
+                () -> assertThat(response.getArtists().get(0).getName()).isEqualTo("NewJeans")
         );
     }
 }
