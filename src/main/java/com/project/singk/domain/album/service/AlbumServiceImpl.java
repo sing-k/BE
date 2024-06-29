@@ -6,6 +6,7 @@ import com.project.singk.domain.album.service.port.*;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,13 +51,17 @@ public class AlbumServiceImpl implements AlbumService {
 
         // 아티스트 생성
         Set<Artist> artists = new HashSet<>();
+
+        artists.addAll(album.getArtists().stream()
+                .map(AlbumArtist::getArtist)
+                .toList());
+
+
         for (Track track : album.getTracks()) {
             artists.addAll(track.getArtists().stream()
                     .map(TrackArtist::getArtist)
                     .toList());
         }
-
-        System.out.println(artists.size());
 
         for (Artist artist : artists) {
             if (!artistRepository.existById(artist.getId())) {
@@ -89,6 +94,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "albums_modified_at", key = "'albums_modified_at_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
         Page<Album> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
         return PageResponse.of(

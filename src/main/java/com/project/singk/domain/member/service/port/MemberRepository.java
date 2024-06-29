@@ -10,6 +10,7 @@ public interface MemberRepository {
     List<Member> saveAll(List<Member> members);
 	Member getById(Long memberId);
 	Member getByEmail(String email);
+    List<Member> findAll();
 	Optional<Member> findById(Long memberId);
 	Optional<Member> findByEmail(String email);
 	boolean existsByEmail(String email);
