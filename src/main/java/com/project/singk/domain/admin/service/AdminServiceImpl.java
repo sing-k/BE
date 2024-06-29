@@ -2,10 +2,11 @@ package com.project.singk.domain.admin.service;
 
 import com.project.singk.domain.admin.controller.port.AdminService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
-import com.project.singk.domain.album.domain.Album;
-import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumSimplifiedEntity;
 import com.project.singk.domain.album.service.port.*;
+import com.project.singk.domain.common.service.port.S3Repository;
+import com.project.singk.domain.member.controller.response.MemberResponse;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Builder
@@ -26,6 +29,7 @@ public class AdminServiceImpl implements AdminService {
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final MemberRepository memberRepository;
+    private final S3Repository s3Repository;
 
     @Override
     public PageResponse<AlbumDetailResponse> createAlbums(String query, int offset, int limit) {
@@ -43,10 +47,21 @@ public class AdminServiceImpl implements AdminService {
                     if (albumRepository.existsById(spotifyAlbum.getId())) return AlbumDetailResponse.from(album);
 
                     // 아티스트 생성
-                    for (AlbumArtist artist : album.getArtists()) {
+                    Set<Artist> artists = new HashSet<>();
 
-                        if (!artistRepository.existById(artist.getArtist().getId())) {
-                            artistRepository.save(artist.getArtist());
+                    artists.addAll(album.getArtists().stream()
+                            .map(AlbumArtist::getArtist)
+                            .toList());
+
+                    for (Track track : album.getTracks()) {
+                        artists.addAll(track.getArtists().stream()
+                                .map(TrackArtist::getArtist)
+                                .toList());
+                    }
+
+                    for (Artist artist : artists) {
+                        if (!artistRepository.existById(artist.getId())) {
+                            artistRepository.save(artist);
                         }
                     }
 
@@ -67,5 +82,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
+    }
+
+    @Override
+    public List<MemberResponse> getMembers() {
+        return memberRepository.findAll().stream()
+                .map(member -> {
+                    String imageUrl = s3Repository.getPreSignedGetUrl(member.getImageUrl());
+                    return MemberResponse.from(member, imageUrl);
+                })
+                .toList();
     }
 }

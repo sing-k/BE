@@ -39,7 +39,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 			.orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 	}
 
-	@Override
+    @Override
+    public List<Member> findAll() {
+        return memberJpaRepository.findAll().stream()
+                .map(MemberEntity::toModel)
+                .toList();
+    }
+
+    @Override
 	public Optional<Member> findById(Long id) {
 		return memberJpaRepository.findById(id).map(MemberEntity::toModel);
 	}
