@@ -1,5 +1,6 @@
 package com.project.singk.global.scheduler;
 
+import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.domain.Role;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,9 @@ public class DataLoader implements ApplicationRunner {
                 .password(passwordEncoderHolder.encode(adminProperties.getPassword()))
                 .nickname("관리자")
                 .role(Role.ROLE_ADMIN)
+                .gender(Gender.MALE)
+                .name("관리자")
+                .birthday(LocalDateTime.of(1999,12,30,0,0,0))
                 .statistics(MemberStatistics.empty())
                 .build());
     }

@@ -53,7 +53,12 @@ public class FakeMemberRepository implements MemberRepository {
 		return findByEmail(email).orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_MEMBER));
 	}
 
-	@Override
+    @Override
+    public List<Member> findAll() {
+        return data;
+    }
+
+    @Override
 	public Optional<Member> findById(Long id) {
 		return data.stream().filter(item -> item.getId().equals(id)).findAny();
 	}
