@@ -19,26 +19,32 @@ class AlbumTest {
     @Test
     public void Spotify_AlbumEntity로_Album을_생성할_수_있다() {
         // given
-        List<TrackSimplifiedEntity> trackSimplifiedEntities = List.of(
-                TrackSimplifiedEntity.builder()
-                        .name("Bubble Gum")
-                        .build(),
-                TrackSimplifiedEntity.builder()
-                        .name("How Sweet")
-                        .build(),
-                TrackSimplifiedEntity.builder()
-                        .name("How Sweet (Instrumental)")
-                        .build(),
-                TrackSimplifiedEntity.builder()
-                        .name("Bubble Gum (Instrumental)")
-                        .build()
-        );
 
         List<ArtistSimplifiedEntity> artistSimplifiedEntities = List.of(
                 ArtistSimplifiedEntity.builder()
                         .name("NewJeans")
                         .build()
         );
+
+        List<TrackSimplifiedEntity> trackSimplifiedEntities = List.of(
+                TrackSimplifiedEntity.builder()
+                        .name("Bubble Gum")
+                        .artists(artistSimplifiedEntities)
+                        .build(),
+                TrackSimplifiedEntity.builder()
+                        .name("How Sweet")
+                        .artists(artistSimplifiedEntities)
+                        .build(),
+                TrackSimplifiedEntity.builder()
+                        .name("How Sweet (Instrumental)")
+                        .artists(artistSimplifiedEntities)
+                        .build(),
+                TrackSimplifiedEntity.builder()
+                        .name("Bubble Gum (Instrumental)")
+                        .artists(artistSimplifiedEntities)
+                        .build()
+        );
+
 
         List<ImageEntity> imageEntities = List.of(
                 ImageEntity.builder()

@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -20,6 +21,8 @@ public class QTrackEntity extends EntityPathBase<TrackEntity> {
     public static final QTrackEntity trackEntity = new QTrackEntity("trackEntity");
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
+
+    public final ListPath<TrackArtistEntity, QTrackArtistEntity> artists = this.<TrackArtistEntity, QTrackArtistEntity>createList("artists", TrackArtistEntity.class, QTrackArtistEntity.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;

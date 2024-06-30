@@ -1,21 +1,25 @@
 package com.project.singk.domain.album.service;
 
-import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.PageResponse;
 import lombok.Builder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
-import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.controller.response.AlbumListResponse;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 @Builder
 @RequiredArgsConstructor
@@ -46,10 +50,22 @@ public class AlbumServiceImpl implements AlbumService {
         album = album.updateStatistic(statistics);
 
         // 아티스트 생성
-        for (AlbumArtist artist : album.getArtists()) {
+        Set<Artist> artists = new HashSet<>();
 
-            if (!artistRepository.existById(artist.getArtist().getId())) {
-                artistRepository.save(artist.getArtist());
+        artists.addAll(album.getArtists().stream()
+                .map(AlbumArtist::getArtist)
+                .toList());
+
+
+        for (Track track : album.getTracks()) {
+            artists.addAll(track.getArtists().stream()
+                    .map(TrackArtist::getArtist)
+                    .toList());
+        }
+
+        for (Artist artist : artists) {
+            if (!artistRepository.existById(artist.getId())) {
+                artistRepository.save(artist);
             }
         }
 
@@ -78,6 +94,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "albums_modified_at", key = "'albums_modified_at_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
         Page<Album> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
         return PageResponse.of(

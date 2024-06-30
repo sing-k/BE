@@ -1,16 +1,16 @@
 package com.project.singk.domain.album.infrastructure.entity;
 
 import com.project.singk.domain.album.domain.Track;
+import com.project.singk.domain.album.domain.TrackArtist;
 import com.project.singk.global.domain.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
+
+import java.util.List;
 
 @Entity
 @Table(name = "TRACKS")
@@ -37,14 +37,19 @@ public class TrackEntity extends BaseTimeEntity implements Persistable<String> {
 	@Column(name = "preview_url")
 	private String previewUrl;
 
+    @JoinColumn(name = "album_id", updatable = false, nullable = false)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<TrackArtistEntity> artists;
+
     @Builder
-    public TrackEntity(String id, String name, int trackNumber, long duration, boolean isPlayable, String previewUrl) {
+    public TrackEntity(String id, String name, int trackNumber, long duration, boolean isPlayable, String previewUrl, List<TrackArtistEntity> artists) {
         this.id = id;
         this.name = name;
         this.trackNumber = trackNumber;
         this.duration = duration;
         this.isPlayable = isPlayable;
         this.previewUrl = previewUrl;
+        this.artists = artists;
     }
 
 	public static TrackEntity from (Track track) {
@@ -55,6 +60,9 @@ public class TrackEntity extends BaseTimeEntity implements Persistable<String> {
 			.duration(track.getDuration())
 			.isPlayable(track.isPlayable())
 			.previewUrl(track.getPreviewUrl())
+            .artists(track.getArtists().stream()
+                    .map(TrackArtistEntity::from)
+                    .toList())
 			.build();
 	}
 
@@ -66,7 +74,8 @@ public class TrackEntity extends BaseTimeEntity implements Persistable<String> {
 			.duration(this.duration)
 			.isPlayable(this.isPlayable)
 			.previewUrl(this.previewUrl)
-                .createdAt(this.getCreatedAt())
+            .createdAt(this.getCreatedAt())
+            .artists(this.artists.stream().map(TrackArtistEntity::toModel).toList())
 			.build();
 	}
 
