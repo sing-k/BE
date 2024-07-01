@@ -108,6 +108,8 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "albums_average_score", key = "'albums_average_score_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByAverageScore(String cursorId, String cursorScore, int limit) {
         Page<Album> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
         return PageResponse.of(
@@ -121,6 +123,8 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "albums_review_count", key = "'albums_review_count_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByReviewCount(String cursorId, String cursorReviewCount, int limit) {
         Page<Album> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
         return PageResponse.of(

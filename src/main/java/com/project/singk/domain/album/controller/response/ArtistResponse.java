@@ -2,16 +2,16 @@ package com.project.singk.domain.album.controller.response;
 
 import com.project.singk.domain.album.domain.Artist;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class ArtistResponse {
-	private final String id;
-	private final String name;
+	private String id;
+	private String name;
 	public static ArtistResponse from (Artist artist) {
 		return ArtistResponse.builder()
 			.id(artist.getId())
