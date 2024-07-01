@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtRepositoryImpl implements JwtRepository {
 
-	private final String BEARER_PREFIX = "Bearer ";
+	private final String BEARER_PREFIX = "Bearer";
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
 	private final JwtProperties jwtProperties;
@@ -141,7 +141,7 @@ public class JwtRepositoryImpl implements JwtRepository {
 	public String resolveAccessToken(HttpServletRequest request) {
 		String accessToken = request.getHeader(AUTHORIZATION_HEADER);
 		if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
-			return accessToken.substring(7);
+			return accessToken.substring(BEARER_PREFIX.length());
 		}
 		return null;
 	}
