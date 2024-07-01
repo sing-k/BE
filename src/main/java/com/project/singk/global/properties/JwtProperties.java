@@ -16,5 +16,14 @@ public class JwtProperties {
 	private final String secretKey;
 	private final long accessExpirationMillis;
 	private final long refreshExpirationMillis;
+    private final Cookie cookie;
 
+    @Getter @ToString
+    @AllArgsConstructor
+    public static class Cookie {
+        private final int maxAge;
+        private final String path;
+        private final boolean httpOnly;
+        private final boolean secure;
+    }
 }

@@ -1,6 +1,7 @@
 package com.project.singk.domain.member.service;
 
 import com.project.singk.domain.member.domain.MemberStatistics;
+import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class AuthServiceImpl implements AuthService {
-	private final String BEARER_PREFIX = "Bearer ";
+	private final String BEARER_PREFIX = "Bearer";
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
 	private final String AUTH_PREFIX = "AuthCode";
@@ -73,8 +74,8 @@ public class AuthServiceImpl implements AuthService {
 		SingKUserDetails userDetails = SingKUserDetails.of(member);
 		TokenDto token = jwtRepository.generateTokenDto(userDetails.getId(), userDetails.getEmail(), userDetails.getRole());
 
-		response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken());
-		response.setHeader(REFRESH_HEADER, token.getRefreshToken());
+        response.addCookie(createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
+        response.addCookie(createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
 		redisRepository.deleteValue(clientEmail);
 		redisRepository.setValue(
@@ -83,6 +84,15 @@ public class AuthServiceImpl implements AuthService {
 			jwtProperties.getRefreshExpirationMillis()
 		);
 	}
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(jwtProperties.getCookie().getMaxAge());
+        cookie.setPath(jwtProperties.getCookie().getPath());
+        cookie.setHttpOnly(jwtProperties.getCookie().isHttpOnly());
+        cookie.setSecure(jwtProperties.getCookie().isSecure());
+        return cookie;
+    }
 
 	@Override
 	public void logout(TokenDto dto) {
