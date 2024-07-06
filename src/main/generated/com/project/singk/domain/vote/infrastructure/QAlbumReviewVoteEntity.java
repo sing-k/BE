@@ -57,7 +57,7 @@ public class QAlbumReviewVoteEntity extends EntityPathBase<AlbumReviewVoteEntity
     public QAlbumReviewVoteEntity(Class<? extends AlbumReviewVoteEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.albumReview = inits.isInitialized("albumReview") ? new com.project.singk.domain.review.infrastructure.QAlbumReviewEntity(forProperty("albumReview"), inits.get("albumReview")) : null;
-        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member"), inits.get("member")) : null;
     }
 
 }

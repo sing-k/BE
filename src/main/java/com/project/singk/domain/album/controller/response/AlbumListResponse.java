@@ -7,11 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.album.domain.Album;
 
 import com.project.singk.domain.album.domain.AlbumArtist;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class AlbumListResponse {
 	private String id;

@@ -2,12 +2,14 @@ package com.project.singk.domain.album.controller.response;
 
 import com.project.singk.domain.album.domain.AlbumImage;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import se.michaelthelin.spotify.model_objects.specification.Image;
 
-@Data
+@Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class ImageResponse {
 	private String imageUrl;
 	private int width;

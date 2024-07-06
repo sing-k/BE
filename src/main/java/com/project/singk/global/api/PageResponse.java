@@ -4,24 +4,21 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageResponse<T> {
 
-	private final int offset;
-	private final int limit;
-	private final int total;
-	private final List<T> items;
-
-	@Builder
-	public PageResponse(int offset, int limit, int total, List<T> items) {
-		this.offset = offset;
-		this.limit = limit;
-		this.total = total;
-		this.items = items;
-	}
+	private int offset;
+	private int limit;
+	private int total;
+	private List<T> items;
 
 	public static <T> PageResponse<T> of (int offset, int limit, int total, List<T> items) {
 		return PageResponse.<T>builder()

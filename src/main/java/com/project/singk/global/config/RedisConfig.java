@@ -1,7 +1,9 @@
 package com.project.singk.global.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.singk.domain.album.controller.response.AlbumListResponse;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +19,13 @@ import com.project.singk.global.properties.RedisProperties;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
 @Configuration
+@EnableCaching
 @RequiredArgsConstructor
 public class RedisConfig {
 
@@ -38,10 +40,20 @@ public class RedisConfig {
 
     @Bean
     RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder()
+                                .allowIfSubType(Object.class)
+                                .build(),
+                        ObjectMapper.DefaultTyping.NON_FINAL,
+                        JsonTypeInfo.As.WRAPPER_ARRAY
+                );
+
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(5))
+                .entryTtl(Duration.ofMillis(redisProperties.getCache().getTtl()))
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new Jackson2JsonRedisSerializer(AlbumListResponse.class)));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(configuration)
@@ -54,7 +66,7 @@ public class RedisConfig {
 		StringRedisTemplate redisTemplate = new StringRedisTemplate();
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(AlbumListResponse.class));
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
 		return redisTemplate;
 	}
 }
