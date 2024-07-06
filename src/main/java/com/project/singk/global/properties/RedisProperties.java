@@ -15,5 +15,11 @@ public class RedisProperties {
 
 	private final String host;
 	private final int port;
+    private final Cache cache;
+    @Getter @ToString
+    @AllArgsConstructor
+    public static class Cache {
+        private final long ttl;
+    }
 
 }
