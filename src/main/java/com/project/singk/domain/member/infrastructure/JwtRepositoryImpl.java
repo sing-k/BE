@@ -1,6 +1,7 @@
 package com.project.singk.domain.member.infrastructure;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import jakarta.servlet.http.Cookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -139,15 +141,33 @@ public class JwtRepositoryImpl implements JwtRepository {
 	}
 
 	public String resolveAccessToken(HttpServletRequest request) {
-		String accessToken = request.getHeader(AUTHORIZATION_HEADER);
-		if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        String accessToken = Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(AUTHORIZATION_HEADER))
+                .findAny()
+                .map(Cookie::getValue)
+                .orElse(null);
+
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
 			return accessToken.substring(BEARER_PREFIX.length());
 		}
 		return null;
 	}
 
 	public String resolveRefreshToken(HttpServletRequest request) {
-		String refreshToken = request.getHeader(REFRESH_HEADER);
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        String refreshToken = Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(REFRESH_HEADER))
+                .findAny()
+                .map(Cookie::getValue)
+                .orElse(null);
+
 		if (StringUtils.hasText(refreshToken)) {
 			return refreshToken;
 		}

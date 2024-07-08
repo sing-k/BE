@@ -79,7 +79,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		AuthenticationException failed) throws IOException {
 		response.setContentType(CONTENT_TYPE);
 		ObjectMapper objectMapper = new ObjectMapper();
-		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED));
+		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED, failed.getMessage()));
 		response.getWriter().write(body);
 	}
 

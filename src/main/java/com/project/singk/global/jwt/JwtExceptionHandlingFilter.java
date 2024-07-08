@@ -2,6 +2,7 @@ package com.project.singk.global.jwt;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,11 +27,11 @@ public class JwtExceptionHandlingFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 		} catch (JwtException e) {
 			String body = objectMapper.writeValueAsString(
-				BaseResponse.fail(AppHttpStatus.INVALID_TOKEN, e.getMessage()));
+            BaseResponse.fail(AppHttpStatus.INVALID_TOKEN, e.getMessage()));
 			response.getWriter().write(body);
 		} catch (OAuth2AuthenticationException e) {
 			String body = objectMapper.writeValueAsString(
-				BaseResponse.fail(AppHttpStatus.OAUTH_UNAUTHORIZED, e.getMessage()));
+            BaseResponse.fail(AppHttpStatus.OAUTH_UNAUTHORIZED, e.getMessage()));
 			response.getWriter().write(body);
 		}
 	}
