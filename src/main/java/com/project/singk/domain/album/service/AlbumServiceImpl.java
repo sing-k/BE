@@ -97,8 +97,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Cacheable(value = "albums_modified_at", key = "'albums_modified_at_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
         Page<Album> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
+
         return PageResponse.of(
-                (int) albums.getPageable().getOffset(),
                 limit,
                 (int) albums.getTotalElements(),
                 albums.stream()
@@ -113,7 +113,6 @@ public class AlbumServiceImpl implements AlbumService {
     public PageResponse<AlbumListResponse> getAlbumsByAverageScore(String cursorId, String cursorScore, int limit) {
         Page<Album> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
         return PageResponse.of(
-                (int) albums.getPageable().getOffset(),
                 limit,
                 (int) albums.getTotalElements(),
                 albums.stream()
@@ -128,7 +127,6 @@ public class AlbumServiceImpl implements AlbumService {
     public PageResponse<AlbumListResponse> getAlbumsByReviewCount(String cursorId, String cursorReviewCount, int limit) {
         Page<Album> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
         return PageResponse.of(
-                (int) albums.getPageable().getOffset(),
                 limit,
                 (int) albums.getTotalElements(),
                 albums.stream()

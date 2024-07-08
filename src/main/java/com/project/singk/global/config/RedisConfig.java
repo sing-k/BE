@@ -25,7 +25,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 @Configuration
-@EnableCaching
+// @EnableCaching 임시 비활성화
 @RequiredArgsConstructor
 public class RedisConfig {
 
