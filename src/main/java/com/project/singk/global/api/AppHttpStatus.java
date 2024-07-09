@@ -49,6 +49,7 @@ public enum AppHttpStatus {
 	 * 404 : 응답할 리소스가 없음
 	 */
 	NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
+    NOT_FOUND_POST(404, HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
 	NOT_FOUND_MEMBER(404, HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 	NOT_FOUND_ALBUM(404, HttpStatus.NOT_FOUND, "존재하지 않는 앨범입니다."),
     NOT_FOUND_ALBUM_GENRE(404, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다."),

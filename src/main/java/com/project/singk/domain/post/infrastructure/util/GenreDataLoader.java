@@ -1,22 +1,27 @@
 package com.project.singk.domain.post.infrastructure.util;
 
 import com.project.singk.domain.post.domain.AlbumGenre;
+import com.project.singk.domain.post.domain.GenreType;
 import com.project.singk.domain.post.service.port.AlbumGenreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class GenreDataLoader implements CommandLineRunner {
 
-    @Autowired
-    private AlbumGenreRepository albumGenreRepository;
+    private final AlbumGenreRepository albumGenreRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        for (AlbumGenre genre : AlbumGenre.values()) {
+        long i=1L;
+        for (GenreType genre : GenreType.values()) {
             if (!albumGenreRepository.existsByGenre(genre))
-                albumGenreRepository.save(genre);
+                albumGenreRepository.save(AlbumGenre.builder().
+                        id(i++).
+                        genre(genre).
+                        build());
         }
     }
 }

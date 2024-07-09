@@ -3,7 +3,6 @@ package com.project.singk.domain.post.infrastructure.entity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.domain.PostType;
-import com.project.singk.domain.post.domain.AlbumGenre;
 import com.project.singk.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -40,8 +39,11 @@ public class PostEntity extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private MemberEntity member;
 
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
+
     @Builder
-    public PostEntity(Long id, String title, String content, PostType postType, Integer likes, Boolean isDeleted, AlbumGenre albumGenre, MemberEntity member) {
+    public PostEntity(Long id, String title, String content, PostType postType, Integer likes, Boolean isDeleted, MemberEntity member, String thumbnailUrl) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -49,6 +51,7 @@ public class PostEntity extends BaseTimeEntity {
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.member = member;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public static PostEntity from(Post post) {
@@ -73,7 +76,8 @@ public class PostEntity extends BaseTimeEntity {
                 .isDeleted(this.isDeleted)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())
-                .updatedAt(this.getModifiedAt())
+                .modifiedAt(this.getModifiedAt())
+                .thumbnailUrl(this.getThumbnailUrl())
                 .build();
     }
 }
