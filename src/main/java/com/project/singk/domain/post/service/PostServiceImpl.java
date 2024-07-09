@@ -20,8 +20,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PkResponseDto create(Long memberId, PostCreateRequest postCreateRequest, MultipartFile thumbnail) {
         Member member = memberRepository.getById(memberId);
-        Post post = Post.byRequest(postCreateRequest);
-        postRepository.save(post);
+        Post post = Post.byRequest(postCreateRequest, member);
+        post = postRepository.save(post);
         return PkResponseDto.of(post.getId());
     }
 }

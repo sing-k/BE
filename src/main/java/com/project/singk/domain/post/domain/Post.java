@@ -34,10 +34,11 @@ public class Post {
         this.modifiedAt = modifiedAt;
     }
 
-    public static Post byRequest(PostCreateRequest req) {
+    public static Post byRequest(PostCreateRequest req, Member member) {
         return Post.builder()
                 .title(req.getTitle())
                 .content(req.getTitle())
+                .member(member)
                 .build();
     }
 }
