@@ -3,7 +3,7 @@ package com.project.singk.domain.post.infrastructure.entity;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.domain.PostType;
-import com.project.singk.domain.post.domain.Genre;
+import com.project.singk.domain.post.domain.AlbumGenre;
 import com.project.singk.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "POSTS")
+@Table(name = "Posts")
 @Getter
 @NoArgsConstructor
 public class PostEntity extends BaseTimeEntity {
@@ -41,7 +41,7 @@ public class PostEntity extends BaseTimeEntity {
     private MemberEntity member;
 
     @Builder
-    public PostEntity(Long id, String title, String content, PostType postType, Integer likes, Boolean isDeleted, Genre genre, MemberEntity member) {
+    public PostEntity(Long id, String title, String content, PostType postType, Integer likes, Boolean isDeleted, AlbumGenre albumGenre, MemberEntity member) {
         this.id = id;
         this.title = title;
         this.content = content;

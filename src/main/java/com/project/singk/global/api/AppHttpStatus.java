@@ -51,6 +51,7 @@ public enum AppHttpStatus {
 	NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
 	NOT_FOUND_MEMBER(404, HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 	NOT_FOUND_ALBUM(404, HttpStatus.NOT_FOUND, "존재하지 않는 앨범입니다."),
+    NOT_FOUND_ALBUM_GENRE(404, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다."),
 	NOT_FOUND_ALBUM_REVIEW(404, HttpStatus.NOT_FOUND, "존재하지 않는 앨범 감상평입니다."),
 	NOT_FOUND_ALBUM_REVIEW_VOTE(404, HttpStatus.NOT_FOUND, "존재하지 않는 앨범 감상평 공감/비공감 입니다."),
 	NOT_FOUND_PROFILE_IMAGE(404, HttpStatus.NOT_FOUND, "등록되지 않거나 존재하지 않는 이미지 입니다."),

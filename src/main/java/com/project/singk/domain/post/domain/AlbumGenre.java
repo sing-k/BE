@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Genre {
+public enum AlbumGenre {
     BALLAD("발라드"),
     POP("팝"),
     HIPHOP("힙합"),
