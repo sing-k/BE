@@ -29,5 +29,6 @@ public class OAuthProperties {
 		private final String path;
 		private final boolean httpOnly;
 		private final boolean secure;
+        private final String sameSite;
 	}
 }
