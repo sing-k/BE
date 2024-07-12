@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "ACTIVITY_HISTORYS")
+@Table(name = "ACTIVITY_HISTORYS", indexes = {
+        @Index(name = "idx_activity_historys_created_at", columnList = "createdAt DESC"),
+})
 @Getter
 @NoArgsConstructor
 public class ActivityHistoryEntity extends BaseTimeEntity {
@@ -53,6 +55,7 @@ public class ActivityHistoryEntity extends BaseTimeEntity {
                 .type(this.type)
                 .score(this.score)
                 .member(this.member.toModel())
+                .createdAt(this.getCreatedAt())
                 .build();
     }
 }
