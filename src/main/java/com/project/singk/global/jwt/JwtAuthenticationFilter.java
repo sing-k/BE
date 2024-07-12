@@ -2,8 +2,6 @@ package com.project.singk.global.jwt;
 
 import java.io.IOException;
 
-import com.project.singk.global.properties.OAuthProperties;
-import jakarta.servlet.http.Cookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,7 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// Response Header 설정
         response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
         response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
-        System.out.println(createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
+
 		// 로그인 성공 시 Refresh Token 저장
 		redisRepository.setValue(
 			principal.getEmail(),
