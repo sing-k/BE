@@ -9,4 +9,5 @@ import java.util.List;
 public interface ActivityHistoryService {
     List<ActivityGraphResponse> getActivityGraph(Long memberId);
     PageResponse<ActivityHistoryResponse> getActivityHistories(Long memberId, int offset, int limit);
+    List<ActivityGraphResponse> getDailyActivityGraph(Long memberId, String startDate, String endDate);
 }

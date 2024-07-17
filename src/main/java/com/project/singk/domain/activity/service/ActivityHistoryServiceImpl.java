@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -31,7 +33,7 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
                     accumulatedScore.addAndGet(activity.getScore());
 
                     return ActivityGraphResponse.builder()
-                            .date(activity.getCreatedAt())
+                            .date(activity.getCreatedAt().toLocalDate())
                             .score(accumulatedScore.get())
                             .build();
                 })
@@ -51,4 +53,19 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
                         .toList()
         );
     }
+
+    @Override
+    public List<ActivityGraphResponse> getDailyActivityGraph(Long memberId, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        return activityHistoryRepository.getActivityDailyGraph(
+                memberId,
+                start,
+                end
+            ).stream()
+            .map(ActivityGraphResponse::from)
+            .collect(Collectors.toList());
+    }
+
 }
