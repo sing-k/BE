@@ -3,6 +3,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,6 +66,17 @@ public class SimpleTest {
         System.out.println("Result Activity History ----");
         for (History history : resultHistory) {
             System.out.println(history);
+        }
+
+        System.out.println("Weekly Sunday LocalDate ----");
+        List<LocalDate> weeks = new ArrayList<>(LocalDate.now().minusMonths(2).datesUntil(LocalDate.now().plusDays(1))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY)
+                .toList());
+
+        if (LocalDate.now().getDayOfWeek() != DayOfWeek.SUNDAY) weeks.add(LocalDate.now());
+
+        for (LocalDate week : weeks) {
+            System.out.println(week);
         }
     }
 
