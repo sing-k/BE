@@ -1,12 +1,14 @@
 package com.project.singk.domain.activity.controller;
 
 import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
+import com.project.singk.domain.activity.controller.request.ActivityDate;
 import com.project.singk.domain.activity.controller.response.ActivityGraphResponse;
 import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.api.PageResponse;
 import com.project.singk.global.validate.Date;
+import com.project.singk.global.validate.ValidEnum;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Validated
@@ -28,9 +28,16 @@ public class ActivityHistoryController {
     private final AuthService authService;
 
     @GetMapping("/graph")
-    public BaseResponse<List<ActivityGraphResponse>> getActivityHistoryGraph() {
+    public BaseResponse<List<ActivityGraphResponse>> getActivityHistoryGraph(
+            @Date @RequestParam("startDate") String startDate,
+            @Date @RequestParam("endDate") String endDate,
+            @ValidEnum(enumClass = ActivityDate.class, ignoreCase = false) @RequestParam("type") String type
+    ) {
         return BaseResponse.ok(activityHistoryService.getActivityGraph(
-                authService.getLoginMemberId()
+                authService.getLoginMemberId(),
+                startDate,
+                endDate,
+                type
         ));
     }
 
@@ -52,6 +59,29 @@ public class ActivityHistoryController {
             @Date @RequestParam("endDate") String endDate
     ) {
         return BaseResponse.ok(activityHistoryService.getDailyActivityGraph(
+                authService.getLoginMemberId(),
+                startDate,
+                endDate
+        ));
+    }
+    @GetMapping("/weekly/graph")
+    public BaseResponse<List<ActivityGraphResponse>> getWeeklyActivityGraph(
+            @Date @RequestParam("startDate") String startDate,
+            @Date @RequestParam("endDate") String endDate
+    ) {
+        return BaseResponse.ok(activityHistoryService.getWeeklyActivityGraph(
+                authService.getLoginMemberId(),
+                startDate,
+                endDate
+        ));
+    }
+
+    @GetMapping("/monthly/graph")
+    public BaseResponse<List<ActivityGraphResponse>> getMonthlyActivityGraph(
+            @Date @RequestParam("startDate") String startDate,
+            @Date @RequestParam("endDate") String endDate
+    ) {
+        return BaseResponse.ok(activityHistoryService.getMonthlyActivityGraph(
                 authService.getLoginMemberId(),
                 startDate,
                 endDate
