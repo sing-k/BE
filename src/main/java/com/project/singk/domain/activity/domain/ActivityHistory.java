@@ -30,4 +30,13 @@ public class ActivityHistory {
                 .member(member)
                 .build();
     }
+
+    public ActivityHistory setAccumulatedScore(int score) {
+        return ActivityHistory.builder()
+                .type(this.type)
+                .score(score)
+                .member(this.member)
+                .createdAt(this.createdAt)
+                .build();
+    }
 }

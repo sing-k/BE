@@ -1,6 +1,7 @@
 package com.project.singk.domain.activity.service;
 
 import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
+import com.project.singk.domain.activity.controller.request.ActivityDate;
 import com.project.singk.domain.activity.controller.response.ActivityGraphResponse;
 import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
 import com.project.singk.domain.activity.domain.ActivityHistory;
@@ -12,8 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,17 +26,18 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
 
     private final ActivityHistoryRepository activityHistoryRepository;
     @Override
-    public List<ActivityGraphResponse> getActivityGraph(Long memberId) {
-        AtomicInteger accumulatedScore = new AtomicInteger(0);
-        return activityHistoryRepository.getActivityGraph(memberId).stream()
-                .map(activity -> {
-                    accumulatedScore.addAndGet(activity.getScore());
+    public List<ActivityGraphResponse> getActivityGraph(Long memberId, String startDate, String endDate, String dateType) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        ActivityDate type = ActivityDate.valueOf(dateType);
 
-                    return ActivityGraphResponse.builder()
-                            .date(activity.getCreatedAt())
-                            .score(accumulatedScore.get())
-                            .build();
-                })
+        return activityHistoryRepository.getActivityGraph(
+                        memberId,
+                        start,
+                        end,
+                        type
+                ).stream()
+                .map(ActivityGraphResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -51,4 +54,47 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
                         .toList()
         );
     }
+
+    @Override
+    public List<ActivityGraphResponse> getDailyActivityGraph(Long memberId, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        return activityHistoryRepository.getActivityDailyGraph(
+                memberId,
+                start,
+                end
+            ).stream()
+            .map(ActivityGraphResponse::from)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ActivityGraphResponse> getWeeklyActivityGraph(Long memberId, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        return activityHistoryRepository.getActivityWeeklyGraph(
+                        memberId,
+                        start,
+                        end
+                ).stream()
+                .map(ActivityGraphResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ActivityGraphResponse> getMonthlyActivityGraph(Long memberId, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        return activityHistoryRepository.getActivityMonthlyGraph(
+                        memberId,
+                        start,
+                        end
+                ).stream()
+                .map(ActivityGraphResponse::from)
+                .collect(Collectors.toList());
+    }
+
 }

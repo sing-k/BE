@@ -1,9 +1,12 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.activity.controller.request.ActivityDate;
 import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityScore;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,12 +23,27 @@ public class FakeActivityHistoryRepository implements ActivityHistoryRepository 
     }
 
     @Override
-    public List<ActivityHistory> getActivityGraph(Long memberId) {
+    public List<ActivityScore> getActivityGraph(Long memberId, LocalDate start, LocalDate end, ActivityDate type) {
         return null;
     }
 
     @Override
     public Page<ActivityHistory> getActivityHistories(Long memberId, int offset, int limit) {
+        return null;
+    }
+
+    @Override
+    public List<ActivityScore> getActivityDailyGraph(Long memberId, LocalDate start, LocalDate end) {
+        return null;
+    }
+
+    @Override
+    public List<ActivityScore> getActivityWeeklyGraph(Long memberId, LocalDate start, LocalDate end) {
+        return null;
+    }
+
+    @Override
+    public List<ActivityScore> getActivityMonthlyGraph(Long memberId, LocalDate start, LocalDate end) {
         return null;
     }
 

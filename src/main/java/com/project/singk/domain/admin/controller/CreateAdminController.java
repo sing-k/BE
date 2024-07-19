@@ -1,14 +1,18 @@
 package com.project.singk.domain.admin.controller;
 
+import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
 import com.project.singk.domain.admin.controller.port.AdminService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.validate.Date;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -26,4 +30,18 @@ public class CreateAdminController {
 	) {
 		return BaseResponse.ok(adminService.createAlbums(query, offset, limit));
 	}
+
+    @PostMapping("/activity-histories")
+    public BaseResponse<List<ActivityHistoryResponse>> createActivityHistories(
+            @Date @RequestParam("startDate") String startDate,
+            @Date @RequestParam("endDate") String endDate,
+            @RequestParam("count") int count
+    ) {
+        return BaseResponse.ok(adminService.createActivityHistories(
+                authService.getLoginMemberId(),
+                startDate,
+                endDate,
+                count
+        ));
+    }
 }

@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "ACTIVITY_HISTORYS", indexes = {
         @Index(name = "idx_activity_historys_created_at", columnList = "createdAt DESC"),
@@ -33,11 +35,13 @@ public class ActivityHistoryEntity extends BaseTimeEntity {
     private MemberEntity member;
 
     @Builder
-    public ActivityHistoryEntity(Long id, ActivityType type, int score, MemberEntity member) {
+    public ActivityHistoryEntity(Long id, ActivityType type, int score, MemberEntity member, LocalDateTime createdAt) {
+        super(createdAt, null);
         this.id = id;
         this.type = type;
         this.score = score;
         this.member = member;
+        this.createdAt = createdAt;
     }
 
     public static ActivityHistoryEntity from (ActivityHistory activity) {
@@ -46,6 +50,7 @@ public class ActivityHistoryEntity extends BaseTimeEntity {
                 .type(activity.getType())
                 .score(activity.getScore())
                 .member(MemberEntity.from(activity.getMember()))
+                .createdAt(activity.getCreatedAt())
                 .build();
     }
 
@@ -55,7 +60,7 @@ public class ActivityHistoryEntity extends BaseTimeEntity {
                 .type(this.type)
                 .score(this.score)
                 .member(this.member.toModel())
-                .createdAt(this.getCreatedAt())
+                .createdAt(this.createdAt)
                 .build();
     }
 }
