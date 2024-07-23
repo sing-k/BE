@@ -1,4 +1,4 @@
-package com.project.singk.domain.post.domain;
+package com.project.singk.domain.album.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

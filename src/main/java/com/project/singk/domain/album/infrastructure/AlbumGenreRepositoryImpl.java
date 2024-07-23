@@ -1,10 +1,10 @@
-package com.project.singk.domain.post.infrastructure;
+package com.project.singk.domain.album.infrastructure;
 
-import com.project.singk.domain.post.domain.AlbumGenre;
-import com.project.singk.domain.post.domain.GenreType;
-import com.project.singk.domain.post.infrastructure.entity.AlbumGenreEntity;
-import com.project.singk.domain.post.infrastructure.jpa.AlbumGenreJpaRepository;
-import com.project.singk.domain.post.service.port.AlbumGenreRepository;
+import com.project.singk.domain.album.domain.AlbumGenre;
+import com.project.singk.domain.album.domain.GenreType;
+import com.project.singk.domain.album.infrastructure.entity.AlbumGenreEntity;
+import com.project.singk.domain.album.infrastructure.jpa.AlbumGenreJpaRepository;
+import com.project.singk.domain.album.service.port.AlbumGenreRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import lombok.RequiredArgsConstructor;

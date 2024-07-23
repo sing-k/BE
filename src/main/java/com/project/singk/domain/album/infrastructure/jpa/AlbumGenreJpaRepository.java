@@ -1,7 +1,7 @@
-package com.project.singk.domain.post.infrastructure.jpa;
+package com.project.singk.domain.album.infrastructure.jpa;
 
-import com.project.singk.domain.post.domain.GenreType;
-import com.project.singk.domain.post.infrastructure.entity.AlbumGenreEntity;
+import com.project.singk.domain.album.domain.GenreType;
+import com.project.singk.domain.album.infrastructure.entity.AlbumGenreEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

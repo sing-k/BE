@@ -1,9 +1,8 @@
-package com.project.singk.domain.post.infrastructure.entity;
+package com.project.singk.domain.album.infrastructure.entity;
 
-import com.project.singk.domain.post.domain.AlbumGenre;
-import com.project.singk.domain.post.domain.GenreType;
+import com.project.singk.domain.album.domain.AlbumGenre;
+import com.project.singk.domain.album.domain.GenreType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
