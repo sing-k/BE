@@ -160,6 +160,7 @@ public class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository 
                     .toList());
 
             if (end.getDayOfWeek() != DayOfWeek.SUNDAY) dates.add(end);
+            dates.add(0, start);
 
             return dates;
         } else if (type.equals(ActivityDate.MONTHLY)) {
@@ -169,6 +170,7 @@ public class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository 
                     .toList());
 
             if (!end.equals(YearMonth.from(end).atEndOfMonth())) dates.add(end);
+            dates.add(0, start);
 
             return dates;
         }
