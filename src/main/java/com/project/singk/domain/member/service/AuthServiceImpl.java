@@ -2,6 +2,7 @@ package com.project.singk.domain.member.service;
 
 import com.project.singk.domain.member.domain.MemberStatistics;
 import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
 	private final String AUTH_PREFIX = "AuthCode";
+    private final String COOKIE_HEADER = "Set-Cookie";
 	private final MemberRepository memberRepository;
 	private final CodeGenerator codeGenerator;
 	private final MailService mailService;
@@ -59,24 +61,30 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public void issueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        // 클라이언트가 제공한 리프레쉬 토큰
 		String clientRefreshToken = jwtRepository.resolveRefreshToken(request);
 		Claims refreshClaims = jwtRepository.parseToken(clientRefreshToken);
 		String clientEmail = refreshClaims.getSubject();
+
+        // 서버에 저장되어 있는 클라이언트 리프레쉬 토큰
 		String serverRefreshToken = redisRepository.getValue(clientEmail);
 
-		// 서버에 refresh token이 존재하지 않거나 서버의 refresh token과 클라이언트의 refresh token이 일치하지 않는경우
+		// 서버에 클라이언트의 리프레쉬 토큰이 존재하지 않거나
+        // 서버가 가지고 있는 클라이언트 리프레쉬 토큰과 클라이언트가 제공한 리프레쉬 토큰이 일치하지 않는 예외 사항
 		if (serverRefreshToken == null || !serverRefreshToken.equals(clientRefreshToken)) {
 			throw new ApiException(AppHttpStatus.INVALID_TOKEN);
 		}
 
 		Member member = memberRepository.getByEmail(clientEmail);
-
 		SingKUserDetails userDetails = SingKUserDetails.of(member);
+
+        // 토큰 재발행
 		TokenDto token = jwtRepository.generateTokenDto(userDetails.getId(), userDetails.getEmail(), userDetails.getRole());
 
-        response.addCookie(createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
-        response.addCookie(createCookie(REFRESH_HEADER, token.getRefreshToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
+        // 기존 클라이언트 리프레쉬 토큰 제거 후 새로 발행한 리프레쉬 토큰 저장
 		redisRepository.deleteValue(clientEmail);
 		redisRepository.setValue(
 			clientEmail,
@@ -85,20 +93,22 @@ public class AuthServiceImpl implements AuthService {
 		);
 	}
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(jwtProperties.getCookie().getMaxAge());
-        cookie.setPath(jwtProperties.getCookie().getPath());
-        cookie.setHttpOnly(jwtProperties.getCookie().isHttpOnly());
-        cookie.setSecure(jwtProperties.getCookie().isSecure());
-        return cookie;
+    private String createCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .path(jwtProperties.getCookie().getPath())
+                .sameSite(jwtProperties.getCookie().getSameSite())
+                .httpOnly(jwtProperties.getCookie().isHttpOnly())
+                .secure(jwtProperties.getCookie().isSecure())
+                .maxAge(jwtProperties.getCookie().getMaxAge())
+                .build()
+                .toString();
     }
 
 	@Override
 	public void logout(TokenDto dto) {
 		Claims claims = jwtRepository.parseToken(dto.getRefreshToken());
 
-		// login 성공 시 저장한 email 조회
+		// Redis에서 로그인 성공 시 저장한 클라이언트 email 조회
 		String email = claims.getSubject();
 		String savedRefreshToken = redisRepository.getValue(email);
 
