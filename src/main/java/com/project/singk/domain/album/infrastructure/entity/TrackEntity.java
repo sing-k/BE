@@ -10,12 +10,13 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "TRACKS")
 @Getter
 @NoArgsConstructor
-public class TrackEntity extends BaseTimeEntity {
+public class TrackEntity extends BaseTimeEntity implements Persistable<String> {
 
 	@Id
 	@Column(updatable = false, length = 22)
@@ -65,6 +66,12 @@ public class TrackEntity extends BaseTimeEntity {
 			.duration(this.duration)
 			.isPlayable(this.isPlayable)
 			.previewUrl(this.previewUrl)
+                .createdAt(this.getCreatedAt())
 			.build();
 	}
+
+    @Override
+    public boolean isNew() {
+        return this.getCreatedAt() == null;
+    }
 }
