@@ -22,7 +22,7 @@ public class AlarmController {
     }
 
     @DeleteMapping(value="/{alarmId}")
-    public BaseResponse<Void> delete(@PathVariable(value = "alarmId") String id){
+    public BaseResponse<Void> delete(@PathVariable(value = "alarmId") Long id){
         alarmService.delete(id);
         return BaseResponse.ok();
     }

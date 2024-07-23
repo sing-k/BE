@@ -8,5 +8,5 @@ public interface AlarmService {
     SseEmitter subscribe(String username,String lastEventId);
     // Todo: 알람 보낼 서비스 메소드 안에 send()로 넣으시면 됩니다. -> AlarmType도 자체 수정
     void send(Member receiver, AlarmType alarmType, String content);
-    Void delete(String id);
+    Void delete(Long id);
 }

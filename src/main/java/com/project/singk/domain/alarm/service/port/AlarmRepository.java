@@ -4,5 +4,5 @@ import com.project.singk.domain.alarm.domain.Alarm;
 
 public interface AlarmRepository {
     Alarm save(Alarm alarm);
-    void deleteById(String id);
+    void deleteById(Long id);
 }

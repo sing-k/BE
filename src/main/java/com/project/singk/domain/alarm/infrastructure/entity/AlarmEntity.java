@@ -17,8 +17,8 @@ import org.hibernate.annotations.OnDeleteAction;
 public class AlarmEntity {
 
     @Id
-    @Column(updatable = false)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name="content")
     private String content;
@@ -36,7 +36,7 @@ public class AlarmEntity {
     private AlarmType type;
 
     @Builder
-    public AlarmEntity(String id, AlarmType type, Member receiver, Boolean isRead, String content) {
+    public AlarmEntity(Long id, AlarmType type, Member receiver, Boolean isRead, String content) {
         this.id = id;
         this.type = type;
         this.receiver = receiver;

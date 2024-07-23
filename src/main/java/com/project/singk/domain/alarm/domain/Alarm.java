@@ -7,14 +7,14 @@ import lombok.Getter;
 @Getter
 public class Alarm {
 
-    private final String id;
+    private final Long id;
     private final String content;
     private final Boolean isRead;
     private final Member receiver;
     private final AlarmType type;
 
     @Builder
-    public Alarm(String id, String content, Boolean isRead, AlarmType type, Member receiver){
+    public Alarm(Long id, String content, Boolean isRead, AlarmType type, Member receiver){
         this.id = id;
         this.content = content;
         this.isRead = isRead;

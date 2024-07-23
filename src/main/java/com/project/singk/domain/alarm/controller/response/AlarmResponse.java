@@ -13,7 +13,7 @@ public class AlarmResponse {
     String receiverName;
     public static AlarmResponse from(Alarm alarm){
         return AlarmResponse.builder()
-                .id(alarm.getId())
+                .id(alarm.getId().toString())
                 .content(alarm.getContent())
                 .type(alarm.getType().toString())
                 .receiverName(alarm.getReceiver().getName())

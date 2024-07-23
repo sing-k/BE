@@ -6,7 +6,9 @@ import com.project.singk.domain.alarm.domain.Alarm;
 import com.project.singk.domain.alarm.domain.AlarmType;
 import com.project.singk.domain.alarm.service.port.AlarmRepository;
 import com.project.singk.domain.alarm.service.port.EmitterRepository;
+import com.project.singk.domain.common.service.port.ClockHolder;
 import com.project.singk.domain.member.domain.Member;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,12 +16,14 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
+@Builder
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
     private static final Long SSE_TIMEOUT = 120L * 1000 * 60;
 
     private final EmitterRepository emitterRepository;
     private final AlarmRepository alarmRepository;
+    private final ClockHolder clockHolder;
 
     @Override
     public SseEmitter subscribe(String username,String lastEventId){
@@ -54,12 +58,12 @@ public class AlarmServiceImpl implements AlarmService {
         );
     }
     @Override
-    public Void delete(String id){
+    public Void delete(Long id){
         alarmRepository.deleteById(id);
         return null;
     }
     private String makeTimeIncludeId(String email) {
-        return email + "_" + System.currentTimeMillis();
+        return email + "_" + clockHolder.millis();
     }
     private void sendAlarm(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {

@@ -17,5 +17,5 @@ public class AlarmRepositoryImpl implements AlarmRepository {
     public Alarm save(Alarm alarm){ return alarmJpaRepository.save(AlarmEntity.from(alarm)).toModel();}
 
     @Override
-    public void deleteById(String id){alarmJpaRepository.deleteById(id);}
+    public void deleteById(Long id){alarmJpaRepository.deleteById(id);}
 }
