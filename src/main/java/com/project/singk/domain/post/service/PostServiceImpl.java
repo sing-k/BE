@@ -3,7 +3,7 @@ package com.project.singk.domain.post.service;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.controller.port.PostService;
-import com.project.singk.domain.post.controller.request.PostCreateRequest;
+import com.project.singk.domain.post.domain.PostCreate;
 import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.service.port.PostRepository;
 import com.project.singk.global.domain.PkResponseDto;
@@ -18,9 +18,9 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
 
     @Override
-    public PkResponseDto create(Long memberId, PostCreateRequest postCreateRequest, MultipartFile thumbnail) {
+    public PkResponseDto create(Long memberId, PostCreate postCreate, MultipartFile thumbnail) {
         Member member = memberRepository.getById(memberId);
-        Post post = Post.byRequest(postCreateRequest, member);
+        Post post = Post.byRequest(postCreate, member);
         post = postRepository.save(post);
         return PkResponseDto.of(post.getId());
     }

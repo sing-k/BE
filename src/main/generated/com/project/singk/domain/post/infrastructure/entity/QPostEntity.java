@@ -64,7 +64,11 @@ public class QPostEntity extends EntityPathBase<PostEntity> {
 
     public QPostEntity(Class<? extends PostEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+<<<<<<< HEAD
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
+=======
+        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member"), inits.get("member")) : null;
+>>>>>>> 677edcf (fix : 게시글 생성 시 멤버 누락)
     }
 
 }

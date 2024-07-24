@@ -1,4 +1,4 @@
-package com.project.singk.domain.post.infrastructure.entity;
+package com.project.singk.domain.album.infrastructure.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,11 +15,11 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QAlbumGenreEntity extends EntityPathBase<AlbumGenreEntity> {
 
-    private static final long serialVersionUID = -159508689L;
+    private static final long serialVersionUID = -1938004692L;
 
     public static final QAlbumGenreEntity albumGenreEntity = new QAlbumGenreEntity("albumGenreEntity");
 
-    public final EnumPath<com.project.singk.domain.post.domain.GenreType> genre = createEnum("genre", com.project.singk.domain.post.domain.GenreType.class);
+    public final EnumPath<com.project.singk.domain.album.domain.GenreType> genre = createEnum("genre", com.project.singk.domain.album.domain.GenreType.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

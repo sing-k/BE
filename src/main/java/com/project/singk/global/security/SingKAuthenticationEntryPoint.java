@@ -24,6 +24,5 @@ public class SingKAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		response.setContentType(CONTENT_TYPE);
 		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED));
 		response.getWriter().write(body);
-		authException.printStackTrace();
 	}
 }

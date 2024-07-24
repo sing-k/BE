@@ -1,7 +1,6 @@
 package com.project.singk.domain.post.domain;
 
 import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.post.controller.request.PostCreateRequest;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,7 +33,7 @@ public class Post {
         this.modifiedAt = modifiedAt;
     }
 
-    public static Post byRequest(PostCreateRequest req, Member member) {
+    public static Post byRequest(PostCreate req, Member member) {
         return Post.builder()
                 .title(req.getTitle())
                 .content(req.getTitle())

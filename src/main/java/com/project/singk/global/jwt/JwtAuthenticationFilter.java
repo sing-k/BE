@@ -2,8 +2,7 @@ package com.project.singk.global.jwt;
 
 import java.io.IOException;
 
-import com.project.singk.global.properties.OAuthProperties;
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +31,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
 	private final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    private final String COOKIE_HEADER = "Set-Cookie";
 
 	private final AuthenticationManager authenticationManager;
 	private final RedisRepository redisRepository;
@@ -63,8 +63,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		TokenDto token = jwtRepository.generateTokenDto(principal.getId(), principal.getEmail(), principal.getRole());
 
 		// Response Header 설정
-        response.addCookie(createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
-        response.addCookie(createCookie(REFRESH_HEADER, token.getRefreshToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
 		// 로그인 성공 시 Refresh Token 저장
 		redisRepository.setValue(
@@ -79,16 +79,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		AuthenticationException failed) throws IOException {
 		response.setContentType(CONTENT_TYPE);
 		ObjectMapper objectMapper = new ObjectMapper();
-		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED));
+		String body = objectMapper.writeValueAsString(BaseResponse.fail(AppHttpStatus.UNAUTHORIZED, failed.getMessage()));
 		response.getWriter().write(body);
 	}
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(jwtProperties.getCookie().getMaxAge());
-        cookie.setPath(jwtProperties.getCookie().getPath());
-        cookie.setHttpOnly(jwtProperties.getCookie().isHttpOnly());
-        cookie.setSecure(jwtProperties.getCookie().isSecure());
-        return cookie;
+    private String createCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .path(jwtProperties.getCookie().getPath())
+                .sameSite(jwtProperties.getCookie().getSameSite())
+                .httpOnly(jwtProperties.getCookie().isHttpOnly())
+                .secure(jwtProperties.getCookie().isSecure())
+                .maxAge(jwtProperties.getCookie().getMaxAge())
+                .build()
+                .toString();
     }
 }

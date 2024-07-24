@@ -38,10 +38,12 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 			return;
 		}
 
+        // 로그아웃된 토큰인지 확인
 		if (isLogout(accessToken)) {
 			throw new JwtException(AppHttpStatus.BLOCKED_TOKEN.getMessage());
 		}
 
+        // 토큰 유효성 검사
 		jwtRepository.parseToken(accessToken);
 
 		setAuthenticationToSecurityContextHolder(accessToken);

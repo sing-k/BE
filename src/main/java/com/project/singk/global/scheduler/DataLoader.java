@@ -1,5 +1,8 @@
 package com.project.singk.global.scheduler;
 
+import com.project.singk.domain.album.domain.AlbumGenre;
+import com.project.singk.domain.album.domain.GenreType;
+import com.project.singk.domain.album.service.port.AlbumGenreRepository;
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
@@ -21,7 +24,7 @@ public class DataLoader implements ApplicationRunner {
     private final MemberRepository memberRepository;
     private final PasswordEncoderHolder passwordEncoderHolder;
     private final AdminProperties adminProperties;
-
+    private final AlbumGenreRepository albumGenreRepository;
     @Override
     public void run(ApplicationArguments args) {
 
@@ -38,5 +41,14 @@ public class DataLoader implements ApplicationRunner {
                 .birthday(LocalDateTime.of(1999,12,30,0,0,0))
                 .statistics(MemberStatistics.empty())
                 .build());
+
+        // 앨범 장르 생성
+        for (GenreType genre : GenreType.values()) {
+            if (!albumGenreRepository.existsByGenre(genre)) {
+                albumGenreRepository.save(AlbumGenre.builder()
+                        .genre(genre)
+                        .build());
+            }
+        }
     }
 }

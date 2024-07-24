@@ -1,7 +1,7 @@
-package com.project.singk.domain.post.service.port;
+package com.project.singk.domain.album.service.port;
 
-import com.project.singk.domain.post.domain.AlbumGenre;
-import com.project.singk.domain.post.domain.GenreType;
+import com.project.singk.domain.album.domain.AlbumGenre;
+import com.project.singk.domain.album.domain.GenreType;
 
 public interface AlbumGenreRepository {
     AlbumGenre findGenreById(Long id);
