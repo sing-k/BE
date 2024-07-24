@@ -2,6 +2,7 @@ package com.project.singk.domain.member.service;
 
 import java.util.UUID;
 
+import com.project.singk.global.properties.S3Properties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
 	private final AuthService authService;
 	private final MemberRepository memberRepository;
 	private final S3Repository s3Repository;
+    private final S3Properties s3Properties;
 	private final UUIDHolder uuidHolder;
 
 	@Transactional(readOnly = true)
@@ -59,7 +61,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		Member member = memberRepository.getById(memberId);
-		String key = "profile-img/" + uuidHolder.randomUUID();
+		String key = s3Properties.getPath() + uuidHolder.randomUUID();
 
 		s3Repository.putObject(key, image);
 		member = member.uploadProfileImage(key);

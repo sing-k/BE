@@ -15,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -75,15 +76,15 @@ public class AlbumReviewRepositoryImpl implements AlbumReviewRepository {
                 .map(AlbumReviewEntity::toModel)
                 .toList();
 
-        JPAQuery<Long> count = jpaQueryFactory.select(albumReviewEntity.count())
+        Long count = jpaQueryFactory.select(albumReviewEntity.count())
                 .from(albumReviewEntity)
-                .join(albumReviewEntity.member, memberEntity)
                 .join(albumReviewEntity.album, albumEntity)
-                .where(albumEntity.id.eq(albumId));
+                .where(albumEntity.id.eq(albumId))
+                .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);
 
-        return PageableExecutionUtils.getPage(reviews, pageable, count::fetchOne);
+        return new PageImpl<>(reviews, pageable, count);
     }
 
     @Override
@@ -100,15 +101,15 @@ public class AlbumReviewRepositoryImpl implements AlbumReviewRepository {
                 .map(AlbumReviewEntity::toModel)
                 .toList();
 
-        JPAQuery<Long> count = jpaQueryFactory.select(albumReviewEntity.count())
+        Long count = jpaQueryFactory.select(albumReviewEntity.count())
                 .from(albumReviewEntity)
                 .join(albumReviewEntity.member, memberEntity)
-                .join(albumReviewEntity.album, albumEntity)
-                .where(memberEntity.id.eq(memberId));
+                .where(memberEntity.id.eq(memberId))
+                .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);
 
-        return PageableExecutionUtils.getPage(reviews, pageable, count::fetchOne);
+        return new PageImpl<>(reviews, pageable, count);
     }
 
     private OrderSpecifier createOrderSpecifier(ReviewSort sort) {

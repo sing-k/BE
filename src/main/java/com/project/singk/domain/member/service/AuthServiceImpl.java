@@ -105,21 +105,23 @@ public class AuthServiceImpl implements AuthService {
     }
 
 	@Override
-	public void logout(TokenDto dto) {
-		Claims claims = jwtRepository.parseToken(dto.getRefreshToken());
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+        String clientAccessToken = jwtRepository.resolveAccessToken(request);
+        String clientRefreshToken = jwtRepository.resolveRefreshToken(request);
+		Claims refreshClaims = jwtRepository.parseToken(clientRefreshToken);
 
 		// Redis에서 로그인 성공 시 저장한 클라이언트 email 조회
-		String email = claims.getSubject();
-		String savedRefreshToken = redisRepository.getValue(email);
+		String email = refreshClaims.getSubject();
+		String serverRefreshToken = redisRepository.getValue(email);
 
-		if (savedRefreshToken == null) {
+		if (serverRefreshToken == null) {
 			throw new ApiException(AppHttpStatus.UNAUTHORIZED);
 		}
 
 		redisRepository.deleteValue(email);
 		// Access Token 블랙 리스트 처리
 		redisRepository.setValue(
-			dto.getAccessToken().substring(7),
+			clientAccessToken,
 			"logout",
 			jwtProperties.getAccessExpirationMillis()
 		);

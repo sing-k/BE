@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -63,13 +64,14 @@ public class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository 
                 .map(ActivityHistoryEntity::toModel)
                 .toList();
 
-        JPAQuery<Long> count = queryFactory.select(activityHistoryEntity.count())
+        Long count = queryFactory.select(activityHistoryEntity.count())
                 .from(activityHistoryEntity)
-                .where(activityHistoryEntity.member.id.eq(memberId));
+                .where(activityHistoryEntity.member.id.eq(memberId))
+                .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);
 
-        return PageableExecutionUtils.getPage(activityHistories, pageable, count::fetchOne);
+        return new PageImpl<>(activityHistories, pageable, count);
     }
 
     @Override

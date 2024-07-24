@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthService {
 	Long getLoginMemberId();
 	void issueAccessToken(HttpServletRequest request, HttpServletResponse response);
-	public void logout(TokenDto dto);
+	public void logout(HttpServletRequest request, HttpServletResponse response);
 	PkResponseDto signup(MemberCreate memberCreate);
 	void confirmNickname(String nickname);
 	void sendCertificationCode(String email);

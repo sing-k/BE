@@ -17,7 +17,7 @@ public class S3Properties {
 	private final Credentials credentials;
 	private final Stack stack;
 	private final long expirationMillis;
-
+    private final String path;
 	@Getter @ToString
 	@AllArgsConstructor
 	public static class Credentials {

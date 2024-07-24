@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
         response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
-		// 로그인 성공 시 Refresh Token 저장
+		// 로그인 성공 시 Key : Email Value : Refresh Token 저장
 		redisRepository.setValue(
 			principal.getEmail(),
 			token.getRefreshToken(),

@@ -117,7 +117,7 @@ public class JwtRepositoryImpl implements JwtRepository {
 		}
 	}
 
-	// JWT 토큰으로 Authentication
+	// 액세스 토큰으로 Authentication 객체 가져오기
 	public Authentication getAuthentication(String accessToken) {
 		Claims claims = parseToken(accessToken);
 		String id = claims.get("id").toString();
@@ -141,36 +141,41 @@ public class JwtRepositoryImpl implements JwtRepository {
 	}
 
 	public String resolveAccessToken(HttpServletRequest request) {
+        // 쿠키가 존재하는지 확인
         if (request.getCookies() == null) {
             return null;
         }
 
+        // 쿠키 중 AUTHORIZATION_HEADER Key를 갖는 쿠키를 찾고 Value 가져오기
         String accessToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(AUTHORIZATION_HEADER))
                 .findAny()
                 .map(Cookie::getValue)
                 .orElse(null);
 
-        if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
-			return accessToken.substring(BEARER_PREFIX.length());
+        if (!StringUtils.hasText(accessToken) || !accessToken.startsWith(BEARER_PREFIX)) {
+			return null;
 		}
-		return null;
+		return accessToken.substring(BEARER_PREFIX.length());
 	}
 
 	public String resolveRefreshToken(HttpServletRequest request) {
+        // 쿠키가 존재하는지 확인
         if (request.getCookies() == null) {
             return null;
         }
 
+        // 쿠키 중 REFRESH_HEADER Key를 갖는 쿠키를 찾고 Value 가져오기
         String refreshToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(REFRESH_HEADER))
                 .findAny()
                 .map(Cookie::getValue)
                 .orElse(null);
 
-		if (StringUtils.hasText(refreshToken)) {
-			return refreshToken;
+		if (!StringUtils.hasText(refreshToken)) {
+			return null;
 		}
-		return null;
+
+		return refreshToken;
 	}
 }
