@@ -51,6 +51,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 	}
 
 	private boolean isLogout(String accessToken) {
+        // Redis에 해당 액세스 토큰이 저장되어 있다면 만료된 토큰
 		return redisRepository.getValue(accessToken) != null;
 	}
 	private void setAuthenticationToSecurityContextHolder(String accessToken) {

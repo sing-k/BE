@@ -36,8 +36,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public BaseResponse<Void> logout(@Valid @RequestBody TokenDto request) {
-		authService.logout(request);
+	public BaseResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+		authService.logout(request, response);
 		return BaseResponse.ok();
 	}
 
