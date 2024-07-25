@@ -21,10 +21,13 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
     private  final RecommendPostRepository postRepository;
 
     // Todo : auth 관련 처리
+    // 댓글 수
     @Override
     public PkResponseDto createComment(Long memberId, Long postId,Long parentId,RecommendCommentCreate req) {
         Member member = memberRepository.findById(memberId).orElse(null);
         RecommendPost post = postRepository.findById(postId);
+        post.updateLikeCount();
+        postRepository.save(post);
         RecommendComment parent = commentRepository.findById(parentId);
         RecommendComment recommendComment = commentRepository.save(RecommendComment.byRequest(req,member,post,parent));
         return PkResponseDto.of(recommendComment.getId());
@@ -35,7 +38,6 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
         RecommendComment recommendComment = commentRepository.findById(id);
         recommendComment.update(req);
         RecommendComment updatedComment = commentRepository.save(recommendComment);
-        commentRepository.delete(id);
         return PkResponseDto.of(updatedComment.getId());
     }
 

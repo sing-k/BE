@@ -45,7 +45,6 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         RecommendPost recommendPost = recommendPostRepository.findById(id);
         recommendPost.update(req);
         RecommendPost updatedRecommendPost = recommendPostRepository.save(recommendPost);
-        recommendPostRepository.delete(id);
         return PkResponseDto.of(updatedRecommendPost.getId());
     }
 

@@ -58,4 +58,7 @@ public class RecommendPost {
             content = newContent;
         }
     }
+    public void updateLikeCount(){
+        this.likes = this.likes+1;
+    }
 }
