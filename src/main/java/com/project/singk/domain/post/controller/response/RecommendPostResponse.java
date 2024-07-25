@@ -1,18 +1,12 @@
 package com.project.singk.domain.post.controller.response;
 
-import com.project.singk.domain.member.domain.Member;
-import com.project.singk.domain.post.domain.Post;
+import com.project.singk.domain.post.domain.RecommendPost;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Getter
 @Builder
-@ToString
-public class PostResponse {
+public class RecommendPostResponse {
     private String id;
     private String title;
     private String content;
@@ -21,15 +15,20 @@ public class PostResponse {
     private String modifiedAt;
     private int likeCount;
     private int commentCount;
+    private String thumbnailUrl;
+    private String recommendType;
 
-    public static PostResponse from(Post post){
-        return PostResponse.builder()
+    public static RecommendPostResponse from(RecommendPost post){
+
+        return RecommendPostResponse.builder()
                 .id(post.getId().toString())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .nickname(post.getMember().getNickname())
                 .createdAt(post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .modifiedAt(post.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .thumbnailUrl(post.getThumbnailUrl())
+                .recommendType(post.getRecommendType().getName())
                 .build();
     }
 }

@@ -1,8 +1,10 @@
 package com.project.singk.domain.post.infrastructure.entity;
 
+import com.project.singk.domain.album.domain.AlbumGenre;
+import com.project.singk.domain.album.domain.GenreType;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.post.domain.Post;
-import com.project.singk.domain.post.domain.PostType;
+import com.project.singk.domain.post.domain.RecommendType;
 import com.project.singk.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -25,9 +27,6 @@ public class PostEntity extends BaseTimeEntity {
     @Column(name = "content")
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "post_type")
-    private PostType postType;
 
     @Column(name = "likes")
     private Integer likes = 0;
@@ -39,19 +38,14 @@ public class PostEntity extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private MemberEntity member;
 
-    @Column(name = "thumbnail_url")
-    private String thumbnailUrl;
-
     @Builder
-    public PostEntity(Long id, String title, String content, PostType postType, Integer likes, Boolean isDeleted, MemberEntity member, String thumbnailUrl) {
+    public PostEntity(Long id, String title, String content, Integer likes, Boolean isDeleted, MemberEntity member) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.postType = postType;
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.member = member;
-        this.thumbnailUrl = thumbnailUrl;
     }
 
     public static PostEntity from(Post post) {
@@ -59,7 +53,6 @@ public class PostEntity extends BaseTimeEntity {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .postType(post.getPostType())
                 .likes(post.getLikes())
                 .isDeleted(post.getIsDeleted())
                 .member(MemberEntity.from(post.getMember()))
@@ -71,13 +64,11 @@ public class PostEntity extends BaseTimeEntity {
                 .id(this.id)
                 .title(this.title)
                 .content(this.content)
-                .postType(this.postType)
                 .likes(this.likes)
                 .isDeleted(this.isDeleted)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())
                 .modifiedAt(this.getModifiedAt())
-                .thumbnailUrl(this.getThumbnailUrl())
                 .build();
     }
 }
