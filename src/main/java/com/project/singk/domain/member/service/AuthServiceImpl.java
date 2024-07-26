@@ -104,6 +104,17 @@ public class AuthServiceImpl implements AuthService {
                 .toString();
     }
 
+    private String deleteCookie(String key) {
+        return ResponseCookie.from(key, "")
+                .path(jwtProperties.getCookie().getPath())
+                .sameSite(jwtProperties.getCookie().getSameSite())
+                .httpOnly(jwtProperties.getCookie().isHttpOnly())
+                .secure(jwtProperties.getCookie().isSecure())
+                .maxAge(0)
+                .build()
+                .toString();
+    }
+
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
         String clientAccessToken = jwtRepository.resolveAccessToken(request);
@@ -125,6 +136,10 @@ public class AuthServiceImpl implements AuthService {
 			"logout",
 			jwtProperties.getAccessExpirationMillis()
 		);
+
+        // 클라이언트의 인증 정보 쿠키를 삭제
+        response.addHeader(COOKIE_HEADER, deleteCookie(AUTHORIZATION_HEADER));
+        response.addHeader(COOKIE_HEADER, deleteCookie(REFRESH_HEADER));
 	}
 
 	@Override
