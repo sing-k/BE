@@ -16,6 +16,7 @@ public class RecommendPost {
     private String content;
     private RecommendType recommendType;
     private Integer likes;
+    private Integer comments;
     private Boolean isDeleted;
     private Member member;
     private String thumbnailUrl;
@@ -24,12 +25,13 @@ public class RecommendPost {
     private GenreType genre;
 
     @Builder
-    public RecommendPost(Long id, String title, String content, RecommendType recommendType, Integer likes, Boolean isDeleted, Member member, String thumbnailUrl, LocalDateTime createdAt, LocalDateTime modifiedAt,GenreType genre) {
+    public RecommendPost(Long id, String title, String content, RecommendType recommendType, Integer likes, Integer comments, Boolean isDeleted, Member member, String thumbnailUrl, LocalDateTime createdAt, LocalDateTime modifiedAt,GenreType genre) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.recommendType = recommendType;
         this.likes = likes;
+        this.comments = comments;
         this.isDeleted = isDeleted;
         this.member = member;
         this.thumbnailUrl = thumbnailUrl;
@@ -58,7 +60,10 @@ public class RecommendPost {
             content = newContent;
         }
     }
-    public void updateLikeCount(){
-        this.likes = this.likes+1;
+    public void updateCommentCount(int cnt){
+        this.comments = cnt;
+    }
+    public void updateLikeCount(int cnt){
+        this.likes = cnt;
     }
 }

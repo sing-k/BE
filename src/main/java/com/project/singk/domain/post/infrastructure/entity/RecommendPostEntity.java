@@ -34,6 +34,9 @@ public class RecommendPostEntity extends BaseTimeEntity {
     @Column(name = "likes")
     private Integer likes = 0;
 
+    @Column(name = "comments")
+    private Integer comments = 0;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
@@ -49,12 +52,13 @@ public class RecommendPostEntity extends BaseTimeEntity {
     private String thumbnailUrl;
 
     @Builder
-    public RecommendPostEntity(Long id, String title, String content, RecommendType recommendType, Integer likes, Boolean isDeleted, MemberEntity member, String thumbnailUrl,GenreType genre) {
+    public RecommendPostEntity(Long id, String title, String content, RecommendType recommendType, Integer likes, Integer comments, Boolean isDeleted, MemberEntity member, String thumbnailUrl,GenreType genre) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.recommendType = recommendType;
         this.likes = likes;
+        this.comments = comments;
         this.isDeleted = isDeleted;
         this.member = member;
         this.thumbnailUrl = thumbnailUrl;
@@ -68,6 +72,7 @@ public class RecommendPostEntity extends BaseTimeEntity {
                 .content(post.getContent())
                 .recommendType(post.getRecommendType())
                 .likes(post.getLikes())
+                .comments(post.getComments())
                 .isDeleted(post.getIsDeleted())
                 .member(MemberEntity.from(post.getMember()))
                 .genre(post.getGenre())
@@ -81,6 +86,7 @@ public class RecommendPostEntity extends BaseTimeEntity {
                 .content(this.content)
                 .recommendType(this.recommendType)
                 .likes(this.likes)
+                .comments(this.comments)
                 .isDeleted(this.isDeleted)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())

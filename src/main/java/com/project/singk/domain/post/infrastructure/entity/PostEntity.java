@@ -31,6 +31,9 @@ public class PostEntity extends BaseTimeEntity {
     @Column(name = "likes")
     private Integer likes = 0;
 
+    @Column(name = "comments")
+    private Integer comments = 0;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
@@ -39,11 +42,12 @@ public class PostEntity extends BaseTimeEntity {
     private MemberEntity member;
 
     @Builder
-    public PostEntity(Long id, String title, String content, Integer likes, Boolean isDeleted, MemberEntity member) {
+    public PostEntity(Long id, String title, String content, Integer likes, Integer comments, Boolean isDeleted, MemberEntity member) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.likes = likes;
+        this.comments = comments;
         this.isDeleted = isDeleted;
         this.member = member;
     }
@@ -54,6 +58,7 @@ public class PostEntity extends BaseTimeEntity {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likes(post.getLikes())
+                .comments(post.getComments())
                 .isDeleted(post.getIsDeleted())
                 .member(MemberEntity.from(post.getMember()))
                 .build();
@@ -65,6 +70,7 @@ public class PostEntity extends BaseTimeEntity {
                 .title(this.title)
                 .content(this.content)
                 .likes(this.likes)
+                .comments(this.comments)
                 .isDeleted(this.isDeleted)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())

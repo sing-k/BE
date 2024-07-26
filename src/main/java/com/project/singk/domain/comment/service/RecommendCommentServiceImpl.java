@@ -26,7 +26,7 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
     public PkResponseDto createComment(Long memberId, Long postId,Long parentId,RecommendCommentCreate req) {
         Member member = memberRepository.findById(memberId).orElse(null);
         RecommendPost post = postRepository.findById(postId);
-        post.updateLikeCount();
+        post.updateCommentCount(post.getComments()+1);
         postRepository.save(post);
         RecommendComment parent = commentRepository.findById(parentId);
         RecommendComment recommendComment = commentRepository.save(RecommendComment.byRequest(req,member,post,parent));
