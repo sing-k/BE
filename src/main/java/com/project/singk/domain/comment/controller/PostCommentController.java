@@ -18,11 +18,12 @@ public class PostCommentController {
     private final PostCommentService commentService;
     private final AuthService authService;
 
+    // Todo : 부모 댓글 null 일 시 처리
     @PostMapping("/{postId}/comments/{parentId}")
     public BaseResponse<PkResponseDto> createComment(
             @RequestBody PostCommentCreate req,
             @PathVariable Long postId,
-            @PathVariable Long parentId){
+            @PathVariable(required = false) Long parentId){
         return BaseResponse.created(commentService.createComment(
                 authService.getLoginMemberId(),postId,parentId,req)
         );

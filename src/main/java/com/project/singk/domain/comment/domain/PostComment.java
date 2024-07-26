@@ -39,4 +39,7 @@ public class PostComment {
             this.content = content;
         }
     }
+    public void updateLikeCount(int cnt){
+        this.likeCount = cnt;
+    }
 }
