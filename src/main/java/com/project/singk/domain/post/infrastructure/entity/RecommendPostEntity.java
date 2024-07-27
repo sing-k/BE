@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "Posts")
@@ -29,40 +30,38 @@ public class RecommendPostEntity extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "recommend_type")
-    private RecommendType recommendType;
-
-    @Column(name = "likes")
-    private Integer likes = 0;
-
-    @Column(name = "comments")
-    private Integer comments = 0;
-
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private RecommendType recommend;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "genre_type")
     private GenreType genre;
 
+    @Column(name = "link")
+    private String link;
+
+    @ColumnDefault("0")
+    @Column(name = "likes")
+    private int likes;
+
+    @ColumnDefault("0")
+    @Column(name = "comments")
+    private int comments;
+
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private MemberEntity member;
 
-    @Column(name = "thumbnail_url")
-    private String thumbnailUrl;
-
     @Builder
-    public RecommendPostEntity(Long id, String title, String content, RecommendType recommendType, Integer likes, Integer comments, Boolean isDeleted, MemberEntity member, String thumbnailUrl,GenreType genre) {
+    public RecommendPostEntity(Long id, String title, String content, String link, RecommendType recommend, Integer likes, Integer comments, GenreType genre, MemberEntity member) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.recommendType = recommendType;
+        this.link = link;
+        this.recommend = recommend;
         this.likes = likes;
         this.comments = comments;
-        this.isDeleted = isDeleted;
-        this.member = member;
-        this.thumbnailUrl = thumbnailUrl;
         this.genre = genre;
+        this.member = member;
     }
 
     public static RecommendPostEntity from(RecommendPost post) {
@@ -70,12 +69,12 @@ public class RecommendPostEntity extends BaseTimeEntity {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .recommendType(post.getRecommendType())
+                .recommend(post.getRecommend())
+                .genre(post.getGenre())
+                .link(post.getLink())
                 .likes(post.getLikes())
                 .comments(post.getComments())
-                .isDeleted(post.getIsDeleted())
                 .member(MemberEntity.from(post.getMember()))
-                .genre(post.getGenre())
                 .build();
     }
 
@@ -84,14 +83,13 @@ public class RecommendPostEntity extends BaseTimeEntity {
                 .id(this.id)
                 .title(this.title)
                 .content(this.content)
-                .recommendType(this.recommendType)
+                .recommend(this.recommend)
+                .genre(this.genre)
+                .link(this.link)
                 .likes(this.likes)
                 .comments(this.comments)
-                .isDeleted(this.isDeleted)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())
-                .modifiedAt(this.getModifiedAt())
-                .thumbnailUrl(this.getThumbnailUrl())
                 .build();
     }
 }

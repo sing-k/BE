@@ -24,8 +24,8 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
     // 댓글 수
     @Override
     public PkResponseDto createComment(Long memberId, Long postId,Long parentId,RecommendCommentCreate req) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        RecommendPost post = postRepository.findById(postId);
+        Member member = memberRepository.getById(memberId);
+        RecommendPost post = postRepository.getById(postId);
         post.updateCommentCount(post.getComments()+1);
         postRepository.save(post);
         RecommendComment parent = commentRepository.findById(parentId);

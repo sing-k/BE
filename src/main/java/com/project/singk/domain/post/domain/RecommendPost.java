@@ -6,64 +6,107 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 public class RecommendPost {
 
-    private Long id;
-    private String title;
-    private String content;
-    private RecommendType recommendType;
-    private Integer likes;
-    private Integer comments;
-    private Boolean isDeleted;
-    private Member member;
-    private String thumbnailUrl;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private GenreType genre;
+    private final Long id;
+    private final String title;
+    private final String content;
+    private final RecommendType recommend;
+    private final GenreType genre;
+    private final String link;
+    private final int likes;
+    private final int comments;
+    private final Member member;
+    private final LocalDateTime createdAt;
 
     @Builder
-    public RecommendPost(Long id, String title, String content, RecommendType recommendType, Integer likes, Integer comments, Boolean isDeleted, Member member, String thumbnailUrl, LocalDateTime createdAt, LocalDateTime modifiedAt,GenreType genre) {
+    public RecommendPost(Long id, String title, String content, RecommendType recommend, GenreType genre, String link, Integer likes, Integer comments, Member member, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.recommendType = recommendType;
+        this.recommend = recommend;
+        this.genre = genre;
+        this.link = link;
         this.likes = likes;
         this.comments = comments;
-        this.isDeleted = isDeleted;
         this.member = member;
-        this.thumbnailUrl = thumbnailUrl;
         this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
-        this.genre = genre;
     }
 
-    public static RecommendPost byRequest(RecommendPostCreate req, Member member) {
+    public static RecommendPost albumType(RecommendPostCreate recommendPostCreate, String link, Member member) {
         return RecommendPost.builder()
-                .title(req.getTitle())
-                .content(req.getTitle())
-                .recommendType(RecommendType.valueOf(req.getType()))
-                .thumbnailUrl(req.getLink())
-                .genre(GenreType.valueOf(req.getGenre()))
+                .title(recommendPostCreate.getTitle())
+                .content(recommendPostCreate.getContent())
+                .recommend(RecommendType.ALBUM)
+                .link(link)
+                .genre(GenreType.valueOf(recommendPostCreate.getGenre()))
                 .member(member)
                 .build();
     }
-    public void update(RecommendPostUpdate req){
-        String newTitle = req.getTitle();
-        String newContent = req.getContent();
-        if(!newTitle.isEmpty()){
-            title = newTitle;
-        }
-        if(!newContent.isEmpty()){
-            content = newContent;
-        }
+
+    public static RecommendPost imageType(RecommendPostCreate recommendPostCreate, String key, Member member) {
+        return RecommendPost.builder()
+                .title(recommendPostCreate.getTitle())
+                .content(recommendPostCreate.getContent())
+                .recommend(RecommendType.IMAGE)
+                .link(key)
+                .genre(GenreType.valueOf(recommendPostCreate.getGenre()))
+                .member(member)
+                .build();
     }
-    public void updateCommentCount(int cnt){
-        this.comments = cnt;
+    public static RecommendPost youtubeType(RecommendPostCreate recommendPostCreate, Member member) {
+        return RecommendPost.builder()
+                .title(recommendPostCreate.getTitle())
+                .content(recommendPostCreate.getContent())
+                .recommend(RecommendType.YOUTUBE)
+                .link(recommendPostCreate.getLink())
+                .genre(GenreType.valueOf(recommendPostCreate.getGenre()))
+                .member(member)
+                .build();
     }
-    public void updateLikeCount(int cnt){
-        this.likes = cnt;
+
+    public RecommendPost update(RecommendPostUpdate recommendPostUpdate){
+        return RecommendPost.builder()
+                .id(this.id)
+                .title(recommendPostUpdate.getTitle() == null ? this.title : recommendPostUpdate.getTitle())
+                .content(recommendPostUpdate.getContent() == null ? this.content : recommendPostUpdate.getContent())
+                .genre(this.genre)
+                .recommend(this.recommend)
+                .likes(this.likes)
+                .comments(this.comments)
+                .link(this.link)
+                .member(this.member)
+                .createdAt(this.createdAt)
+                .build();
+    }
+    public RecommendPost updateCommentCount(int comments){
+        return RecommendPost.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.title)
+                .genre(this.genre)
+                .recommend(this.recommend)
+                .likes(this.likes)
+                .comments(comments)
+                .link(this.link)
+                .member(this.member)
+                .createdAt(this.createdAt)
+                .build();
+    }
+    public RecommendPost updateLikeCount(int likes){
+        return RecommendPost.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.title)
+                .genre(this.genre)
+                .recommend(this.recommend)
+                .likes(likes)
+                .comments(this.comments)
+                .link(this.link)
+                .member(this.member)
+                .createdAt(this.createdAt)
+                .build();
     }
 }

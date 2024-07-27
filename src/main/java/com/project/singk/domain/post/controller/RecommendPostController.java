@@ -1,13 +1,20 @@
 package com.project.singk.domain.post.controller;
 
 import com.project.singk.domain.member.controller.port.AuthService;
+import com.project.singk.domain.post.controller.request.FilterSort;
+import com.project.singk.domain.post.controller.request.PostSort;
+import com.project.singk.domain.post.controller.response.RecommendPostListResponse;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.RecommendPostCreate;
 import com.project.singk.domain.post.controller.port.RecommendPostService;
 import com.project.singk.domain.post.domain.RecommendPostUpdate;
+import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.global.api.BaseResponse;
+import com.project.singk.global.api.PageResponse;
 import com.project.singk.global.domain.PkResponseDto;
+import com.project.singk.global.validate.ValidEnum;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,34 +38,72 @@ public class RecommendPostController {
         return BaseResponse.created(recommendPostService.createRecommendPost(
                 authService.getLoginMemberId(),
                 post,
-                image)
-        );
+                image
+        ));
     }
-    //Todo : auth 관련 처리 하기
-    @GetMapping("/{id}")
-    public BaseResponse<RecommendPostResponse> getPost(@PathVariable Long id){
-        RecommendPostResponse dto = recommendPostService.findById(id);
-        return BaseResponse.ok(dto);
+    @GetMapping("/{postId}")
+    public BaseResponse<RecommendPostResponse> getRecommendPost(@PathVariable Long postId){
+        return BaseResponse.ok(recommendPostService.getRecommendPost(postId));
     }
 
-    //Todo : page처리 + 검색 + 필터링
     @GetMapping("")
-    public BaseResponse<List<RecommendPostResponse>> getPostList(){
-        List<RecommendPostResponse> dtoList = recommendPostService.findAll();
-        return BaseResponse.ok(dtoList);
+    public BaseResponse<PageResponse<RecommendPostListResponse>> getRecommendPosts(
+            @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
+            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
+            @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
+            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class) String filter,
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+
+        return BaseResponse.ok(recommendPostService.getRecommendPosts(
+                offset,
+                limit,
+                sort,
+                filter,
+                keyword
+        ));
     }
 
-    @PutMapping("/{id}")
-    public BaseResponse<PkResponseDto> updatePost(@PathVariable Long id,
-                                                          @RequestPart(value = "post",required = false) RecommendPostUpdate post,
-                                                          @RequestPart(value = "image",required = false)MultipartFile image){
-        PkResponseDto dto = recommendPostService.updateById(id,post);
-        return BaseResponse.ok(dto);
+    @GetMapping("/me")
+    public BaseResponse<PageResponse<RecommendPostListResponse>> getMyRecommendPosts(
+            @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
+            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
+            @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
+            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class) String filter,
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+
+        return BaseResponse.ok(recommendPostService.getMyRecommendPosts(
+                authService.getLoginMemberId(),
+                offset,
+                limit,
+                sort,
+                filter,
+                keyword
+        ));
     }
 
-    @DeleteMapping("/{id}")
-    public BaseResponse<Void> deletePost(@PathVariable Long id){
-        recommendPostService.deleteById(id);
+    @PutMapping("/{postId}")
+    public BaseResponse<PkResponseDto> updatePost(
+            @PathVariable Long postId,
+            @RequestPart(value = "post",required = false) RecommendPostUpdate post,
+            @RequestPart(value = "image",required = false)MultipartFile image
+    ) {
+        return BaseResponse.ok(recommendPostService.updateRecommendPost(
+                authService.getLoginMemberId(),
+                postId,
+                post
+        ));
+    }
+
+    @DeleteMapping("/{postId}")
+    public BaseResponse<Void> deletePost(
+            @PathVariable Long postId
+    ) {
+        recommendPostService.deleteRecommendPost(
+                authService.getLoginMemberId(),
+                postId
+        );
         return BaseResponse.ok();
     }
 

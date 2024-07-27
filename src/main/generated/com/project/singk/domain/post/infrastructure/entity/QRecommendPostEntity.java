@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPostEntity is a Querydsl query type for PostEntity
+ * QRecommendPostEntity is a Querydsl query type for RecommendPostEntity
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QPostEntity extends EntityPathBase<PostEntity> {
+public class QRecommendPostEntity extends EntityPathBase<RecommendPostEntity> {
 
-    private static final long serialVersionUID = 699285627L;
+    private static final long serialVersionUID = 1612588455L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QPostEntity postEntity = new QPostEntity("postEntity");
+    public static final QRecommendPostEntity recommendPostEntity = new QRecommendPostEntity("recommendPostEntity");
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
@@ -31,36 +31,40 @@ public class QPostEntity extends EntityPathBase<PostEntity> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final EnumPath<com.project.singk.domain.album.domain.GenreType> genre = createEnum("genre", com.project.singk.domain.album.domain.GenreType.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isDeleted = createBoolean("isDeleted");
-
     public final NumberPath<Integer> likes = createNumber("likes", Integer.class);
+
+    public final StringPath link = createString("link");
 
     public final com.project.singk.domain.member.infrastructure.QMemberEntity member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
+    public final EnumPath<com.project.singk.domain.post.domain.RecommendType> recommend = createEnum("recommend", com.project.singk.domain.post.domain.RecommendType.class);
+
     public final StringPath title = createString("title");
 
-    public QPostEntity(String variable) {
-        this(PostEntity.class, forVariable(variable), INITS);
+    public QRecommendPostEntity(String variable) {
+        this(RecommendPostEntity.class, forVariable(variable), INITS);
     }
 
-    public QPostEntity(Path<? extends PostEntity> path) {
+    public QRecommendPostEntity(Path<? extends RecommendPostEntity> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QPostEntity(PathMetadata metadata) {
+    public QRecommendPostEntity(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QPostEntity(PathMetadata metadata, PathInits inits) {
-        this(PostEntity.class, metadata, inits);
+    public QRecommendPostEntity(PathMetadata metadata, PathInits inits) {
+        this(RecommendPostEntity.class, metadata, inits);
     }
 
-    public QPostEntity(Class<? extends PostEntity> type, PathMetadata metadata, PathInits inits) {
+    public QRecommendPostEntity(Class<? extends RecommendPostEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member"), inits.get("member")) : null;
     }

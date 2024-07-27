@@ -44,7 +44,8 @@ public enum AppHttpStatus {
 	 * 403 : 접근 권한이 없음
 	 */
 	FORBIDDEN(403, HttpStatus.FORBIDDEN, "권한이 없습니다."),
-	FORBIDDEN_ALBUM_REVIEW(403, HttpStatus.FORBIDDEN, "해당 앨범 감상평에 대한 권한이 없습니다."),
+	FORBIDDEN_ALBUM_REVIEW(403, HttpStatus.FORBIDDEN, "해당 앨범 감상평에 대한 접근 권한이 없습니다."),
+	FORBIDDEN_RECOMMEND_POST(403, HttpStatus.FORBIDDEN, "해당 앨범 추천 게시글에 대한 접근 권한이 없습니다."),
 	/**
 	 * 404 : 응답할 리소스가 없음
 	 */

@@ -21,7 +21,7 @@ public class RecommendLikeServiceImpl implements RecommendLikeService {
     @Override
     public PkResponseDto addLike(Long memberId, Long postId){
         Member member = memberRepository.getById(memberId);
-        RecommendPost post = postRepository.findById(postId);
+        RecommendPost post = postRepository.getById(postId);
         post.updateLikeCount(post.getLikes()+1);
         postRepository.save(post);
         RecommendLike like = RecommendLike.builder()

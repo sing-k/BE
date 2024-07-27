@@ -63,11 +63,7 @@ public class QAlbumReviewEntity extends EntityPathBase<AlbumReviewEntity> {
     public QAlbumReviewEntity(Class<? extends AlbumReviewEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.album = inits.isInitialized("album") ? new com.project.singk.domain.album.infrastructure.entity.QAlbumEntity(forProperty("album"), inits.get("album")) : null;
-<<<<<<< HEAD
-        this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member")) : null;
-=======
         this.member = inits.isInitialized("member") ? new com.project.singk.domain.member.infrastructure.QMemberEntity(forProperty("member"), inits.get("member")) : null;
->>>>>>> f6b7212 (fix : insert 쿼리가 실행되기 직전 select 쿼리가 발생하는 문제 해결)
     }
 
 }
