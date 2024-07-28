@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.album.domain.Album;
 
 import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.AlbumSimplified;
 import lombok.*;
 
 @Getter
@@ -26,7 +27,7 @@ public class AlbumListResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-	public static AlbumListResponse from (Album album) {
+	public static AlbumListResponse from (AlbumSimplified album) {
 
 		return AlbumListResponse.builder()
 			.id(album.getId())

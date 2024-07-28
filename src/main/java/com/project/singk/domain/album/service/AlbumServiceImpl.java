@@ -86,7 +86,7 @@ public class AlbumServiceImpl implements AlbumService {
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
                 spotifyAlbums.getItems().stream()
-                        .map(album -> AlbumListResponse.from(album.toModel()))
+                        .map(album -> AlbumListResponse.from(album.simplified()))
                         .toList()
 
 		);
@@ -96,7 +96,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_modified_at", key = "'albums_modified_at_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
-        Page<Album> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
+        Page<AlbumSimplified> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
 
         return PageResponse.of(
                 limit,
@@ -111,7 +111,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_average_score", key = "'albums_average_score_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByAverageScore(String cursorId, String cursorScore, int limit) {
-        Page<Album> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
+        Page<AlbumSimplified> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
         return PageResponse.of(
                 limit,
                 (int) albums.getTotalElements(),
@@ -125,7 +125,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_review_count", key = "'albums_review_count_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
     public PageResponse<AlbumListResponse> getAlbumsByReviewCount(String cursorId, String cursorReviewCount, int limit) {
-        Page<Album> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
+        Page<AlbumSimplified> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
         return PageResponse.of(
                 limit,
                 (int) albums.getTotalElements(),

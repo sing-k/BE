@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.singk.domain.album.domain.AlbumSimplified;
 import com.project.singk.domain.album.infrastructure.entity.*;
 import com.project.singk.domain.album.infrastructure.jpa.AlbumJpaRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
@@ -96,15 +97,15 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 	}
 
     @Override
-    public Page<Album> findAllByModifiedAt(String cursorId, String cursorDate, int limit) {
-        List<Album> albums = jpaQueryFactory.select(albumEntity)
+    public Page<AlbumSimplified> findAllByModifiedAt(String cursorId, String cursorDate, int limit) {
+        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByDate(cursorId, cursorDate))
                 .orderBy(albumReviewStatisticsEntity.modifiedAt.desc(), albumEntity.id.asc())
                 .limit(limit)
                 .fetch().stream()
-                .map(AlbumEntity::toModel)
+                .map(AlbumEntity::simplified)
                 .toList();
 
         long count = jpaQueryFactory.select(albumEntity.count())
@@ -130,16 +131,16 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     @Override
-    public Page<Album> findAllByAverageScore(String cursorId, String cursorScore, int limit) {
+    public Page<AlbumSimplified> findAllByAverageScore(String cursorId, String cursorScore, int limit) {
 
-        List<Album> albums = jpaQueryFactory.select(albumEntity)
+        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByAverage(cursorId, cursorScore))
                 .orderBy(albumReviewStatisticsEntity.averageScore.desc(), albumEntity.id.asc())
                 .limit(limit)
                 .fetch().stream()
-                .map(AlbumEntity::toModel)
+                .map(AlbumEntity::simplified)
                 .toList();
 
         // TODO : 카운트 쿼리 최적화
@@ -164,15 +165,15 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     @Override
-    public Page<Album> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
-        List<Album> albums = jpaQueryFactory.select(albumEntity)
+    public Page<AlbumSimplified> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
+        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByReviewCount(cursorId, cursorReviewCount))
                 .orderBy(albumReviewStatisticsEntity.totalReviewer.desc(), albumEntity.id.asc())
                 .limit(limit)
                 .fetch().stream()
-                .map(AlbumEntity::toModel)
+                .map(AlbumEntity::simplified)
                 .toList();
 
         long count = jpaQueryFactory.select(albumEntity.count())
