@@ -1,12 +1,10 @@
 package com.project.singk.domain.member.controller.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Builder

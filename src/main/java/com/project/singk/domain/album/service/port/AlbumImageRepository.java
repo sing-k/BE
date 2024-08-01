@@ -7,4 +7,5 @@ import java.util.List;
 public interface AlbumImageRepository {
     AlbumImage save(AlbumImage albumImage);
     List<AlbumImage> saveAll(List<AlbumImage> albumImages);
+    List<AlbumImage> findAllByAlbumId(String albumId);
 }

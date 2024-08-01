@@ -4,14 +4,12 @@ import com.project.singk.domain.activity.controller.request.ActivityDate;
 import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.domain.ActivityScore;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.DayOfWeek;
