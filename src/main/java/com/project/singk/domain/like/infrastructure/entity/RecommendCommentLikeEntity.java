@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="RecommendCommentLikes")
+@Table(name="RECOMMEND_COMMENT_LIKES")
 @Getter
 @NoArgsConstructor
 public class RecommendCommentLikeEntity {
@@ -18,12 +18,12 @@ public class RecommendCommentLikeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="member_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id", nullable = false)
     private MemberEntity member;
 
-    @ManyToOne
-    @JoinColumn(name="comment_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="comment_id", nullable = false)
     private RecommendCommentEntity comment;
 
     @Builder

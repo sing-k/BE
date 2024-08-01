@@ -17,4 +17,11 @@ public class RecommendCommentLike {
         this.member = member;
         this.comment = comment;
     }
+
+    public static RecommendCommentLike from(Member member, RecommendComment comment) {
+        return RecommendCommentLike.builder()
+                .member(member)
+                .comment(comment)
+                .build();
+    }
 }

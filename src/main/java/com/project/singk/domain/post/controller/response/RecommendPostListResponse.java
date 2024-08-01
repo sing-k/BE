@@ -1,7 +1,9 @@
 package com.project.singk.domain.post.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.singk.domain.like.controller.response.LikeResponse;
 import com.project.singk.domain.member.controller.response.MemberResponse;
+import com.project.singk.domain.member.controller.response.MemberSimpleResponse;
 import com.project.singk.domain.post.domain.RecommendPost;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,27 +17,27 @@ import java.time.LocalDateTime;
 public class RecommendPostListResponse {
     private Long id;
     private String title;
-    private String content;
     private String link;
     private String recommend;
     private String genre;
-    private int likes;
+    private LikeResponse like;
     private int comments;
-    private MemberResponse writer;
+    private MemberSimpleResponse writer;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
 
-    public static RecommendPostListResponse from(RecommendPost post, String link, String profileImgUrl) {
+    public static RecommendPostListResponse from(RecommendPost post, boolean isLike, String link, String profileImgUrl) {
         return RecommendPostListResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .content(post.getContent())
                 .recommend(post.getRecommend().getName())
                 .genre(post.getGenre().getName())
                 .link(link)
-                .likes(post.getLikes())
+                .like(LikeResponse.from(post.getLikes(), isLike))
                 .comments(post.getComments())
-                .writer(MemberResponse.from(post.getMember(), profileImgUrl))
+                .writer(MemberSimpleResponse.from(post.getMember(), profileImgUrl))
                 .createdAt(post.getCreatedAt())
                 .build();
     }

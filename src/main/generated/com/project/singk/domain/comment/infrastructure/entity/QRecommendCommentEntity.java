@@ -24,6 +24,8 @@ public class QRecommendCommentEntity extends EntityPathBase<RecommendCommentEnti
 
     public final com.project.singk.global.domain.QBaseTimeEntity _super = new com.project.singk.global.domain.QBaseTimeEntity(this);
 
+    public final ListPath<RecommendCommentEntity, QRecommendCommentEntity> children = this.<RecommendCommentEntity, QRecommendCommentEntity>createList("children", RecommendCommentEntity.class, QRecommendCommentEntity.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
 
     //inherited
@@ -31,7 +33,7 @@ public class QRecommendCommentEntity extends EntityPathBase<RecommendCommentEnti
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
+    public final NumberPath<Integer> likes = createNumber("likes", Integer.class);
 
     public final com.project.singk.domain.member.infrastructure.QMemberEntity member;
 

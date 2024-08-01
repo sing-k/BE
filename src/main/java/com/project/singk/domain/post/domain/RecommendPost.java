@@ -20,9 +20,10 @@ public class RecommendPost {
     private final int comments;
     private final Member member;
     private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
 
     @Builder
-    public RecommendPost(Long id, String title, String content, RecommendType recommend, GenreType genre, String link, Integer likes, Integer comments, Member member, LocalDateTime createdAt) {
+    public RecommendPost(Long id, String title, String content, RecommendType recommend, GenreType genre, String link, int likes, int comments, Member member, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -33,6 +34,7 @@ public class RecommendPost {
         this.comments = comments;
         this.member = member;
         this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 
     public static RecommendPost albumType(RecommendPostCreate recommendPostCreate, String link, Member member) {
@@ -79,9 +81,10 @@ public class RecommendPost {
                 .link(this.link)
                 .member(this.member)
                 .createdAt(this.createdAt)
+                .modifiedAt(this.modifiedAt)
                 .build();
     }
-    public RecommendPost updateCommentCount(int comments){
+    public RecommendPost updateComments(int comments){
         return RecommendPost.builder()
                 .id(this.id)
                 .title(this.title)
@@ -93,9 +96,10 @@ public class RecommendPost {
                 .link(this.link)
                 .member(this.member)
                 .createdAt(this.createdAt)
+                .modifiedAt(this.modifiedAt)
                 .build();
     }
-    public RecommendPost updateLikeCount(int likes){
+    public RecommendPost updateLikes(int likes){
         return RecommendPost.builder()
                 .id(this.id)
                 .title(this.title)
@@ -107,6 +111,7 @@ public class RecommendPost {
                 .link(this.link)
                 .member(this.member)
                 .createdAt(this.createdAt)
+                .modifiedAt(this.modifiedAt)
                 .build();
     }
 }

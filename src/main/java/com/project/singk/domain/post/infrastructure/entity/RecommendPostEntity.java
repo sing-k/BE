@@ -2,7 +2,6 @@ package com.project.singk.domain.post.infrastructure.entity;
 
 import com.project.singk.domain.album.domain.GenreType;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
-import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.domain.RecommendPost;
 import com.project.singk.domain.post.domain.RecommendType;
 import com.project.singk.global.domain.BaseTimeEntity;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "Posts")
+@Table(name = "RECOMMEND_POSTS")
 @Getter
 @NoArgsConstructor
 public class RecommendPostEntity extends BaseTimeEntity {
@@ -52,7 +51,7 @@ public class RecommendPostEntity extends BaseTimeEntity {
     private MemberEntity member;
 
     @Builder
-    public RecommendPostEntity(Long id, String title, String content, String link, RecommendType recommend, Integer likes, Integer comments, GenreType genre, MemberEntity member) {
+    public RecommendPostEntity(Long id, String title, String content, String link, RecommendType recommend, int likes, Integer comments, GenreType genre, MemberEntity member) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -90,6 +89,7 @@ public class RecommendPostEntity extends BaseTimeEntity {
                 .comments(this.comments)
                 .member(this.member.toModel())
                 .createdAt(this.getCreatedAt())
+                .modifiedAt(this.getModifiedAt())
                 .build();
     }
 }

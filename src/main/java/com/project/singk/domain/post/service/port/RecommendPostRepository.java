@@ -1,11 +1,8 @@
 package com.project.singk.domain.post.service.port;
 
-import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.domain.RecommendPost;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RecommendPostRepository {

@@ -2,7 +2,10 @@ package com.project.singk.domain.member.service;
 
 import com.project.singk.domain.member.domain.MemberStatistics;
 import jakarta.servlet.http.Cookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.project.singk.domain.common.service.port.RedisRepository;
@@ -49,12 +52,26 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public Long getLoginMemberId() {
-		SingKUserDetails userDetails = (SingKUserDetails) SecurityContextHolder
-			.getContext()
-			.getAuthentication()
-			.getPrincipal();
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        if (securityContext == null) {
+            return null;
+        }
 
-		return userDetails == null ? null : userDetails.getId();
+        // 로그인 O -> UsernamePasswordAuthenticationToken
+        // 로그인 X -> AnonymousAuthenticationToken
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+
+        // 로그인 O -> SingKUserDetails
+        // 로그인 X -> anonymousUser
+        Object details = authentication.getPrincipal();
+        if (!(details instanceof SingKUserDetails)) {
+            return null;
+        }
+
+		return ((SingKUserDetails) details).getId();
 	}
 
 	@Override

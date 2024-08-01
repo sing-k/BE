@@ -1,16 +1,24 @@
 package com.project.singk.domain.album.infrastructure;
 
+import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumImage;
+import com.project.singk.domain.album.infrastructure.entity.AlbumEntity;
 import com.project.singk.domain.album.infrastructure.entity.AlbumImageEntity;
 import com.project.singk.domain.album.infrastructure.jpa.AlbumImageJpaRepository;
 import com.project.singk.domain.album.service.port.AlbumImageRepository;
+import com.project.singk.global.api.ApiException;
+import com.project.singk.global.api.AppHttpStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.project.singk.domain.album.infrastructure.entity.QAlbumEntity.albumEntity;
+import static com.project.singk.domain.album.infrastructure.entity.QAlbumImageEntity.albumImageEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -34,11 +42,11 @@ public class AlbumImageRepositoryImpl implements AlbumImageRepository {
 
     @Override
     public List<AlbumImage> findAllByAlbumId(String albumId) {
-        return queryFactory.select(albumEntity.images)
-                .from(albumEntity)
+        Album album = Optional.ofNullable(queryFactory.selectFrom(albumEntity)
                 .where(albumEntity.id.eq(albumId))
-                .fetchOne().stream()
-                .map(AlbumImageEntity::toModel)
-                .toList();
+                .fetchOne()).map(AlbumEntity::toModel)
+                .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
+
+        return album.getImages();
     }
 }

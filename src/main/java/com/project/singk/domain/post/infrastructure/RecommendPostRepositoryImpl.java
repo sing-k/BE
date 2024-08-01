@@ -2,13 +2,10 @@ package com.project.singk.domain.post.infrastructure;
 
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
-import com.project.singk.domain.post.domain.Post;
 import com.project.singk.domain.post.domain.RecommendPost;
-import com.project.singk.domain.post.infrastructure.entity.PostEntity;
 import com.project.singk.domain.post.infrastructure.entity.RecommendPostEntity;
 import com.project.singk.domain.post.infrastructure.jpa.RecommendPostJpaRepository;
 import com.project.singk.domain.post.service.port.RecommendPostRepository;
-import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.querydsl.core.types.Order;
@@ -23,16 +20,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.singk.domain.album.infrastructure.entity.QAlbumEntity.albumEntity;
 import static com.project.singk.domain.post.infrastructure.entity.QRecommendPostEntity.recommendPostEntity;
-import static com.project.singk.domain.review.infrastructure.QAlbumReviewEntity.albumReviewEntity;
-import static com.project.singk.domain.review.infrastructure.QAlbumReviewStatisticsEntity.albumReviewStatisticsEntity;
 
 
 @Repository
@@ -55,7 +46,7 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
     @Override
     public Page<RecommendPost> findAll(int offset, int limit, String sort, String filter, String keyword) {
         List<RecommendPost> posts = queryFactory.selectFrom(recommendPostEntity)
-                .where(filter(FilterSort.valueOf(filter), keyword))
+                .where(search(filter, keyword))
                 .orderBy(order(PostSort.valueOf(sort)))
                 .offset(offset)
                 .limit(limit)
@@ -76,7 +67,7 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
     public Page<RecommendPost> findAllByMemberId(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         List<RecommendPost> posts = queryFactory.selectFrom(recommendPostEntity)
                 .where(recommendPostEntity.member.id.eq(memberId)
-                        .and(filter(FilterSort.valueOf(filter), keyword)))
+                        .and(search(filter, keyword)))
                 .orderBy(order(PostSort.valueOf(sort)))
                 .offset(offset)
                 .limit(limit)
@@ -100,10 +91,12 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
         };
     }
 
-    private BooleanExpression filter(FilterSort filter, String keyword) {
-        if (!StringUtils.hasText(keyword)) return null;
+    private BooleanExpression search(String filter, String keyword) {
+        if (!StringUtils.hasText(filter) || !StringUtils.hasText(keyword)) return null;
 
-        return switch (filter) {
+        FilterSort filterSort = FilterSort.valueOf(filter);
+
+        return switch (filterSort) {
             case TITLE -> recommendPostEntity.title.contains(keyword);
             case CONTENT -> recommendPostEntity.content.contains(keyword);
             case WRITER -> recommendPostEntity.member.nickname.contains(keyword);
@@ -115,6 +108,5 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
     }
 
     @Override
-    public void deleteById(Long postId) {recommendPostJpaRepository.deleteById(postId);
-    }
+    public void deleteById(Long postId) {recommendPostJpaRepository.deleteById(postId);}
 }

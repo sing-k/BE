@@ -17,4 +17,5 @@ public @interface ValidEnum {
 	Class<?>[] groups() default { };
 	Class<? extends Payload>[] payload() default { };
 	boolean ignoreCase() default true;
+    boolean required() default true;
 }

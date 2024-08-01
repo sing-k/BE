@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface RecommendPostService {
     PkResponseDto createRecommendPost(Long memberId, RecommendPostCreate post, MultipartFile image);
-    RecommendPostResponse getRecommendPost(Long postId);
-    PageResponse<RecommendPostListResponse> getRecommendPosts(int offset, int limit, String sort, String filter, String keyword);
+    RecommendPostResponse getRecommendPost(Long memberId, Long postId);
+    PageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword);
     PageResponse<RecommendPostListResponse> getMyRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword);
     PkResponseDto updateRecommendPost(Long memberId, Long postId, RecommendPostUpdate req);
     void deleteRecommendPost(Long memberId, Long postId);

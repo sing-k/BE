@@ -1,13 +1,16 @@
 package com.project.singk.domain.comment.controller;
 
 import com.project.singk.domain.comment.controller.port.RecommendCommentService;
-import com.project.singk.domain.comment.domain.RecommendCommentCreate;
+import com.project.singk.domain.comment.controller.response.CommentResponse;
+import com.project.singk.domain.comment.domain.CommentCreate;
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.global.api.BaseResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -18,27 +21,48 @@ public class RecommendCommentController {
     private final RecommendCommentService commentService;
     private final AuthService authService;
 
-    @PostMapping("/{postId}/comments/{parentId}")
-    public BaseResponse<PkResponseDto> createComment(
-            @RequestBody RecommendCommentCreate req,
-            @PathVariable Long postId,
-            @PathVariable Long parentId){
-        return BaseResponse.created(commentService.createComment(
-                authService.getLoginMemberId(),postId,parentId,req)
-        );
-    }
-    //Todo : auth 관련 처리 하기
-    @PutMapping("/comments/{id}")
-    public BaseResponse<PkResponseDto> updateComment(
-            @PathVariable Long commentId
-            ,@RequestBody RecommendCommentCreate req){
-        return BaseResponse.ok(commentService.updateComment(commentId,req));
+    @GetMapping("/{postId}/comments")
+    public BaseResponse<List<CommentResponse>> getRecommendComments(
+            @PathVariable Long postId
+    ) {
+        return BaseResponse.ok(commentService.getRecommendComments(
+                authService.getLoginMemberId(),
+                postId
+        ));
     }
 
-    @DeleteMapping("/comments/{id}")
-    public BaseResponse<Void> deleteComment(@PathVariable Long commentId){
-        commentService.deleteComment(commentId);
+    @PostMapping(value = {"/{postId}/comments", "/{postId}/comments/{parentId}"})
+    public BaseResponse<PkResponseDto> createRecommendComment(
+            @RequestBody CommentCreate commentCreate,
+            @PathVariable Long postId,
+            @PathVariable(required = false) Long parentId
+    ) {
+        return BaseResponse.created(commentService.createRecommendComment(
+                authService.getLoginMemberId(),
+                postId,
+                parentId,
+                commentCreate
+        ));
+    }
+
+    @PutMapping("/comments/{commentId}")
+    public BaseResponse<PkResponseDto> updateRecommendComment(
+            @PathVariable Long commentId
+            ,@RequestBody CommentCreate commentCreate){
+        return BaseResponse.ok(commentService.updateRecommendComment(
+                authService.getLoginMemberId(),
+                commentId,
+                commentCreate
+        ));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public BaseResponse<Void> deleteRecommendComment(@PathVariable Long commentId){
+        commentService.deleteRecommendComment(
+                authService.getLoginMemberId(),
+                commentId
+        );
         return BaseResponse.ok();
     }
-    //Todo: 댓글 조회 만들기
+
 }

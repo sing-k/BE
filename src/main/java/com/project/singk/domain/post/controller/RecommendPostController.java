@@ -33,7 +33,7 @@ public class RecommendPostController {
     @PostMapping("")
     public BaseResponse<PkResponseDto> createPost(
             @RequestPart("post") RecommendPostCreate post,
-            @RequestPart("image") MultipartFile image
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         return BaseResponse.created(recommendPostService.createRecommendPost(
                 authService.getLoginMemberId(),
@@ -43,7 +43,10 @@ public class RecommendPostController {
     }
     @GetMapping("/{postId}")
     public BaseResponse<RecommendPostResponse> getRecommendPost(@PathVariable Long postId){
-        return BaseResponse.ok(recommendPostService.getRecommendPost(postId));
+        return BaseResponse.ok(recommendPostService.getRecommendPost(
+                authService.getLoginMemberId(),
+                postId
+        ));
     }
 
     @GetMapping("")
@@ -51,11 +54,12 @@ public class RecommendPostController {
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
-            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class) String filter,
+            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class, required = false) String filter,
             @RequestParam(name = "keyword", required = false) String keyword
     ) {
 
         return BaseResponse.ok(recommendPostService.getRecommendPosts(
+                authService.getLoginMemberId(),
                 offset,
                 limit,
                 sort,
@@ -69,7 +73,7 @@ public class RecommendPostController {
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
-            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class) String filter,
+            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class, required = false) String filter,
             @RequestParam(name = "keyword", required = false) String keyword
     ) {
 
@@ -84,10 +88,9 @@ public class RecommendPostController {
     }
 
     @PutMapping("/{postId}")
-    public BaseResponse<PkResponseDto> updatePost(
+    public BaseResponse<PkResponseDto> updateRecommendPost(
             @PathVariable Long postId,
-            @RequestPart(value = "post",required = false) RecommendPostUpdate post,
-            @RequestPart(value = "image",required = false)MultipartFile image
+            @RequestBody RecommendPostUpdate post
     ) {
         return BaseResponse.ok(recommendPostService.updateRecommendPost(
                 authService.getLoginMemberId(),
@@ -97,7 +100,7 @@ public class RecommendPostController {
     }
 
     @DeleteMapping("/{postId}")
-    public BaseResponse<Void> deletePost(
+    public BaseResponse<Void> deleteRecommendPost(
             @PathVariable Long postId
     ) {
         recommendPostService.deleteRecommendPost(

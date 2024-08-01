@@ -4,6 +4,7 @@ import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.service.port.AlbumImageRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
+import com.project.singk.domain.like.service.port.RecommendPostLikeRepository;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.controller.port.RecommendPostService;
@@ -11,8 +12,8 @@ import com.project.singk.domain.post.controller.response.RecommendPostListRespon
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.RecommendPost;
 import com.project.singk.domain.post.domain.RecommendPostCreate;
-import com.project.singk.domain.post.domain.RecommendPostUpdate;
 import com.project.singk.domain.post.domain.RecommendType;
+import com.project.singk.domain.post.domain.RecommendPostUpdate;
 import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
@@ -29,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecommendPostServiceImpl implements RecommendPostService {
     private final RecommendPostRepository recommendPostRepository;
+    private final RecommendPostLikeRepository recommendPostLikeRepository;
     private final MemberRepository memberRepository;
     private final AlbumImageRepository albumImageRepository;
     private final S3Repository s3Repository;
@@ -70,18 +72,19 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     }
 
     @Override
-    public RecommendPostResponse getRecommendPost(Long postId){
+    public RecommendPostResponse getRecommendPost(Long memberId, Long postId){
         RecommendPost recommendPost = recommendPostRepository.getById(postId);
 
         return RecommendPostResponse.from(
                 recommendPost,
+                recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, postId),
                 getLinkByRecommend(recommendPost),
                 s3Repository.getPreSignedGetUrl(recommendPost.getMember().getImageUrl())
         );
     }
 
     @Override
-    public PageResponse<RecommendPostListResponse> getRecommendPosts(int offset, int limit, String sort, String filter, String keyword) {
+    public PageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<RecommendPost> posts = recommendPostRepository.findAll(offset, limit, sort, filter, keyword);
         return PageResponse.of(
                 offset,
@@ -92,6 +95,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
                             String link = getLinkByRecommend(post);
                             return RecommendPostListResponse.from(
                                     post,
+                                    recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, post.getId()),
                                     link,
                                     s3Repository.getPreSignedGetUrl(post.getMember().getImageUrl())
                             );
@@ -112,6 +116,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
                             String link = getLinkByRecommend(post);
                             return RecommendPostListResponse.from(
                                     post,
+                                    recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, post.getId()),
                                     link,
                                     s3Repository.getPreSignedGetUrl(post.getMember().getImageUrl())
                             );
@@ -137,7 +142,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         RecommendPost recommendPost = recommendPostRepository.getById(id);
 
         if (!recommendPost.getMember().getId().equals(memberId)) {
-            throw new ApiException(AppHttpStatus.FORBIDDEN_RECOMMEND_POST);
+            throw new ApiException(AppHttpStatus.FORBIDDEN_POST);
         }
 
         recommendPost = recommendPost.update(req);
@@ -151,9 +156,10 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         RecommendPost recommendPost = recommendPostRepository.getById(postId);
 
         if (!recommendPost.getMember().getId().equals(memberId)) {
-            throw new ApiException(AppHttpStatus.FORBIDDEN_RECOMMEND_POST);
+            throw new ApiException(AppHttpStatus.FORBIDDEN_POST);
         }
 
         recommendPostRepository.deleteById(postId);
     }
+
 }
