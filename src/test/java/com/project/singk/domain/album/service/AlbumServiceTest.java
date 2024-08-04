@@ -5,9 +5,8 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.mock.TestContainer;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -126,7 +125,7 @@ class AlbumServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.searchAlbums("query", 0, 20);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.searchAlbums("query", 0, 20);
 
         // then
         assertAll(
@@ -168,7 +167,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
 
         // then
         assertAll(
@@ -211,7 +210,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
 
         // then
         assertAll(
@@ -260,7 +259,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
 
         // then
         assertAll(
@@ -309,7 +308,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
 
         // then
         assertAll(
@@ -352,7 +351,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
 
         // then
         assertAll(
@@ -395,7 +394,7 @@ class AlbumServiceTest {
         int limit = 5;
 
         // when
-        PageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
+        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
 
         // then
         assertAll(

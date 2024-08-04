@@ -6,7 +6,7 @@ import com.project.singk.domain.activity.controller.response.ActivityGraphRespon
 import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
 import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,10 +42,10 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
     }
 
     @Override
-    public PageResponse<ActivityHistoryResponse> getActivityHistories(Long memberId, int offset, int limit) {
+    public OffsetPageResponse<ActivityHistoryResponse> getActivityHistories(Long memberId, int offset, int limit) {
         Page<ActivityHistory> activityHistories = activityHistoryRepository.getActivityHistories(memberId, offset, limit);
 
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) activityHistories.getTotalElements(),

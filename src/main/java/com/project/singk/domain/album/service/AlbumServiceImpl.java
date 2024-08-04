@@ -4,10 +4,10 @@ import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.*;
 import com.project.singk.domain.album.service.port.*;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.CursorPageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,7 @@ import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -76,12 +77,12 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
 	@Transactional(readOnly = true)
-	public PageResponse<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
+	public OffsetPageResponse<AlbumListResponse> searchAlbums(String query, int offset, int limit) {
 		// 앨범 목록 API 요청 준비
 
-		PageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
+		OffsetPageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
 
-		return PageResponse.of(
+		return OffsetPageResponse.of(
                 spotifyAlbums.getOffset(),
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
@@ -95,12 +96,12 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_modified_at", key = "'albums_modified_at_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
-    public PageResponse<AlbumListResponse> getAlbumsByDate(String cursorId, String cursorDate, int limit) {
-        Page<AlbumSimplified> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
+    public CursorPageResponse<AlbumListResponse> getAlbumsByDate(Long cursorId, String cursorDate, int limit) {
+        List<AlbumSimplified> albums = albumRepository.findAllByModifiedAt(cursorId, cursorDate, limit);
 
-        return PageResponse.of(
+        return CursorPageResponse.of(
                 limit,
-                (int) albums.getTotalElements(),
+                albums.size() >= limit,
                 albums.stream()
                         .map(AlbumListResponse::from)
                         .toList()
@@ -110,11 +111,11 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_average_score", key = "'albums_average_score_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
-    public PageResponse<AlbumListResponse> getAlbumsByAverageScore(String cursorId, String cursorScore, int limit) {
-        Page<AlbumSimplified> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
-        return PageResponse.of(
+    public CursorPageResponse<AlbumListResponse> getAlbumsByAverageScore(Long cursorId, String cursorScore, int limit) {
+        List<AlbumSimplified> albums = albumRepository.findAllByAverageScore(cursorId, cursorScore, limit);
+        return CursorPageResponse.of(
                 limit,
-                (int) albums.getTotalElements(),
+                albums.size() >= limit,
                 albums.stream()
                         .map(AlbumListResponse::from)
                         .toList()
@@ -124,11 +125,11 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "albums_review_count", key = "'albums_review_count_'+ #cursorId + '_' + #cursorDate + '_' + #limit")
-    public PageResponse<AlbumListResponse> getAlbumsByReviewCount(String cursorId, String cursorReviewCount, int limit) {
-        Page<AlbumSimplified> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
-        return PageResponse.of(
+    public CursorPageResponse<AlbumListResponse> getAlbumsByReviewCount(Long cursorId, String cursorReviewCount, int limit) {
+        List<AlbumSimplified> albums = albumRepository.findAllByReviewCount(cursorId, cursorReviewCount, limit);
+        return CursorPageResponse.of(
                 limit,
-                (int) albums.getTotalElements(),
+                albums.size() >= limit,
                 albums.stream()
                         .map(AlbumListResponse::from)
                         .toList()

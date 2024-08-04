@@ -34,7 +34,7 @@ import static com.project.singk.domain.review.infrastructure.QAlbumReviewStatist
 @RequiredArgsConstructor
 public class AlbumRepositoryImpl implements AlbumRepository {
 	private final AlbumJpaRepository albumJpaRepository;
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory queryFactory;
 
 	@Override
 	public Album save(Album album) {
@@ -58,6 +58,47 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 	}
 
     @Override
+    public List<AlbumSimplified> findAll() {
+        return queryFactory.selectFrom(albumEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
+                .fetch().stream()
+                .map(AlbumEntity::simplified)
+                .toList();
+    }
+
+    @Override
+    public Page<AlbumSimplified> findAllWithOffsetPaging(int offset, int limit) {
+        List<AlbumSimplified> albums = queryFactory.selectFrom(albumEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
+                .offset(offset)
+                .limit(limit)
+                .orderBy(albumReviewStatisticsEntity.modifiedAt.desc())
+                .fetch().stream()
+                .map(AlbumEntity::simplified)
+                .toList();
+
+        Long count = queryFactory.select(albumEntity.count())
+                .from(albumEntity)
+                .fetchOne();
+
+        Pageable pageable = PageRequest.ofSize(limit);
+
+        return new PageImpl<>(albums, pageable, count);
+    }
+
+    @Override
+    public List<AlbumSimplified> findAllWithCursorPaging(Long cursorId, String cursorDate, int limit) {
+        return queryFactory.selectFrom(albumEntity)
+                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
+                .where(cursorByDate(cursorId, cursorDate))
+                .limit(limit)
+                .orderBy(albumReviewStatisticsEntity.modifiedAt.desc())
+                .fetch().stream()
+                .map(AlbumEntity::simplified)
+                .toList();
+    }
+
+    @Override
     public Album getByIdWithStatistics(String albumId) {
         return findByIdWithStatistics(albumId)
                 .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
@@ -66,7 +107,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
 
-        return jpaQueryFactory.select(albumReviewStatisticsEntity)
+        return queryFactory.select(albumReviewStatisticsEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
                 .where(albumEntity.id.eq(albumId))
@@ -76,7 +117,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public Optional<Album> findByIdWithStatistics(String albumId) {
-        return Optional.ofNullable(jpaQueryFactory.select(albumEntity)
+        return Optional.ofNullable(queryFactory.select(albumEntity)
                 .from(albumEntity)
                 .where(albumEntity.id.eq(albumId))
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
@@ -86,7 +127,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
 	public Optional<Album> findById(String id) {
-        return Optional.ofNullable(jpaQueryFactory
+        return Optional.ofNullable(queryFactory
                 .selectFrom(albumEntity)
                 .where(albumEntity.id.eq(id))
                 .leftJoin(albumEntity.tracks, trackEntity)
@@ -97,27 +138,18 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 	}
 
     @Override
-    public Page<AlbumSimplified> findAllByModifiedAt(String cursorId, String cursorDate, int limit) {
-        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
-                .from(albumEntity)
+    public List<AlbumSimplified> findAllByModifiedAt(Long cursorId, String cursorDate, int limit) {
+        return queryFactory.selectFrom(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByDate(cursorId, cursorDate))
-                .orderBy(albumReviewStatisticsEntity.modifiedAt.desc(), albumEntity.id.asc())
+                .orderBy(albumReviewStatisticsEntity.modifiedAt.desc())
                 .limit(limit)
                 .fetch().stream()
                 .map(AlbumEntity::simplified)
                 .toList();
-
-        long count = jpaQueryFactory.select(albumEntity.count())
-                .from(albumEntity)
-                .fetchOne();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, count);
     }
 
-    private BooleanExpression cursorByDate(String cursorId, String cursorDate) {
+    private BooleanExpression cursorByDate(Long cursorId, String cursorDate) {
         if (cursorId == null || cursorDate == null) {
             return null;
         }
@@ -126,47 +158,38 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         LocalDateTime date = LocalDateTime.parse(cursorDate, formatter);
 
         return albumReviewStatisticsEntity.modifiedAt.eq(date)
-                .and(albumEntity.id.gt(cursorId))
+                .and(albumReviewStatisticsEntity.id.gt(cursorId))
                 .or(albumReviewStatisticsEntity.modifiedAt.lt(date));
     }
 
     @Override
-    public Page<AlbumSimplified> findAllByAverageScore(String cursorId, String cursorScore, int limit) {
-
-        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
+    public List<AlbumSimplified> findAllByAverageScore(Long cursorId, String cursorScore, int limit) {
+        return queryFactory.select(albumEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByAverage(cursorId, cursorScore))
-                .orderBy(albumReviewStatisticsEntity.averageScore.desc(), albumEntity.id.asc())
+                .orderBy(albumReviewStatisticsEntity.averageScore.desc())
                 .limit(limit)
                 .fetch().stream()
                 .map(AlbumEntity::simplified)
                 .toList();
-
-        // TODO : 카운트 쿼리 최적화
-        long count = jpaQueryFactory.select(albumEntity.count())
-                .from(albumEntity)
-                .fetchOne();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, count);
     }
 
-    private BooleanExpression cursorByAverage(String cursorId, String cursorScore) {
+    private BooleanExpression cursorByAverage(Long cursorId, String cursorScore) {
         if (cursorId == null || cursorScore == null) {
             return null;
         }
 
         double score = Double.parseDouble(cursorScore);
+
         return albumReviewStatisticsEntity.averageScore.eq(score)
-                .and(albumEntity.id.gt(cursorId))
+                .and(albumReviewStatisticsEntity.id.gt(cursorId))
                 .or(albumReviewStatisticsEntity.averageScore.lt(score));
     }
 
     @Override
-    public Page<AlbumSimplified> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
-        List<AlbumSimplified> albums = jpaQueryFactory.select(albumEntity)
+    public List<AlbumSimplified> findAllByReviewCount(Long cursorId, String cursorReviewCount, int limit) {
+        return queryFactory.select(albumEntity)
                 .from(albumEntity)
                 .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity).fetchJoin()
                 .where(cursorByReviewCount(cursorId, cursorReviewCount))
@@ -175,23 +198,15 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 .fetch().stream()
                 .map(AlbumEntity::simplified)
                 .toList();
-
-        long count = jpaQueryFactory.select(albumEntity.count())
-                .from(albumEntity)
-                .fetchOne();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, count);
     }
-    private BooleanExpression cursorByReviewCount(String cursorId, String cursorReviewCount) {
+    private BooleanExpression cursorByReviewCount(Long cursorId, String cursorReviewCount) {
         if (cursorId == null || cursorReviewCount == null) {
             return null;
         }
         int reviewCount = Integer.parseInt(cursorReviewCount);
 
         return albumReviewStatisticsEntity.totalReviewer.eq(reviewCount)
-                .and(albumEntity.id.gt(cursorId))
+                .and(albumReviewStatisticsEntity.id.gt(cursorId))
                 .or(albumReviewStatisticsEntity.totalReviewer.lt(reviewCount));
     }
 

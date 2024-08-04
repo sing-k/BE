@@ -10,11 +10,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "ALBUM_REVIEW_STATISTICS", indexes = {
-        @Index(name = "idx_album_statistic_modified_at", columnList = "modifiedAt DESC"),
-        @Index(name = "idx_album_statistic_total_reviewer", columnList = "totalReviewer DESC"),
-        @Index(name = "idx_album_statistic_average_score", columnList = "averageScore DESC")
-})
+@Table(
+        name = "ALBUM_REVIEW_STATISTICS",
+        indexes = {
+            @Index(name = "idx_album_statistic_modified_at", columnList = "modifiedAt DESC"),
+            @Index(name = "idx_album_statistic_total_reviewer", columnList = "totalReviewer DESC"),
+            @Index(name = "idx_album_statistic_average_score", columnList = "averageScore DESC")
+        }
+)
 @Getter
 @NoArgsConstructor
 public class AlbumReviewStatisticsEntity extends BaseTimeEntity {

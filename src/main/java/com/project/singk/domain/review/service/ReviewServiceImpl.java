@@ -10,7 +10,6 @@ import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.controller.port.ReviewService;
-import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import com.project.singk.domain.review.controller.response.MyAlbumReviewResponse;
@@ -19,7 +18,7 @@ import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,6 @@ import com.project.singk.domain.review.domain.AlbumReviewCreate;
 import com.project.singk.global.domain.PkResponseDto;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Service
 @Builder
@@ -108,10 +105,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<AlbumReviewResponse> getAlbumReviews(String albumId, int offset, int limit, String sort) {
+    public OffsetPageResponse<AlbumReviewResponse> getAlbumReviews(String albumId, int offset, int limit, String sort) {
         Page<AlbumReview> reviews = albumReviewRepository.getAllByAlbumId(albumId, offset, limit, sort);
 
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) reviews.getTotalElements(),
@@ -132,9 +129,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<MyAlbumReviewResponse> getMyAlbumReview(Long memberId, int offset, int limit, String sort) {
+    public OffsetPageResponse<MyAlbumReviewResponse> getMyAlbumReview(Long memberId, int offset, int limit, String sort) {
         Page<AlbumReview> reviews = albumReviewRepository.getAllByMemberId(memberId, offset, limit, sort);
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) reviews.getTotalElements(),

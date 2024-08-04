@@ -14,7 +14,7 @@ import com.project.singk.domain.review.domain.AlbumReviewCreate;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
@@ -167,7 +167,7 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        PageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
+        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
 
         // then
         assertAll(
@@ -212,7 +212,7 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        PageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
+        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
 
         // then
         assertAll(
@@ -301,7 +301,7 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        PageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"NEW");
+        OffsetPageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"NEW");
 
         // then
         assertAll(
@@ -357,7 +357,7 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        PageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"LIKES");
+        OffsetPageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"LIKES");
 
         // then
         assertAll(

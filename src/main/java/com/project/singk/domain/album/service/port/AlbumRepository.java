@@ -13,11 +13,14 @@ public interface AlbumRepository {
     List<Album> saveAll(List<Album> albums);
     boolean existsById(String albumId);
 	Album getById(String albumId);
+    List<AlbumSimplified> findAll();
+    Page<AlbumSimplified> findAllWithOffsetPaging(int offset, int limit);
+    List<AlbumSimplified> findAllWithCursorPaging(Long cursorId, String cursorDate, int limit);
     Album getByIdWithStatistics(String albumId);
     AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId);
     Optional<Album> findByIdWithStatistics(String albumId);
 	Optional<Album> findById(String albumId);
-    Page<AlbumSimplified> findAllByModifiedAt(String cursorId, String cursorDate, int limit);
-    Page<AlbumSimplified> findAllByAverageScore(String cursorId, String cursorScore, int limit);
-    Page<AlbumSimplified> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit);
+    List<AlbumSimplified> findAllByModifiedAt(Long cursorId, String cursorDate, int limit);
+    List<AlbumSimplified> findAllByAverageScore(Long cursorId, String cursorScore, int limit);
+    List<AlbumSimplified> findAllByReviewCount(Long cursorId, String cursorReviewCount, int limit);
 }
