@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OffsetPageResponse<T> {
 
-    // 기본 값일 때 응답에 미포함
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private int offset;
 	private int limit;
 	private int total;
