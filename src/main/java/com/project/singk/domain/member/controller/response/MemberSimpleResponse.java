@@ -16,7 +16,7 @@ public class MemberSimpleResponse {
     public static MemberSimpleResponse from(Member member, String imageUrl) {
         return MemberSimpleResponse.builder()
                 .id(member.getId())
-                .imageUrl(member.getImageUrl())
+                .imageUrl(imageUrl)
                 .nickname(member.getNickname())
                 .build();
     }
