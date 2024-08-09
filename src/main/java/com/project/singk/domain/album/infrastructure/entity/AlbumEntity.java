@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.AlbumSimplified;
 import com.project.singk.domain.album.domain.AlbumType;
 import com.project.singk.domain.review.infrastructure.AlbumReviewStatisticsEntity;
 import com.project.singk.global.domain.BaseTimeEntity;
@@ -35,19 +36,19 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 	private LocalDateTime releasedAt;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TrackEntity> tracks;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AlbumImageEntity> images;
 
     @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AlbumArtistEntity> artists;
 
     @JoinColumn(name = "statistic_id")
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private AlbumReviewStatisticsEntity statistics;
 
     @Transient
@@ -86,6 +87,19 @@ public class AlbumEntity extends BaseTimeEntity implements Persistable<String> {
 			.type(this.type)
 			.releasedAt(this.releasedAt)
             .tracks(this.tracks.stream().map(TrackEntity::toModel).toList())
+            .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
+            .artists(this.artists.stream().map(AlbumArtistEntity::toModel).toList())
+            .statistics(this.statistics.toModel())
+            .createdAt(this.getCreatedAt())
+			.build();
+	}
+
+    public AlbumSimplified simplified() {
+		return AlbumSimplified.builder()
+			.id(this.id)
+			.name(this.name)
+			.type(this.type)
+			.releasedAt(this.releasedAt)
             .images(this.images.stream().map(AlbumImageEntity::toModel).toList())
             .artists(this.artists.stream().map(AlbumArtistEntity::toModel).toList())
             .statistics(this.statistics.toModel())

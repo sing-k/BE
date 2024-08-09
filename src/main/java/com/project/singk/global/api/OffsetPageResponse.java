@@ -14,17 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageResponse<T> {
+public class OffsetPageResponse<T> {
 
-    // 기본 값일 때 응답에 미포함
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private int offset;
 	private int limit;
 	private int total;
 	private List<T> items;
 
-	public static <T> PageResponse<T> of (int offset, int limit, int total, List<T> items) {
-		return PageResponse.<T>builder()
+	public static <T> OffsetPageResponse<T> of (int offset, int limit, int total, List<T> items) {
+		return OffsetPageResponse.<T>builder()
 			.offset(offset)
 			.limit(limit)
 			.total(total)
@@ -32,19 +30,11 @@ public class PageResponse<T> {
 			.build();
 	}
 
-    public static <T> PageResponse<T> of (int limit, int total, List<T> items) {
-		return PageResponse.<T>builder()
-			.limit(limit)
-			.total(total)
-			.items(items)
-			.build();
-	}
-
-    public <R> PageResponse<R> map(Function<? super T, ? extends R> converter) {
+    public <R> OffsetPageResponse<R> map(Function<? super T, ? extends R> converter) {
         List<R> newItems = this.items.stream()
                 .map(converter)
                 .collect(Collectors.toList());
-        return PageResponse.<R>builder()
+        return OffsetPageResponse.<R>builder()
                 .offset(this.offset)
                 .limit(this.limit)
                 .total(this.total)

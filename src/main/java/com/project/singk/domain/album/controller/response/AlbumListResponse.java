@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.album.domain.Album;
 
 import com.project.singk.domain.album.domain.AlbumArtist;
+import com.project.singk.domain.album.domain.AlbumSimplified;
+import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
+import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsSimpleResponse;
 import lombok.*;
 
 @Getter
@@ -19,14 +22,13 @@ public class AlbumListResponse {
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime releasedAt;
-    private long count;
-    private double averageScore;
+    private AlbumReviewStatisticsSimpleResponse statistics;
 	private List<ArtistResponse> artists;
 	private List<ImageResponse> images;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-	public static AlbumListResponse from (Album album) {
+	public static AlbumListResponse from (AlbumSimplified album) {
 
 		return AlbumListResponse.builder()
 			.id(album.getId())
@@ -39,8 +41,7 @@ public class AlbumListResponse {
 			.images(album.getImages().stream()
 				.map(ImageResponse::from)
 				.toList())
-            .count(album.getStatistics().getTotalReviewer())
-            .averageScore(album.getStatistics().getAverageScore())
+            .statistics(AlbumReviewStatisticsSimpleResponse.from(album.getStatistics()))
             .modifiedAt(album.getStatistics().getModifiedAt())
 			.build();
 	}

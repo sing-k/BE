@@ -37,8 +37,8 @@ public class TrackEntity extends BaseTimeEntity implements Persistable<String> {
 	@Column(name = "preview_url")
 	private String previewUrl;
 
-    @JoinColumn(name = "album_id", updatable = false, nullable = false)
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "track_id", updatable = false, nullable = false)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TrackArtistEntity> artists;
 
     @Builder

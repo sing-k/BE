@@ -7,6 +7,7 @@ import com.project.singk.domain.activity.infrastructure.ActivityHistoryEntity;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.admin.controller.port.AdminService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
+import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumSimplifiedEntity;
 import com.project.singk.domain.album.service.port.*;
@@ -16,9 +17,11 @@ import com.project.singk.domain.member.controller.response.MemberResponse;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.CursorPageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Builder
@@ -45,9 +47,9 @@ public class AdminServiceImpl implements AdminService {
     private final RandomHolder randomHolder;
     private final ActivityHistoryRepository activityHistoryRepository;
     @Override
-    public PageResponse<AlbumDetailResponse> createAlbums(String query, int offset, int limit) {
+    public OffsetPageResponse<AlbumDetailResponse> createAlbums(String query, int offset, int limit) {
 
-        PageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
+        OffsetPageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
 
         List<AlbumDetailResponse> albums = spotifyAlbums.getItems().stream()
                 .map(spotifyAlbum -> {
@@ -84,7 +86,7 @@ public class AdminServiceImpl implements AdminService {
                 })
                 .toList();
 
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 spotifyAlbums.getTotal(),
@@ -105,6 +107,42 @@ public class AdminServiceImpl implements AdminService {
                     return MemberResponse.from(member, imageUrl);
                 })
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AlbumListResponse> getAlbums() {
+        return albumRepository.findAll().stream()
+                .map(AlbumListResponse::from)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OffsetPageResponse<AlbumListResponse> getAlbumsWithOffsetPaging(int offset, int limit) {
+        Page<AlbumSimplified> albums = albumRepository.findAllWithOffsetPaging(offset, limit);
+
+        return OffsetPageResponse.of(
+                offset,
+                limit,
+                (int) albums.getTotalElements(),
+                albums.stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public CursorPageResponse<AlbumListResponse> getAlbumsWithCursorPaging(Long cursorId, String cursorDate, int limit) {
+        List<AlbumSimplified> albums = albumRepository.findAllWithCursorPaging(cursorId, cursorDate, limit);
+
+        return CursorPageResponse.of(
+                limit,
+                albums.size() >= limit,
+                albums.stream()
+                        .map(AlbumListResponse::from)
+                        .toList()
+        );
     }
 
     @Override
