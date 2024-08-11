@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AlbumDetailResponseTest {
 
     @Test
-    public void Album으로_AlbumDetailResponseTest를_만들_수_있다() {
+    public void Album으로_AlbumDetailResponse를_만들_수_있다() {
         // given
 
         List<Artist> artists = List.of(

@@ -7,14 +7,12 @@ import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.controller.port.FreePostService;
 import com.project.singk.domain.post.controller.response.FreePostListResponse;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
-import com.project.singk.domain.post.controller.response.RecommendPostListResponse;
 import com.project.singk.domain.post.domain.FreePostCreate;
 import com.project.singk.domain.post.domain.FreePost;
-import com.project.singk.domain.post.domain.RecommendPost;
 import com.project.singk.domain.post.service.port.FreePostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,9 +49,9 @@ public class FreePostServiceImpl implements FreePostService {
     }
 
     @Override
-    public PageResponse<FreePostListResponse> getFreePosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public OffsetPageResponse<FreePostListResponse> getFreePosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<FreePost> posts = freePostRepository.findAll(offset, limit, sort, filter, keyword);
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) posts.getTotalElements(),
@@ -68,9 +66,9 @@ public class FreePostServiceImpl implements FreePostService {
     }
 
     @Override
-    public PageResponse<FreePostListResponse> getMyFreePosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public OffsetPageResponse<FreePostListResponse> getMyFreePosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<FreePost> posts = freePostRepository.findAllByMemberId(memberId, offset, limit, sort, filter, keyword);
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) posts.getTotalElements(),

@@ -9,8 +9,4 @@ import java.util.List;
 public interface ActivityHistoryService {
     List<ActivityGraphResponse> getActivityGraph(Long memberId, String startDate, String endDate, String dateType);
     OffsetPageResponse<ActivityHistoryResponse> getActivityHistories(Long memberId, int offset, int limit);
-    List<ActivityGraphResponse> getDailyActivityGraph(Long memberId, String startDate, String endDate);
-    List<ActivityGraphResponse> getWeeklyActivityGraph(Long memberId, String startDate, String endDate);
-
-    List<ActivityGraphResponse> getMonthlyActivityGraph(Long memberId, String startDate, String endDate);
 }

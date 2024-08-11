@@ -16,12 +16,6 @@ public class ActivityGraphResponse {
     private LocalDate date;
     private int score;
 
-    public static ActivityGraphResponse from (LocalDate date, int score) {
-        return ActivityGraphResponse.builder()
-                .date(date)
-                .score(score)
-                .build();
-    }
     public static ActivityGraphResponse from (ActivityScore activityScore) {
         return ActivityGraphResponse.builder()
                 .date(activityScore.getDate())

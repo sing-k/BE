@@ -15,7 +15,7 @@ import com.project.singk.domain.member.domain.Role;
 class MyProfileResponseTest {
 
 	@Test
-	public void Member로_응답을_생성할_수_있다() {
+	public void Member로_MyProfileResponse를_생성할_수_있다() {
 		// given
 		Member member = Member.builder()
 			.id(1L)

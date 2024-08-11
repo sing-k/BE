@@ -17,7 +17,7 @@ import com.project.singk.domain.post.domain.RecommendPostUpdate;
 import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -84,9 +84,9 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     }
 
     @Override
-    public PageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public OffsetPageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<RecommendPost> posts = recommendPostRepository.findAll(offset, limit, sort, filter, keyword);
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) posts.getTotalElements(),
@@ -105,9 +105,9 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     }
 
     @Override
-    public PageResponse<RecommendPostListResponse> getMyRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public OffsetPageResponse<RecommendPostListResponse> getMyRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<RecommendPost> posts = recommendPostRepository.findAllByMemberId(memberId, offset, limit, sort, filter, keyword);
-        return PageResponse.of(
+        return OffsetPageResponse.of(
                 offset,
                 limit,
                 (int) posts.getTotalElements(),

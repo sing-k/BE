@@ -8,9 +8,8 @@ import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.RecommendPostCreate;
 import com.project.singk.domain.post.controller.port.RecommendPostService;
 import com.project.singk.domain.post.domain.RecommendPostUpdate;
-import com.project.singk.domain.review.controller.request.ReviewSort;
 import com.project.singk.global.api.BaseResponse;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.validate.ValidEnum;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +49,7 @@ public class RecommendPostController {
     }
 
     @GetMapping("")
-    public BaseResponse<PageResponse<RecommendPostListResponse>> getRecommendPosts(
+    public BaseResponse<OffsetPageResponse<RecommendPostListResponse>> getRecommendPosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
@@ -69,7 +68,7 @@ public class RecommendPostController {
     }
 
     @GetMapping("/me")
-    public BaseResponse<PageResponse<RecommendPostListResponse>> getMyRecommendPosts(
+    public BaseResponse<OffsetPageResponse<RecommendPostListResponse>> getMyRecommendPosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,

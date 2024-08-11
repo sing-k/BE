@@ -52,39 +52,4 @@ public class ActivityHistoryController {
                 limit
         ));
     }
-
-    @GetMapping("/daily/graph")
-    public BaseResponse<List<ActivityGraphResponse>> getDailyActivityGraph(
-            @Date @RequestParam("startDate") String startDate,
-            @Date @RequestParam("endDate") String endDate
-    ) {
-        return BaseResponse.ok(activityHistoryService.getDailyActivityGraph(
-                authService.getLoginMemberId(),
-                startDate,
-                endDate
-        ));
-    }
-    @GetMapping("/weekly/graph")
-    public BaseResponse<List<ActivityGraphResponse>> getWeeklyActivityGraph(
-            @Date @RequestParam("startDate") String startDate,
-            @Date @RequestParam("endDate") String endDate
-    ) {
-        return BaseResponse.ok(activityHistoryService.getWeeklyActivityGraph(
-                authService.getLoginMemberId(),
-                startDate,
-                endDate
-        ));
-    }
-
-    @GetMapping("/monthly/graph")
-    public BaseResponse<List<ActivityGraphResponse>> getMonthlyActivityGraph(
-            @Date @RequestParam("startDate") String startDate,
-            @Date @RequestParam("endDate") String endDate
-    ) {
-        return BaseResponse.ok(activityHistoryService.getMonthlyActivityGraph(
-                authService.getLoginMemberId(),
-                startDate,
-                endDate
-        ));
-    }
 }

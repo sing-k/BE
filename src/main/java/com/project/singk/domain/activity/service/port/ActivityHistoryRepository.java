@@ -13,9 +13,4 @@ public interface ActivityHistoryRepository {
     List<ActivityHistory> saveAll(List<ActivityHistory> activityHistories);
     List<ActivityScore> getActivityGraph(Long memberId, LocalDate start, LocalDate end, ActivityDate type);
     Page<ActivityHistory> getActivityHistories(Long memberId, int offset, int limit);
-
-    List<ActivityScore> getActivityDailyGraph(Long memberId, LocalDate start, LocalDate end);
-    List<ActivityScore> getActivityWeeklyGraph(Long memberId, LocalDate start, LocalDate end);
-
-    List<ActivityScore> getActivityMonthlyGraph(Long memberId, LocalDate start, LocalDate end);
 }

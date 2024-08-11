@@ -56,6 +56,10 @@ class ReviewServiceTest {
                 .build());
     }
 
+    /**
+     * createAlbumReview
+     */
+
     @Test
     public void 동일한_Album에_작성한_AlbumReview가_있다면_생성할_수_없다() {
         // given
@@ -100,6 +104,9 @@ class ReviewServiceTest {
         assertThat(result.getId()).isEqualTo(1L);
     }
 
+    /**
+     * deleteAlbumReview
+     */
     @Test
     public void 본인의_AlbumReview가_아니라면_삭제할_수_없다() {
         // given
@@ -132,6 +139,10 @@ class ReviewServiceTest {
         // when
         testContainer.reviewService.deleteAlbumReview(1L, "0EhZEM4RRz0yioTgucDhJq", 1L);
     }
+
+    /**
+     * getAlbumReviews
+     */
 
     @Test
     public void AlbumId로_AlbumReview_목록을_최신순으로_조회할_수_있다() {
@@ -223,6 +234,9 @@ class ReviewServiceTest {
         );
     }
 
+    /**
+     * getAlbumReviewStatistics
+     */
     @Test
     public void AlbumReview_대한_통계를_조회할_수_있다() {
         // given
@@ -256,6 +270,9 @@ class ReviewServiceTest {
         );
     }
 
+    /**
+     * getMyAlbumReview
+     */
     @Test
     public void MemberId로_AlbumReview_목록을_최신순으로_조회할_수_있다() {
         // given

@@ -1,6 +1,8 @@
 package com.project.singk.mock;
 
+import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
 import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.service.ActivityHistoryServiceImpl;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.service.AlbumServiceImpl;
@@ -47,6 +49,7 @@ public class TestContainer {
     public final AlbumService albumService;
     public final ReviewService reviewService;
     public final VoteService voteService;
+    public final ActivityHistoryService activityHistoryService;
 	@Builder
 	public TestContainer() {
 		this.mailSender = new FakeMailSender();
@@ -95,6 +98,9 @@ public class TestContainer {
                 .albumReviewVoteRepository(this.albumReviewVoteRepository)
                 .memberRepository(this.memberRepository)
                 .albumReviewRepository(this.albumReviewRepository)
+                .activityHistoryRepository(this.activityHistoryRepository)
+                .build();
+        this.activityHistoryService = ActivityHistoryServiceImpl.builder()
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
 	}

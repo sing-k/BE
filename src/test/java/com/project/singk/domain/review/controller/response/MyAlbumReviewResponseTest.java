@@ -1,5 +1,7 @@
 package com.project.singk.domain.review.controller.response;
 
+import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.AlbumSimplified;
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
@@ -11,19 +13,15 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class AlbumReviewResponseTest {
+public class MyAlbumReviewResponseTest {
 
     @Test
-    public void AlbumReview로_AlbumReviewResponse을_생성할_수_있다() {
+    public void AlbumReview로_MyAlbumReviewResponse을_생성할_수_있다() {
         // given
-        Member member = Member.builder()
-                .id(1L)
-                .nickname("SingK")
-                .gender(Gender.MALE)
-                .statistics(MemberStatistics.empty())
+        Album album = Album.builder()
+                .id("id")
+                .name("Right Now")
                 .build();
-
-        String imageUrl = "imageUrl";
 
         AlbumReview albumReview = AlbumReview.builder()
                 .id(1L)
@@ -32,11 +30,11 @@ class AlbumReviewResponseTest {
                 .prosCount(0)
                 .consCount(0)
                 .createdAt(LocalDateTime.of(2024, 6, 6, 0, 0, 0))
-                .reviewer(member)
+                .album(album)
                 .build();
 
         // when
-        AlbumReviewResponse albumReviewResponse = AlbumReviewResponse.from(albumReview, imageUrl);
+        MyAlbumReviewResponse albumReviewResponse = MyAlbumReviewResponse.from(albumReview);
 
         // then
         assertAll(
@@ -46,7 +44,7 @@ class AlbumReviewResponseTest {
                 () -> assertThat(albumReviewResponse.getPros()).isEqualTo(0),
                 () -> assertThat(albumReviewResponse.getCons()).isEqualTo(0),
                 () -> assertThat(albumReviewResponse.getCreatedAt()).isEqualTo(LocalDateTime.of(2024, 6, 6, 0, 0, 0)),
-                () -> assertThat(albumReviewResponse.getReviewer().getNickname()).isEqualTo("SingK")
+                () -> assertThat(albumReviewResponse.getAlbum().getName()).isEqualTo("Right Now")
         );
     }
 }

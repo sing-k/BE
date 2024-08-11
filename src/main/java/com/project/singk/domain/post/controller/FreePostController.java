@@ -8,7 +8,7 @@ import com.project.singk.domain.post.controller.response.FreePostListResponse;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
 import com.project.singk.domain.post.domain.FreePostCreate;
 import com.project.singk.global.api.BaseResponse;
-import com.project.singk.global.api.PageResponse;
+import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.global.validate.ValidEnum;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class FreePostController {
     }
 
     @GetMapping("")
-    public BaseResponse<PageResponse<FreePostListResponse>> getFreePosts(
+    public BaseResponse<OffsetPageResponse<FreePostListResponse>> getFreePosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
@@ -62,7 +62,7 @@ public class FreePostController {
     }
 
     @GetMapping("/me")
-    public BaseResponse<PageResponse<FreePostListResponse>> getMyFreePosts(
+    public BaseResponse<OffsetPageResponse<FreePostListResponse>> getMyFreePosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,

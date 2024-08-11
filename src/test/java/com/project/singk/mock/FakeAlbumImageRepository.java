@@ -19,4 +19,9 @@ public class FakeAlbumImageRepository implements AlbumImageRepository {
     public List<AlbumImage> saveAll(List<AlbumImage> albumImages) {
         return albumImages.stream().map(this::save).toList();
     }
+
+    @Override
+    public List<AlbumImage> findAllByAlbumId(String albumId) {
+        return null;
+    }
 }

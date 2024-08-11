@@ -1,6 +1,7 @@
 package com.project.singk.mock;
 
 import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.AlbumSimplified;
 import com.project.singk.domain.album.service.port.AlbumRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.ApiException;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +41,30 @@ public class FakeAlbumRepository implements AlbumRepository {
     }
 
     @Override
+    public List<AlbumSimplified> findAll() {
+        return data.stream()
+                .map(this::simplified)
+                .toList();
+    }
+
+    @Override
+    public Page<AlbumSimplified> findAllWithOffsetPaging(int offset, int limit) {
+        List<AlbumSimplified> albums = data.stream()
+                .skip(offset)
+                .limit(limit)
+                .map(this::simplified)
+                .toList();
+
+        Pageable pageable = Pageable.ofSize(limit);
+
+        return new PageImpl<>(albums, pageable, data.size());
+    }
+
+    @Override
+    public List<AlbumSimplified> findAllWithCursorPaging(Long cursorId, String cursorDate, int limit) {
+        return this.findAllByModifiedAt(cursorId, cursorDate, limit);
+    }
+    @Override
     public Album getByIdWithStatistics(String albumId) {
         return findByIdWithStatistics(albumId)
                 .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM));
@@ -67,21 +91,16 @@ public class FakeAlbumRepository implements AlbumRepository {
     }
 
     @Override
-    public Page<Album> findAllByModifiedAt(String cursorId, String cursorDate, int limit) {
-
-
-        List<Album> albums = data.stream()
-                .filter(item -> cursorByDate(cursorId, cursorDate, item))
+    public List<AlbumSimplified> findAllByModifiedAt(Long cursorId, String cursorDate, int limit) {
+        return data.stream()
+                .filter(item -> cursorByModifiedAt(cursorId, cursorDate, item))
                 .sorted((a, b) -> b.getStatistics().getModifiedAt().compareTo(a.getStatistics().getModifiedAt()))
                 .limit(limit)
+                .map(this::simplified)
                 .toList();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, data.size());
     }
 
-    private boolean cursorByDate(String cursorId, String cursorDate, Album item) {
+    private boolean cursorByModifiedAt(Long cursorId, String cursorDate, Album item) {
         if (cursorId == null && cursorDate == null) {
             return true;
         }
@@ -91,63 +110,60 @@ public class FakeAlbumRepository implements AlbumRepository {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         );
 
-        return (item.getStatistics().getModifiedAt().equals(date) && !item.getId().equals(cursorId))
+        return (item.getStatistics().getModifiedAt().equals(date) && !item.getStatistics().getId().equals(cursorId))
                 || item.getStatistics().getModifiedAt().isBefore(date);
     }
-
     @Override
-    public Page<Album> findAllByAverageScore(String cursorId, String cursorScore, int limit) {
-
-        List<Album> albums = data.stream()
+    public List<AlbumSimplified> findAllByAverageScore(Long cursorId, String cursorScore, int limit) {
+        return data.stream()
                 .filter(item -> cursorByAverage(cursorId, cursorScore, item))
-                .sorted((a, b) -> {
-                    if(b.getStatistics().getAverageScore() > a.getStatistics().getAverageScore()) {
-                        return 1;
-                    } else if (b.getStatistics().getAverageScore() == a.getStatistics().getAverageScore()) {
-                        return 0;
-                    } else {
-                        return  -1;
-                    }
-                })
+                .sorted((a, b) -> Double.compare(b.getStatistics().getAverageScore(), a.getStatistics().getAverageScore()))
                 .limit(limit)
+                .map(this::simplified)
                 .toList();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, data.size());
     }
 
-    private boolean cursorByAverage(String cursorId, String cursorScore, Album item) {
+    private boolean cursorByAverage(Long cursorId, String cursorScore, Album item) {
         if (cursorId == null && cursorScore == null) {
             return true;
         }
 
         double score = Double.parseDouble(cursorScore);
 
-        return (item.getStatistics().getAverageScore() == score && !item.getId().equals(cursorId))
+        return (item.getStatistics().getAverageScore() == score && !item.getStatistics().getId().equals(cursorId))
                 || item.getStatistics().getAverageScore() < score;
     }
     @Override
-    public Page<Album> findAllByReviewCount(String cursorId, String cursorReviewCount, int limit) {
-        List<Album> albums = data.stream()
+    public List<AlbumSimplified> findAllByReviewCount(Long cursorId, String cursorReviewCount, int limit) {
+        return data.stream()
                 .filter(item -> cursorByReviewCount(cursorId, cursorReviewCount, item))
                 .sorted((a, b) -> b.getStatistics().getTotalReviewer() - a.getStatistics().getTotalReviewer())
                 .limit(limit)
+                .map(this::simplified)
                 .toList();
-
-        Pageable pageable = PageRequest.ofSize(limit);
-
-        return new PageImpl<>(albums, pageable, data.size());
     }
 
-    private boolean cursorByReviewCount(String cursorId, String cursorReviewCount, Album item) {
+    private boolean cursorByReviewCount(Long cursorId, String cursorReviewCount, Album item) {
         if (cursorId == null && cursorReviewCount == null) {
             return true;
         }
 
         long count = Long.parseLong(cursorReviewCount);
 
-        return (item.getStatistics().getTotalReviewer() == count && !item.getId().equals(cursorId))
+        return (item.getStatistics().getTotalReviewer() == count && !item.getStatistics().getId().equals(cursorId))
                 || item.getStatistics().getTotalReviewer() < count;
+    }
+
+    private AlbumSimplified simplified(Album album) {
+        return AlbumSimplified.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .type(album.getType())
+                .releasedAt(album.getReleasedAt())
+                .artists(album.getArtists())
+                .images(album.getImages())
+                .statistics(album.getStatistics())
+                .createdAt(album.getCreatedAt())
+                .build();
     }
 }
