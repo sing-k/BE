@@ -11,10 +11,10 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class MemberResponseTest {
+class MemberSimpleResponseTest {
 
     @Test
-    public void Member로_MemberResponse를_생성할_수_있다() {
+    public void Member로_MemberSimpleResponse을_생성할_수_있다() {
         // given
         Member member = Member.builder()
                 .id(1L)
@@ -31,15 +31,13 @@ class MemberResponseTest {
         String imageUrl = "imageUrl";
 
         // when
-        MemberResponse memberResponse = MemberResponse.from(member, imageUrl);
+        MemberSimpleResponse memberResponse = MemberSimpleResponse.from(member, imageUrl);
 
         // then
         assertAll(
                 () -> assertThat(memberResponse.getId()).isEqualTo(1L),
                 () -> assertThat(memberResponse.getImageUrl()).isEqualTo(imageUrl),
-                () -> assertThat(memberResponse.getNickname()).isEqualTo("SingK"),
-                () -> assertThat(memberResponse.getGender()).isEqualTo("남성"),
-                () -> assertThat(memberResponse.getStatistics().getTotalActivityScore()).isEqualTo(0)
+                () -> assertThat(memberResponse.getNickname()).isEqualTo("SingK")
         );
     }
 

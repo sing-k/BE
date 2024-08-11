@@ -66,7 +66,6 @@ class MemberStatisticsTest {
         assertThat(statistics.getTotalReviewScore()).isEqualTo(5);
     }
     @Test
-
     public void AlbumReview와_ActivityHistory를_받아서_MemberStatistics에_삭제할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.builder()

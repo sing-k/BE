@@ -48,6 +48,9 @@ class VoteServiceTest {
                 .build());
     }
 
+    /**
+     * createAlbumReviewVote
+     */
     @Test
     public void 자신의_감상평에는_공감과비공감을_할_수_없다() {
         // given
@@ -107,6 +110,9 @@ class VoteServiceTest {
         assertThat(result.getId()).isEqualTo(1L);
     }
 
+    /**
+     * deleteAlbumReviewVote
+     */
     @Test
     public void 자신의_감상평에는_공감과비공감을_철회할_수_없다() {
         // given

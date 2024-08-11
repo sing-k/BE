@@ -72,47 +72,6 @@ public class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository 
         return new PageImpl<>(activityHistories, pageable, count);
     }
 
-    @Override
-    public List<ActivityScore> getActivityDailyGraph(Long memberId, LocalDate start, LocalDate end) {
-        // 누적합 구하기
-        List<ActivityHistory> accumulatedHistories = getAccumulatedHistories(memberId);
-
-        // 각 날짜별 최종 값 구하기
-        List<LocalDate> dates = start.datesUntil(end.plusDays(1)).toList(); // 호출 날짜 포함 7일
-
-        return getActivityScores(accumulatedHistories, dates);
-    }
-
-    @Override
-    public List<ActivityScore> getActivityWeeklyGraph(Long memberId, LocalDate start, LocalDate end) {
-        // 누적합 구하기
-        List<ActivityHistory> accumulatedHistories = getAccumulatedHistories(memberId);
-
-        // 각 주별 최종 값 구하기 - 각 주의 일요일
-        List<LocalDate> dates = new ArrayList<>(start.datesUntil(end.plusDays(1))
-                .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY)
-                .toList());
-
-        if (end.getDayOfWeek() != DayOfWeek.SUNDAY) dates.add(end);
-
-        return getActivityScores(accumulatedHistories, dates);
-    }
-
-    @Override
-    public List<ActivityScore> getActivityMonthlyGraph(Long memberId, LocalDate start, LocalDate end) {
-        // 누적합 구하기
-        List<ActivityHistory> accumulatedHistories = getAccumulatedHistories(memberId);
-
-        // 각 달별 최종 값 구하기 - 각 달의 마지막 날
-        List<LocalDate> dates = new ArrayList<>(start.datesUntil(end.plusDays(1))
-                .filter(date -> date.equals(YearMonth.from(date).atEndOfMonth()))
-                .toList());
-
-        if (!end.equals(YearMonth.from(end).atEndOfMonth())) dates.add(end);
-
-        return getActivityScores(accumulatedHistories, dates);
-    }
-
     private List<ActivityHistory> getAccumulatedHistories(Long memberId) {
         List<ActivityHistory> activityHistories = queryFactory.select(activityHistoryEntity)
                 .from(activityHistoryEntity)

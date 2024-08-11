@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MemberStatisticsResponseTest {
 
     @Test
-    public void MemberStatistics로_응답을_생성할_수_있다() {
+    public void MemberStatistics로_MemberStatisticsResponse를_생성할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.empty();
 

@@ -55,46 +55,4 @@ public class ActivityHistoryServiceImpl implements ActivityHistoryService {
         );
     }
 
-    @Override
-    public List<ActivityGraphResponse> getDailyActivityGraph(Long memberId, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        return activityHistoryRepository.getActivityDailyGraph(
-                memberId,
-                start,
-                end
-            ).stream()
-            .map(ActivityGraphResponse::from)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ActivityGraphResponse> getWeeklyActivityGraph(Long memberId, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        return activityHistoryRepository.getActivityWeeklyGraph(
-                        memberId,
-                        start,
-                        end
-                ).stream()
-                .map(ActivityGraphResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ActivityGraphResponse> getMonthlyActivityGraph(Long memberId, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        return activityHistoryRepository.getActivityMonthlyGraph(
-                        memberId,
-                        start,
-                        end
-                ).stream()
-                .map(ActivityGraphResponse::from)
-                .collect(Collectors.toList());
-    }
-
 }
