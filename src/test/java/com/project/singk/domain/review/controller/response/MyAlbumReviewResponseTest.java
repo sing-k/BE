@@ -9,6 +9,7 @@ import com.project.singk.domain.review.domain.AlbumReview;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,6 +22,8 @@ public class MyAlbumReviewResponseTest {
         Album album = Album.builder()
                 .id("id")
                 .name("Right Now")
+                .artists(new ArrayList<>())
+                .images(new ArrayList<>())
                 .build();
 
         AlbumReview albumReview = AlbumReview.builder()

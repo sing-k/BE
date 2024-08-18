@@ -7,9 +7,23 @@ import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.service.AlbumServiceImpl;
 import com.project.singk.domain.album.service.port.*;
+import com.project.singk.domain.comment.controller.port.FreeCommentService;
+import com.project.singk.domain.comment.controller.port.RecommendCommentService;
+import com.project.singk.domain.comment.service.FreeCommentServiceImpl;
+import com.project.singk.domain.comment.service.RecommendCommentServiceImpl;
+import com.project.singk.domain.comment.service.port.FreeCommentRepository;
+import com.project.singk.domain.comment.service.port.RecommendCommentRepository;
 import com.project.singk.domain.common.service.port.RedisRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
+import com.project.singk.domain.like.controller.port.FreeLikeService;
+import com.project.singk.domain.like.controller.port.RecommendLikeService;
+import com.project.singk.domain.like.service.FreeLikeServiceImpl;
+import com.project.singk.domain.like.service.RecommendLikeServiceImpl;
+import com.project.singk.domain.like.service.port.FreeCommentLikeRepository;
+import com.project.singk.domain.like.service.port.FreePostLikeRepository;
+import com.project.singk.domain.like.service.port.RecommendCommentLikeRepository;
+import com.project.singk.domain.like.service.port.RecommendPostLikeRepository;
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.domain.member.controller.port.MemberService;
 import com.project.singk.domain.member.service.AuthServiceImpl;
@@ -20,12 +34,19 @@ import com.project.singk.domain.member.service.port.MailSender;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.member.service.port.PasswordEncoderHolder;
 
+import com.project.singk.domain.post.controller.port.FreePostService;
+import com.project.singk.domain.post.controller.port.RecommendPostService;
+import com.project.singk.domain.post.service.FreePostServiceImpl;
+import com.project.singk.domain.post.service.RecommendPostServiceImpl;
+import com.project.singk.domain.post.service.port.FreePostRepository;
+import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.domain.review.controller.port.ReviewService;
 import com.project.singk.domain.review.service.ReviewServiceImpl;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.domain.vote.controller.port.VoteService;
 import com.project.singk.domain.vote.service.VoteServiceImpl;
 import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
+import com.project.singk.global.properties.S3Properties;
 import lombok.Builder;
 
 public class TestContainer {
@@ -40,6 +61,14 @@ public class TestContainer {
     public final AlbumReviewRepository albumReviewRepository;
     public final AlbumReviewVoteRepository albumReviewVoteRepository;
     public final ActivityHistoryRepository activityHistoryRepository;
+    public final FreePostRepository freePostRepository;
+    public final FreePostLikeRepository freePostLikeRepository;
+    public final FreeCommentRepository freeCommentRepository;
+    public final FreeCommentLikeRepository freeCommentLikeRepository;
+    public final RecommendPostRepository recommendPostRepository;
+    public final RecommendPostLikeRepository recommendPostLikeRepository;
+    public final RecommendCommentRepository recommendCommentRepository;
+    public final RecommendCommentLikeRepository recommendCommentLikeRepository;
     public final SpotifyRepository spotifyRepository;
 	public final S3Repository s3Repository;
 	public final RedisRepository redisRepository;
@@ -50,6 +79,12 @@ public class TestContainer {
     public final ReviewService reviewService;
     public final VoteService voteService;
     public final ActivityHistoryService activityHistoryService;
+    public final FreePostService freePostService;
+    public final FreeCommentService freeCommentService;
+    public final FreeLikeService freeLikeService;
+    public final RecommendPostService recommendPostService;
+    public final RecommendCommentService recommendCommentService;
+    public final RecommendLikeService recommendLikeService;
 	@Builder
 	public TestContainer() {
 		this.mailSender = new FakeMailSender();
@@ -63,6 +98,14 @@ public class TestContainer {
         this.albumReviewRepository = new FakeAlbumReviewRepository();
         this.albumReviewVoteRepository = new FakeAlbumReviewVoteRepository();
         this.activityHistoryRepository = new FakeActivityHistoryRepository();
+        this.freePostRepository = new FakeFreePostRepository();
+        this.freePostLikeRepository = new FakeFreePostLikeRepository();
+        this.freeCommentRepository = new FakeFreeCommentRepository();
+        this.freeCommentLikeRepository = new FakeFreeCommentLikeRepository();
+        this.recommendPostRepository = new FakeRecommendPostRepository();
+        this.recommendPostLikeRepository = new FakeRecommendPostLikeRepository();
+        this.recommendCommentRepository = new FakeRecommendCommentRepository();
+        this.recommendCommentLikeRepository = new FakeRecommendCommentLikeRepository();
         this.spotifyRepository = new FakeSpotifyRepository();
 		this.s3Repository = new FakeS3Repository();
 		this.redisRepository = new FakeRedisRepository();
@@ -103,6 +146,49 @@ public class TestContainer {
         this.activityHistoryService = ActivityHistoryServiceImpl.builder()
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
+        this.freeLikeService = FreeLikeServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .freePostRepository(this.freePostRepository)
+                .freePostLikeRepository(this.freePostLikeRepository)
+                .freeCommentRepository(this.freeCommentRepository)
+                .freeCommentLikeRepository(this.freeCommentLikeRepository)
+                .build();
+        this.freePostService = FreePostServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .s3Repository(this.s3Repository)
+                .freePostRepository(this.freePostRepository)
+                .freeLikeService(this.freeLikeService)
+                .build();
+        this.freeCommentService = FreeCommentServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .s3Repository(this.s3Repository)
+                .freePostRepository(this.freePostRepository)
+                .freeCommentRepository(this.freeCommentRepository)
+                .freeLikeService(this.freeLikeService)
+                .build();
+        this.recommendLikeService = RecommendLikeServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .recommendPostRepository(this.recommendPostRepository)
+                .recommendPostLikeRepository(this.recommendPostLikeRepository)
+                .recommendCommentRepository(this.recommendCommentRepository)
+                .recommendCommentLikeRepository(this.recommendCommentLikeRepository)
+                .build();
+        this.recommendPostService = RecommendPostServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .s3Repository(this.s3Repository)
+                .recommendPostRepository(this.recommendPostRepository)
+                .uuidHolder(this.uuidHolder)
+                .albumImageRepository(this.albumImageRepository)
+                .recommendLikeService(this.recommendLikeService)
+                .build();
+        this.recommendCommentService = RecommendCommentServiceImpl.builder()
+                .memberRepository(this.memberRepository)
+                .s3Repository(this.s3Repository)
+                .recommendPostRepository(this.recommendPostRepository)
+                .recommendCommentRepository(this.recommendCommentRepository)
+                .recommendLikeService(this.recommendLikeService)
+                .build();
+
 	}
 
 }

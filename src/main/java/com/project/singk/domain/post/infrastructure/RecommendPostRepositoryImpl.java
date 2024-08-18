@@ -39,6 +39,15 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
     }
 
     @Override
+    public List<RecommendPost> saveAll(List<RecommendPost> posts) {
+        return recommendPostJpaRepository.saveAll(posts.stream()
+                .map(RecommendPostEntity::from)
+                .toList()).stream()
+                .map(RecommendPostEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public Optional<RecommendPost> findById(Long postId) {
         return recommendPostJpaRepository.findById(postId).map(RecommendPostEntity::toModel);
     }
@@ -56,6 +65,7 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
 
         Long count = queryFactory.select(recommendPostEntity.count())
                 .from(recommendPostEntity)
+                .where(search(filter, keyword))
                 .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);
@@ -64,11 +74,10 @@ public class RecommendPostRepositoryImpl implements RecommendPostRepository {
     }
 
     @Override
-    public Page<RecommendPost> findAllByMemberId(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public Page<RecommendPost> findAllByMemberId(Long memberId, int offset, int limit) {
         List<RecommendPost> posts = queryFactory.selectFrom(recommendPostEntity)
-                .where(recommendPostEntity.member.id.eq(memberId)
-                        .and(search(filter, keyword)))
-                .orderBy(order(PostSort.valueOf(sort)))
+                .where(recommendPostEntity.member.id.eq(memberId))
+                .orderBy(order(PostSort.LATEST))
                 .offset(offset)
                 .limit(limit)
                 .fetch().stream()

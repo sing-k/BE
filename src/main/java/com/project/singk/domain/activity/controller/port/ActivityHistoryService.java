@@ -2,6 +2,8 @@ package com.project.singk.domain.activity.controller.port;
 
 import com.project.singk.domain.activity.controller.response.ActivityGraphResponse;
 import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
 import com.project.singk.global.api.OffsetPageResponse;
 
 import java.util.List;

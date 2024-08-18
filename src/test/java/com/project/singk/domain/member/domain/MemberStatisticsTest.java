@@ -44,24 +44,18 @@ class MemberStatisticsTest {
     }
 
     @Test
-    public void AlbumReview와_ActivityHistory를_받아서_MemberStatistics에_추가할_수_있다() {
+    public void AlbumReview를_받아서_MemberStatistics에_추가할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.empty();
-
-        ActivityHistory activityHistory = ActivityHistory.builder()
-                .type(ActivityType.WRITE_ALBUM_REVIEW)
-                .score(ActivityType.WRITE_ALBUM_REVIEW.getScore())
-                .build();
 
         AlbumReview review = AlbumReview.builder()
                 .score(5)
                 .build();
 
         // when
-        statistics = statistics.updateReview(review, activityHistory, false);
+        statistics = statistics.updateReview(review, false);
 
         // then
-        assertThat(statistics.getTotalActivityScore()).isEqualTo(10);
         assertThat(statistics.getTotalReview()).isEqualTo(1);
         assertThat(statistics.getTotalReviewScore()).isEqualTo(5);
     }
@@ -74,20 +68,14 @@ class MemberStatisticsTest {
                 .totalReviewScore(5)
                 .build();
 
-        ActivityHistory activityHistory = ActivityHistory.builder()
-                .type(ActivityType.DELETE_ALBUM_REVIEW)
-                .score(ActivityType.DELETE_ALBUM_REVIEW.getScore())
-                .build();
-
         AlbumReview review = AlbumReview.builder()
                 .score(5)
                 .build();
 
         // when
-        statistics = statistics.updateReview(review, activityHistory, true);
+        statistics = statistics.updateReview(review, true);
 
         // then
-        assertThat(statistics.getTotalActivityScore()).isEqualTo(-40);
         assertThat(statistics.getTotalReview()).isEqualTo(0);
         assertThat(statistics.getTotalReviewScore()).isEqualTo(0);
     }

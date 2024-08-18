@@ -4,6 +4,7 @@ import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.service.port.AlbumImageRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
+import com.project.singk.domain.like.controller.port.RecommendLikeService;
 import com.project.singk.domain.like.service.port.RecommendPostLikeRepository;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
@@ -19,22 +20,26 @@ import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.global.domain.PkResponseDto;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
+@Builder
 @RequiredArgsConstructor
+@Transactional
 public class RecommendPostServiceImpl implements RecommendPostService {
     private final RecommendPostRepository recommendPostRepository;
-    private final RecommendPostLikeRepository recommendPostLikeRepository;
     private final MemberRepository memberRepository;
     private final AlbumImageRepository albumImageRepository;
     private final S3Repository s3Repository;
     private final UUIDHolder uuidHolder;
+    private final RecommendLikeService recommendLikeService;
 
     @Override
     public PkResponseDto createRecommendPost(Long memberId, RecommendPostCreate recommendPostCreate, MultipartFile image) {
@@ -72,19 +77,21 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RecommendPostResponse getRecommendPost(Long memberId, Long postId){
         RecommendPost recommendPost = recommendPostRepository.getById(postId);
 
         return RecommendPostResponse.from(
                 recommendPost,
-                recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, postId),
+                recommendLikeService.getPostLike(memberId, postId),
                 getLinkByRecommend(recommendPost),
                 s3Repository.getPreSignedGetUrl(recommendPost.getMember().getImageUrl())
         );
     }
 
     @Override
-    public OffsetPageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    @Transactional(readOnly = true)
+    public OffsetPageResponse<RecommendPostResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
         Page<RecommendPost> posts = recommendPostRepository.findAll(offset, limit, sort, filter, keyword);
         return OffsetPageResponse.of(
                 offset,
@@ -93,9 +100,9 @@ public class RecommendPostServiceImpl implements RecommendPostService {
                 posts.stream()
                         .map(post -> {
                             String link = getLinkByRecommend(post);
-                            return RecommendPostListResponse.from(
+                            return RecommendPostResponse.from(
                                     post,
-                                    recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, post.getId()),
+                                    recommendLikeService.getPostLike(memberId, post.getId()),
                                     link,
                                     s3Repository.getPreSignedGetUrl(post.getMember().getImageUrl())
                             );
@@ -105,8 +112,9 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     }
 
     @Override
-    public OffsetPageResponse<RecommendPostListResponse> getMyRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
-        Page<RecommendPost> posts = recommendPostRepository.findAllByMemberId(memberId, offset, limit, sort, filter, keyword);
+    @Transactional(readOnly = true)
+    public OffsetPageResponse<RecommendPostResponse> getMyRecommendPosts(Long memberId, int offset, int limit) {
+        Page<RecommendPost> posts = recommendPostRepository.findAllByMemberId(memberId, offset, limit);
         return OffsetPageResponse.of(
                 offset,
                 limit,
@@ -114,9 +122,9 @@ public class RecommendPostServiceImpl implements RecommendPostService {
                 posts.stream()
                         .map(post -> {
                             String link = getLinkByRecommend(post);
-                            return RecommendPostListResponse.from(
+                            return RecommendPostResponse.from(
                                     post,
-                                    recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, post.getId()),
+                                    recommendLikeService.getPostLike(memberId, post.getId()),
                                     link,
                                     s3Repository.getPreSignedGetUrl(post.getMember().getImageUrl())
                             );

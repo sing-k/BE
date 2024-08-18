@@ -39,6 +39,15 @@ public class FreePostRepositoryImpl implements FreePostRepository {
     }
 
     @Override
+    public List<FreePost> saveAll(List<FreePost> post) {
+        return freePostJpaRepository.saveAll(post.stream()
+                .map(FreePostEntity::from)
+                .toList()).stream()
+                .map(FreePostEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public void deleteById(Long postId) {
         freePostJpaRepository.deleteById(postId);
     }
@@ -61,6 +70,7 @@ public class FreePostRepositoryImpl implements FreePostRepository {
 
         Long count = queryFactory.select(freePostEntity.count())
                 .from(freePostEntity)
+                .where(search(filter, keyword))
                 .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);
@@ -69,11 +79,10 @@ public class FreePostRepositoryImpl implements FreePostRepository {
     }
 
     @Override
-    public Page<FreePost> findAllByMemberId(Long memberId, int offset, int limit, String sort, String filter, String keyword) {
+    public Page<FreePost> findAllByMemberId(Long memberId, int offset, int limit) {
         List<FreePost> posts = queryFactory.selectFrom(freePostEntity)
-                .where(freePostEntity.member.id.eq(memberId)
-                        .and(search(filter, keyword)))
-                .orderBy(order(PostSort.valueOf(sort)))
+                .where(freePostEntity.member.id.eq(memberId))
+                .orderBy(order(PostSort.LATEST))
                 .offset(offset)
                 .limit(limit)
                 .fetch().stream()
@@ -82,7 +91,7 @@ public class FreePostRepositoryImpl implements FreePostRepository {
 
         Long count = queryFactory.select(recommendPostEntity.count())
                 .from(recommendPostEntity)
-                .where(recommendPostEntity.member.id.eq(memberId))
+                .where(freePostEntity.member.id.eq(memberId))
                 .fetchOne();
 
         Pageable pageable = PageRequest.ofSize(limit);

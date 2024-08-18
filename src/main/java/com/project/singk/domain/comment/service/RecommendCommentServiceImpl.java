@@ -7,7 +7,7 @@ import com.project.singk.domain.comment.domain.CommentCreate;
 import com.project.singk.domain.comment.domain.CommentSimplified;
 import com.project.singk.domain.comment.service.port.RecommendCommentRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
-import com.project.singk.domain.like.service.port.RecommendCommentLikeRepository;
+import com.project.singk.domain.like.controller.port.RecommendLikeService;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.domain.RecommendPost;
@@ -15,8 +15,10 @@ import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,26 +26,28 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Builder
 @RequiredArgsConstructor
+@Transactional
 public class RecommendCommentServiceImpl implements RecommendCommentService {
 
-    private final RecommendCommentRepository commentRepository;
-    private final MemberRepository memberRepository;
-    private final RecommendPostRepository postRepository;
     private final RecommendCommentRepository recommendCommentRepository;
-    private final RecommendCommentLikeRepository recommendCommentLikeRepository;
+    private final MemberRepository memberRepository;
+    private final RecommendPostRepository recommendPostRepository;
     private final S3Repository s3Repository;
+    private final RecommendLikeService recommendLikeService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentResponse> getRecommendComments(Long memberId, Long postId) {
-        List<CommentSimplified> comments = commentRepository.findAllByPostId(postId);
+        List<CommentSimplified> comments = recommendCommentRepository.findAllByPostId(postId);
 
         Map<Long, CommentResponse> m = new HashMap<>();
         List<CommentResponse> result = new ArrayList<>();
         comments.forEach(comment -> {
                     CommentResponse c = CommentResponse.recommendType(
                             comment,
-                            recommendCommentLikeRepository.existsByMemberIdAndCommentId(memberId, comment.getId()),
+                            recommendLikeService.getCommentLike(memberId, comment.getId()),
                             s3Repository.getPreSignedGetUrl(comment.getMember().getImageUrl())
                     );
                     m.put(c.getId(), c);
@@ -59,11 +63,11 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
         Member member = memberRepository.getById(memberId);
 
         // 게시글 댓글 수 업데이트
-        RecommendPost post = postRepository.getById(postId);
+        RecommendPost post = recommendPostRepository.getById(postId);
         post = post.updateComments(post.getComments() + 1);
-        post = postRepository.save(post);
+        post = recommendPostRepository.save(post);
 
-        RecommendComment recommendComment = commentRepository.save(RecommendComment.from(
+        RecommendComment recommendComment = recommendCommentRepository.save(RecommendComment.from(
                 commentCreate,
                 member,
                 post,
@@ -76,27 +80,27 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
 
     @Override
     public PkResponseDto updateRecommendComment(Long memberId, Long commentId, CommentCreate commentCreate) {
-        RecommendComment recommendComment = commentRepository.getById(commentId);
+        RecommendComment recommendComment = recommendCommentRepository.getById(commentId);
 
         if (!recommendComment.getMember().getId().equals(memberId)) {
             throw new ApiException(AppHttpStatus.FORBIDDEN_COMMENT);
         }
 
         recommendComment = recommendComment.update(commentCreate);
-        recommendComment = commentRepository.save(recommendComment);
+        recommendComment = recommendCommentRepository.save(recommendComment);
 
         return PkResponseDto.of(recommendComment.getId());
     }
 
     @Override
     public void deleteRecommendComment(Long memberId, Long commentId) {
-        RecommendComment recommendComment = commentRepository.getById(commentId);
+        RecommendComment recommendComment = recommendCommentRepository.getById(commentId);
 
         if (!recommendComment.getMember().getId().equals(memberId)) {
             throw new ApiException(AppHttpStatus.FORBIDDEN_COMMENT);
         }
 
-        commentRepository.deleteById(commentId);
+        recommendCommentRepository.deleteById(commentId);
     }
 
 }

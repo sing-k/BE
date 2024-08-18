@@ -14,17 +14,32 @@ import com.project.singk.domain.post.service.port.FreePostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Builder
 @RequiredArgsConstructor
+@Transactional
 public class FreeLikeServiceImpl implements FreeLikeService {
     private final FreePostLikeRepository freePostLikeRepository;
     private final FreeCommentLikeRepository freeCommentLikeRepository;
     private final MemberRepository memberRepository;
     private final FreePostRepository freePostRepository;
     private final FreeCommentRepository freeCommentRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean getPostLike(Long memberId, Long postId) {
+        return freePostLikeRepository.existsByMemberIdAndPostId(memberId, postId);
+    }
+
+    @Override
+    public boolean getCommentLike(Long memberId, Long commentId) {
+        return freeCommentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId);
+    }
 
     @Override
     public PkResponseDto createPostLike(Long memberId, Long postId) {

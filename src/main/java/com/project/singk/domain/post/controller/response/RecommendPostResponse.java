@@ -2,8 +2,6 @@ package com.project.singk.domain.post.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.singk.domain.like.controller.response.LikeResponse;
-import com.project.singk.domain.like.domain.RecommendPostLike;
-import com.project.singk.domain.member.controller.response.MemberResponse;
 import com.project.singk.domain.member.controller.response.MemberSimpleResponse;
 import com.project.singk.domain.post.domain.RecommendPost;
 import lombok.Builder;
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class RecommendPostResponse {
-    private String id;
+    private Long id;
     private String title;
     private String content;
     private String recommend;
@@ -32,7 +30,7 @@ public class RecommendPostResponse {
 
     public static RecommendPostResponse from(RecommendPost post, boolean isLike, String link, String profileImgUrl){
         return RecommendPostResponse.builder()
-                .id(post.getId().toString())
+                .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .recommend(post.getRecommend().getName())

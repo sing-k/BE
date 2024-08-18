@@ -10,7 +10,7 @@ public class AlbumImage {
 	private final int width;
 	private final int height;
 	@Builder
-    public AlbumImage(Long id, String imageUrl, int width, int height, String albumId) {
+    public AlbumImage(Long id, String imageUrl, int width, int height) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.width = width;

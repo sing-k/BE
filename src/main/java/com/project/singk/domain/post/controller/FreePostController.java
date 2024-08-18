@@ -4,7 +4,6 @@ import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.domain.post.controller.port.FreePostService;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
-import com.project.singk.domain.post.controller.response.FreePostListResponse;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
 import com.project.singk.domain.post.domain.FreePostCreate;
 import com.project.singk.global.api.BaseResponse;
@@ -43,7 +42,7 @@ public class FreePostController {
     }
 
     @GetMapping("")
-    public BaseResponse<OffsetPageResponse<FreePostListResponse>> getFreePosts(
+    public BaseResponse<OffsetPageResponse<FreePostResponse>> getFreePosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
@@ -62,21 +61,15 @@ public class FreePostController {
     }
 
     @GetMapping("/me")
-    public BaseResponse<OffsetPageResponse<FreePostListResponse>> getMyFreePosts(
+    public BaseResponse<OffsetPageResponse<FreePostResponse>> getMyFreePosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
-            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
-            @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
-            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class, required = false) String filter,
-            @RequestParam(name = "keyword", required = false) String keyword
+            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit
     ) {
 
         return BaseResponse.ok(freePostService.getMyFreePosts(
                 authService.getLoginMemberId(),
                 offset,
-                limit,
-                sort,
-                filter,
-                keyword
+                limit
         ));
     }
 

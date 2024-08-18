@@ -32,7 +32,7 @@ public class FreePost {
     public static FreePost from(FreePostCreate freePostCreate, Member member) {
         return FreePost.builder()
                 .title(freePostCreate.getTitle())
-                .content(freePostCreate.getTitle())
+                .content(freePostCreate.getContent())
                 .member(member)
                 .build();
     }
@@ -69,7 +69,7 @@ public class FreePost {
                 .title(this.title)
                 .content(this.content)
                 .likes(likes)
-                .comments(this.comments)
+                .comments(comments)
                 .member(this.member)
                 .createdAt(this.createdAt)
                 .modifiedAt(this.modifiedAt)

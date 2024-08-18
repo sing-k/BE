@@ -65,7 +65,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 회원 통계 수정
         MemberStatistics memberStatistics = member.getStatistics();
-        memberStatistics = memberStatistics.updateReview(albumReview, activity, false);
+        memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateReview(albumReview, false);
 
         member = member.updateStatistic(memberStatistics);
         member = memberRepository.save(member);
@@ -95,7 +96,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 회원 통계 수정
         MemberStatistics memberStatistics = member.getStatistics();
-        memberStatistics = memberStatistics.updateReview(albumReview, activity, true);
+        memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateReview(albumReview, true);
 
         member = member.updateStatistic(memberStatistics);
         member = memberRepository.save(member);

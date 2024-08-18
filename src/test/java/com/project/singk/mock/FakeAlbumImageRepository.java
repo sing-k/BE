@@ -22,6 +22,6 @@ public class FakeAlbumImageRepository implements AlbumImageRepository {
 
     @Override
     public List<AlbumImage> findAllByAlbumId(String albumId) {
-        return null;
+        return data;
     }
 }

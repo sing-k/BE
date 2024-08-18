@@ -43,27 +43,27 @@ public class MemberStatistics {
                 .build();
     }
 
-    public MemberStatistics updateReview(AlbumReview albumReview, ActivityHistory activityHistory, boolean isDelete) {
+    public MemberStatistics updateReview(AlbumReview albumReview, boolean isDelete) {
         if (isDelete) {
-            return deleteReview(albumReview, activityHistory);
+            return deleteReview(albumReview);
         }
 
-        return createReview(albumReview, activityHistory);
+        return createReview(albumReview);
     }
 
-    private MemberStatistics createReview(AlbumReview review, ActivityHistory activityHistory) {
+    private MemberStatistics createReview(AlbumReview review) {
         return MemberStatistics.builder()
                 .id(this.id)
-                .totalActivityScore(this.totalActivityScore + activityHistory.getScore())
+                .totalActivityScore(this.totalActivityScore)
                 .totalReview(this.totalReview + 1)
                 .totalReviewScore(this.totalReviewScore + review.getScore())
                 .build();
     }
 
-    private MemberStatistics deleteReview(AlbumReview review, ActivityHistory activityHistory) {
+    private MemberStatistics deleteReview(AlbumReview review) {
         return MemberStatistics.builder()
                 .id(this.id)
-                .totalActivityScore(this.totalActivityScore + activityHistory.getScore())
+                .totalActivityScore(this.totalActivityScore)
                 .totalReview(this.totalReview - 1)
                 .totalReviewScore(this.totalReviewScore - review.getScore())
                 .build();

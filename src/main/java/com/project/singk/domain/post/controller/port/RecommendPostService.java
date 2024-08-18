@@ -1,6 +1,5 @@
 package com.project.singk.domain.post.controller.port;
 
-import com.project.singk.domain.post.controller.response.RecommendPostListResponse;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.RecommendPostCreate;
 import com.project.singk.domain.post.domain.RecommendPostUpdate;
@@ -13,8 +12,8 @@ import java.util.List;
 public interface RecommendPostService {
     PkResponseDto createRecommendPost(Long memberId, RecommendPostCreate post, MultipartFile image);
     RecommendPostResponse getRecommendPost(Long memberId, Long postId);
-    OffsetPageResponse<RecommendPostListResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword);
-    OffsetPageResponse<RecommendPostListResponse> getMyRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword);
+    OffsetPageResponse<RecommendPostResponse> getRecommendPosts(Long memberId, int offset, int limit, String sort, String filter, String keyword);
+    OffsetPageResponse<RecommendPostResponse> getMyRecommendPosts(Long memberId, int offset, int limit);
     PkResponseDto updateRecommendPost(Long memberId, Long postId, RecommendPostUpdate req);
     void deleteRecommendPost(Long memberId, Long postId);
 }

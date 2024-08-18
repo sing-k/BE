@@ -7,6 +7,7 @@ import com.project.singk.domain.comment.domain.CommentSimplified;
 import com.project.singk.domain.comment.domain.FreeComment;
 import com.project.singk.domain.comment.service.port.FreeCommentRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
+import com.project.singk.domain.like.controller.port.FreeLikeService;
 import com.project.singk.domain.like.service.port.FreeCommentLikeRepository;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
@@ -15,8 +16,10 @@ import com.project.singk.domain.post.service.port.FreePostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,16 +27,18 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Builder
 @RequiredArgsConstructor
+@Transactional
 public class FreeCommentServiceImpl implements FreeCommentService {
 
     private final FreeCommentRepository freeCommentRepository;
     private final MemberRepository memberRepository;
     private final FreePostRepository freePostRepository;
-    private final FreeCommentLikeRepository freeCommentLikeRepository;
     private final S3Repository s3Repository;
-
+    private final FreeLikeService freeLikeService;
     @Override
+    @Transactional(readOnly = true)
     public List<CommentResponse> getFreeComments(Long memberId, Long postId) {
         List<CommentSimplified> comments = freeCommentRepository.findAllByPostId(postId);
 
@@ -42,7 +47,7 @@ public class FreeCommentServiceImpl implements FreeCommentService {
         comments.forEach(comment -> {
             CommentResponse c = CommentResponse.freeType(
                     comment,
-                    freeCommentLikeRepository.existsByMemberIdAndCommentId(memberId, comment.getId()),
+                    freeLikeService.getCommentLike(memberId, comment.getId()),
                     s3Repository.getPreSignedGetUrl(comment.getMember().getImageUrl())
             );
             m.put(c.getId(), c);

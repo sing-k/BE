@@ -61,7 +61,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		Member member = memberRepository.getById(memberId);
-		String key = s3Properties.getPath() + uuidHolder.randomUUID();
+		String key = "img/" + uuidHolder.randomUUID();
 
 		s3Repository.putObject(key, image);
 		member = member.uploadProfileImage(key);

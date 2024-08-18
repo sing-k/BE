@@ -14,17 +14,31 @@ import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Builder
 @RequiredArgsConstructor
+@Transactional
 public class RecommendLikeServiceImpl implements RecommendLikeService {
     private final RecommendPostLikeRepository recommendPostLikeRepository;
     private final RecommendCommentLikeRepository recommendCommentLikeRepository;
     private final MemberRepository memberRepository;
     private final RecommendPostRepository recommendPostRepository;
     private final RecommendCommentRepository recommendCommentRepository;
+
+    @Override
+    public boolean getPostLike(Long memberId, Long postId) {
+        return recommendPostLikeRepository.existsByMemberIdAndPostId(memberId, postId);
+    }
+
+    @Override
+    public boolean getCommentLike(Long memberId, Long commentId) {
+        return recommendCommentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId);
+    }
 
     @Override
     public PkResponseDto createPostLike(Long memberId, Long postId) {

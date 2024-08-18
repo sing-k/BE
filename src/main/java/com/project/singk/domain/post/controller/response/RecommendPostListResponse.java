@@ -25,8 +25,6 @@ public class RecommendPostListResponse {
     private MemberSimpleResponse writer;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime modifiedAt;
 
     public static RecommendPostListResponse from(RecommendPost post, boolean isLike, String link, String profileImgUrl) {
         return RecommendPostListResponse.builder()

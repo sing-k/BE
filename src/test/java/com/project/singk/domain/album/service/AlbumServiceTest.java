@@ -89,7 +89,6 @@ class AlbumServiceTest {
         List<AlbumImage> images = List.of(
                 AlbumImage.builder()
                         .imageUrl("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
-                        .albumId("0EhZEM4RRz0yioTgucDhJq")
                         .build()
         );
         Album album = Album.builder()
@@ -191,8 +190,8 @@ class AlbumServiceTest {
     @Test
     public void CusorId와_CursorDate가_주어졌을_때_최근_평가된_앨범의_해당하는_페이지를_반환한다() {
         // given
-        List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 8, 18, 10);
-        List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32);
+        List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 8, 18, 10, 14);
+        List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
         List<Album> albums = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             AlbumReviewStatistics statistics = AlbumReviewStatistics.builder()
@@ -214,8 +213,8 @@ class AlbumServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         albums = testContainer.albumRepository.saveAll(albums);
 
-        Long cursorId = 6L;
-        String cursorDate = "2024-06-05 00:00:00";
+        Long cursorId = 7L;
+        String cursorDate = "2024-06-04 00:00:00";
         int limit = 5;
 
         // when
@@ -377,7 +376,7 @@ class AlbumServiceTest {
         );
     }
     @Test
-    public void CusorId와_CursorReviewCount가_주어졌을_때_높은_평점_앨범의_해당하는_페이지를_반환한다() {
+    public void CusorId와_CursorReviewCount가_주어졌을_때_높은_참여자_수의_해당하는_페이지를_반환한다() {
         // given
         List<Integer> totalReviewer = List.of(10, 8, 12, 15, 5, 20, 7, 18, 9, 14);
         List<Integer> totalScore = List.of(35, 25, 50, 55, 15, 90, 28, 75, 32, 60);
@@ -403,7 +402,7 @@ class AlbumServiceTest {
         albums = testContainer.albumRepository.saveAll(albums);
 
         Long cursorId = 1L;
-        String cursorReviewCount = "12";
+        String cursorReviewCount = "9";
         int limit = 5;
 
         // when

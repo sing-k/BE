@@ -49,7 +49,7 @@ public class RecommendPostController {
     }
 
     @GetMapping("")
-    public BaseResponse<OffsetPageResponse<RecommendPostListResponse>> getRecommendPosts(
+    public BaseResponse<OffsetPageResponse<RecommendPostResponse>> getRecommendPosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
             @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
             @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
@@ -68,21 +68,15 @@ public class RecommendPostController {
     }
 
     @GetMapping("/me")
-    public BaseResponse<OffsetPageResponse<RecommendPostListResponse>> getMyRecommendPosts(
+    public BaseResponse<OffsetPageResponse<RecommendPostResponse>> getMyRecommendPosts(
             @Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
-            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
-            @RequestParam(name = "sort") @ValidEnum(enumClass = PostSort.class) String sort,
-            @RequestParam(name = "filter", required = false) @ValidEnum(enumClass = FilterSort.class, required = false) String filter,
-            @RequestParam(name = "keyword", required = false) String keyword
+            @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit
     ) {
 
         return BaseResponse.ok(recommendPostService.getMyRecommendPosts(
                 authService.getLoginMemberId(),
                 offset,
-                limit,
-                sort,
-                filter,
-                keyword
+                limit
         ));
     }
 

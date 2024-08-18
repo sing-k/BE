@@ -137,8 +137,8 @@ public class ActivityHistoryServiceTest {
                 () -> assertThat(response.get(size - 2).getDate()).isEqualTo(LocalDate.of(2024, 7, 31)),
                 () -> assertThat(response.get(size - 2).getScore()).isEqualTo(450),
                 () -> assertThat(response.get(size - 2).getDate().getDayOfMonth()).isEqualTo(Month.JULY.length(true)),
-                () -> assertThat(response.get(1).getDate()).isEqualTo(LocalDate.of(2024, 5, 30)),
-                () -> assertThat(response.get(1).getScore()).isEqualTo(450),
+                () -> assertThat(response.get(1).getDate()).isEqualTo(LocalDate.of(2024, 5, 31)),
+                () -> assertThat(response.get(1).getScore()).isEqualTo(145),
                 () -> assertThat(response.get(1).getDate().getDayOfMonth()).isEqualTo(Month.JULY.length(true)),
                 () -> assertThat(response.get(0).getDate()).isEqualTo(LocalDate.of(2024, 5, 30)),
                 () -> assertThat(response.get(0).getScore()).isEqualTo(140)
@@ -150,17 +150,23 @@ public class ActivityHistoryServiceTest {
      */
 
     @Test
-    public void 자신의_활동_히스토리를_조회할_수_있다() {
+    public void 자신의_활동_히스토리를_최신순으로_조회할_수_있다() {
         // given
         Long memberId = 1L;
         int offset = 0;
         int limit = 5;
         // when
-        OffsetPageResponse<ActivityHistoryResponse> activityHistories = tc.activityHistoryService.getActivityHistories(
+        OffsetPageResponse<ActivityHistoryResponse> response = tc.activityHistoryService.getActivityHistories(
                 memberId,
                 offset,
                 limit
         );
         // then
+        assertAll(
+                () -> assertThat(response.getItems().get(offset).getDate()).isEqualTo(LocalDateTime.of(2024, 8, 10, 12,0, 0)),
+                () -> assertThat(response.getItems().get(offset).getScore()).isEqualTo(ActivityType.REACT_ALBUM_REVIEW.getScore()),
+                () -> assertThat(response.getItems().get(offset).getContent()).isEqualTo(ActivityType.REACT_ALBUM_REVIEW.getContent()),
+                () -> assertThat(response.getItems().get(offset + limit - 1).getDate()).isEqualTo(LocalDateTime.of(2024, 8, 6, 12, 0, 0))
+        );
     }
 }
