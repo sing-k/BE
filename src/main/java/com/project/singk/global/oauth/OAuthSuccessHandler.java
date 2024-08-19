@@ -14,7 +14,6 @@ import com.project.singk.global.properties.OAuthProperties;
 import com.project.singk.domain.common.infrastructure.RedisRepositoryImpl;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,24 +33,22 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		Authentication authentication) throws IOException, ServletException {
 		SingKOAuth2User oAuthUser = (SingKOAuth2User) authentication.getPrincipal();
 
-		if (oAuthUser.isNewbie()) {
-			response.addHeader(COOKIE_HEADER, createCookie("email", oAuthUser.getEmail()));
-			response.addHeader(COOKIE_HEADER, createCookie("name", oAuthUser.getName()));
-			response.sendRedirect(oAuthProperties.getUrl().getSignup());
-		} else {
-			TokenDto token = jwtRepositoryImpl.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
+        TokenDto token = jwtRepositoryImpl.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
 
-			response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, token.getAccessToken()));
-			response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, token.getAccessToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
-			redisUtil.setValue(
-				REFRESH_HEADER + oAuthUser.getEmail(),
-				token.getRefreshToken(),
-				jwtProperties.getRefreshExpirationMillis()
-			);
+        redisUtil.setValue(
+            REFRESH_HEADER + oAuthUser.getEmail(),
+            token.getRefreshToken(),
+            jwtProperties.getRefreshExpirationMillis()
+        );
 
-			response.sendRedirect(oAuthProperties.getUrl().getMain());
-		}
+        if (oAuthUser.isNewbie()) {
+            response.sendRedirect(oAuthProperties.getUrl().getMyPage());
+        } else {
+            response.sendRedirect(oAuthProperties.getUrl().getMain());
+        }
 	}
 
     private String createCookie(String key, String value) {

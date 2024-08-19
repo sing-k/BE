@@ -19,7 +19,7 @@ public class OAuthProperties {
 	@Getter @ToString
 	@AllArgsConstructor
 	public static class URL {
-		private final String signup;
+		private final String myPage;
 		private final String main;
 	}
 	@Getter @ToString
