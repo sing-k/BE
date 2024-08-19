@@ -183,8 +183,8 @@ public class RecommendPostServiceTest {
                 () -> assertThat(response.getId()).isEqualTo(1L),
                 () -> assertThat(response.getTitle()).isEqualTo("제목"),
                 () -> assertThat(response.getContent()).isEqualTo("내용"),
-                () -> assertThat(response.getRecommend()).isEqualTo("이미지"),
-                () -> assertThat(response.getGenre()).isEqualTo("팝"),
+                () -> assertThat(response.getRecommend()).isEqualTo("IMAGE"),
+                () -> assertThat(response.getGenre()).isEqualTo("POP"),
                 () -> assertThat(response.getLink()).isEqualTo("imageUrl"),
                 () -> assertThat(response.getLike().isLike()).isEqualTo(false),
                 () -> assertThat(response.getLike().getCount()).isEqualTo(0),
@@ -237,8 +237,8 @@ public class RecommendPostServiceTest {
                 () -> assertThat(response.getId()).isEqualTo(1L),
                 () -> assertThat(response.getTitle()).isEqualTo("제목"),
                 () -> assertThat(response.getContent()).isEqualTo("내용"),
-                () -> assertThat(response.getRecommend()).isEqualTo("앨범"),
-                () -> assertThat(response.getGenre()).isEqualTo("팝"),
+                () -> assertThat(response.getRecommend()).isEqualTo("ALBUM"),
+                () -> assertThat(response.getGenre()).isEqualTo("POP"),
                 () -> assertThat(response.getLink()).isEqualTo("앨범ID"),
                 () -> assertThat(response.getLike().isLike()).isEqualTo(false),
                 () -> assertThat(response.getLike().getCount()).isEqualTo(0),
@@ -283,8 +283,8 @@ public class RecommendPostServiceTest {
                 () -> assertThat(response.getId()).isEqualTo(1L),
                 () -> assertThat(response.getTitle()).isEqualTo("제목"),
                 () -> assertThat(response.getContent()).isEqualTo("내용"),
-                () -> assertThat(response.getRecommend()).isEqualTo("유튜브"),
-                () -> assertThat(response.getGenre()).isEqualTo("팝"),
+                () -> assertThat(response.getRecommend()).isEqualTo("YOUTUBE"),
+                () -> assertThat(response.getGenre()).isEqualTo("POP"),
                 () -> assertThat(response.getLink()).isEqualTo("유튜브URL"),
                 () -> assertThat(response.getLike().isLike()).isEqualTo(false),
                 () -> assertThat(response.getLike().getCount()).isEqualTo(0),
@@ -378,11 +378,11 @@ public class RecommendPostServiceTest {
         // then
         assertAll(
                 () -> assertThat(response.getItems().size()).isEqualTo(3),
-                () -> assertThat(response.getItems().get(0).getRecommend()).isEqualTo("유튜브"),
+                () -> assertThat(response.getItems().get(0).getRecommend()).isEqualTo("YOUTUBE"),
                 () -> assertThat(response.getItems().get(0).getLink()).isEqualTo("유튜브URL"),
-                () -> assertThat(response.getItems().get(1).getRecommend()).isEqualTo("앨범"),
+                () -> assertThat(response.getItems().get(1).getRecommend()).isEqualTo("ALBUM"),
                 () -> assertThat(response.getItems().get(1).getLink()).isEqualTo("앨범ID"),
-                () -> assertThat(response.getItems().get(2).getRecommend()).isEqualTo("이미지"),
+                () -> assertThat(response.getItems().get(2).getRecommend()).isEqualTo("IMAGE"),
                 () -> assertThat(response.getItems().get(2).getLink()).isEqualTo("imageUrl")
         );
     }
@@ -473,11 +473,11 @@ public class RecommendPostServiceTest {
         // then
         assertAll(
                 () -> assertThat(response.getItems().size()).isEqualTo(3),
-                () -> assertThat(response.getItems().get(0).getRecommend()).isEqualTo("유튜브"),
+                () -> assertThat(response.getItems().get(0).getRecommend()).isEqualTo("YOUTUBE"),
                 () -> assertThat(response.getItems().get(0).getLink()).isEqualTo("유튜브URL"),
-                () -> assertThat(response.getItems().get(1).getRecommend()).isEqualTo("이미지"),
+                () -> assertThat(response.getItems().get(1).getRecommend()).isEqualTo("IMAGE"),
                 () -> assertThat(response.getItems().get(1).getLink()).isEqualTo("imageUrl"),
-                () -> assertThat(response.getItems().get(2).getRecommend()).isEqualTo("앨범"),
+                () -> assertThat(response.getItems().get(2).getRecommend()).isEqualTo("ALBUM"),
                 () -> assertThat(response.getItems().get(2).getLink()).isEqualTo("앨범ID")
         );
     }
