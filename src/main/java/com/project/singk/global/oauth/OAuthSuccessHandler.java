@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private final String AUTHORIZATION_HEADER = "Authorization";
 	private final String REFRESH_HEADER = "Refresh";
+    private final String BEARER_PREFIX = "Bearer";
     private final String COOKIE_HEADER = "Set-Cookie";
 	private final JwtRepositoryImpl jwtRepositoryImpl;
 	private final JwtProperties jwtProperties;
@@ -35,7 +36,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         TokenDto token = jwtRepositoryImpl.generateTokenDto(oAuthUser.getId(), oAuthUser.getEmail(), oAuthUser.getRole());
 
-        response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, token.getAccessToken()));
+        response.addHeader(COOKIE_HEADER, createCookie(AUTHORIZATION_HEADER, BEARER_PREFIX + token.getAccessToken()));
         response.addHeader(COOKIE_HEADER, createCookie(REFRESH_HEADER, token.getRefreshToken()));
 
         redisUtil.setValue(
