@@ -3,7 +3,6 @@ package com.project.singk.domain.post.controller;
 import com.project.singk.domain.member.controller.port.AuthService;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
-import com.project.singk.domain.post.controller.response.RecommendPostListResponse;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.RecommendPostCreate;
 import com.project.singk.domain.post.controller.port.RecommendPostService;
@@ -17,8 +16,6 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Validated
 @RestController

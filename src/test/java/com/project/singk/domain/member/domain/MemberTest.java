@@ -62,6 +62,9 @@ class MemberTest {
 
 		MemberUpdate memberUpdate = MemberUpdate.builder()
 			.nickname("NewNickname")
+            .gender("FEMALE")
+            .name("김영희")
+            .birthday("2000-01-01")
 			.build();
 
 		// when
@@ -72,9 +75,9 @@ class MemberTest {
 		assertThat(member.getEmail()).isEqualTo("singk@gmail.com");
 		assertThat(member.getPassword()).isEqualTo("encodedPassword");
 		assertThat(member.getNickname()).isEqualTo("NewNickname");
-		assertThat(member.getName()).isEqualTo("김철수");
-		assertThat(member.getBirthday()).isEqualTo(LocalDate.of(1999, 12, 30).atStartOfDay());
-		assertThat(member.getGender()).isEqualTo(Gender.MALE);
+		assertThat(member.getName()).isEqualTo("김영희");
+		assertThat(member.getBirthday()).isEqualTo(LocalDate.of(2000, 1, 1).atStartOfDay());
+		assertThat(member.getGender()).isEqualTo(Gender.FEMALE);
 		assertThat(member.getRole()).isEqualTo(Role.ROLE_USER);
 	}
 

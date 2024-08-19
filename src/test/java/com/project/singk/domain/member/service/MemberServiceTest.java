@@ -63,6 +63,9 @@ class MemberServiceTest {
 		Long loginMemberId = 1L;
 		MemberUpdate memberUpdate = MemberUpdate.builder()
 			.nickname("newNickname")
+            .name("김철수")
+            .birthday("1999-12-30")
+            .gender("MALE")
 			.build();
 
 		// when

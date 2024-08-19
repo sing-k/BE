@@ -54,8 +54,8 @@ public class RecommendPostResponseTest {
         assertAll(
                 () -> assertThat(response.getTitle()).isEqualTo("제목"),
                 () -> assertThat(response.getContent()).isEqualTo("내용"),
-                () -> assertThat(response.getRecommend()).isEqualTo("앨범"),
-                () -> assertThat(response.getGenre()).isEqualTo( "팝"),
+                () -> assertThat(response.getRecommend()).isEqualTo("ALBUM"),
+                () -> assertThat(response.getGenre()).isEqualTo( "POP"),
                 () -> assertThat(response.getLink()).isEqualTo( "thumbnailImgLink"),
                 () -> assertThat(response.getComments()).isEqualTo( 0),
                 () -> assertThat(response.getLike().getCount()).isEqualTo( 0),
