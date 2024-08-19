@@ -1,5 +1,7 @@
 package com.project.singk.global.oauth;
 
+import com.project.singk.domain.member.domain.MemberCreate;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -43,6 +45,14 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
 			return SingKOAuth2User.of(member.getId(), oAuthResponse, false);
 		}
 
-		return SingKOAuth2User.of(oAuthResponse, true);
+        MemberStatistics statistics = MemberStatistics.empty();
+
+        Member newbie = Member.builder()
+                .email(oAuthResponse.getEmail())
+                .statistics(statistics)
+                .build();
+        newbie = memberRepository.save(newbie);
+
+        return SingKOAuth2User.of(newbie.getId(), oAuthResponse, true);
 	}
 }

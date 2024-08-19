@@ -20,6 +20,7 @@ public class OAuthProperties {
 	@AllArgsConstructor
 	public static class URL {
 		private final String myPage;
+        private final String login;
 		private final String main;
 	}
 	@Getter @ToString
