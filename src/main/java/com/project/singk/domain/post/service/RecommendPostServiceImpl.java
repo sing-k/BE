@@ -62,7 +62,8 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         else if (RecommendType.ALBUM.equals(type)) {
             // 앨범 커버 이미지 URL
             List<AlbumImage> images = albumImageRepository.findAllByAlbumId(recommendPostCreate.getLink());
-            post = RecommendPost.albumType(recommendPostCreate, images.get(0).getImageUrl(), member);
+            String imageUrl = images.get(0).getImageUrl() + "/" + recommendPostCreate.getLink();
+            post = RecommendPost.albumType(recommendPostCreate, imageUrl, member);
         }
         else if (RecommendType.YOUTUBE.equals(type)) {
             // 유튜브 링크 URL
