@@ -117,6 +117,6 @@ public class RecommendLikeServiceImpl implements RecommendLikeService {
         recommendComment = recommendCommentRepository.save(recommendComment);
 
         // 공감 데이터 삭제
-        recommendPostLikeRepository.deleteById(like.getId());
+        recommendCommentRepository.deleteById(like.getId());
     }
 }
