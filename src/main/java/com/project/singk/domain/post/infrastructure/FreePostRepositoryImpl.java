@@ -89,8 +89,8 @@ public class FreePostRepositoryImpl implements FreePostRepository {
                 .map(FreePostEntity::toModel)
                 .toList();
 
-        Long count = queryFactory.select(recommendPostEntity.count())
-                .from(recommendPostEntity)
+        Long count = queryFactory.select(freePostEntity.count())
+                .from(freePostEntity)
                 .where(freePostEntity.member.id.eq(memberId))
                 .fetchOne();
 

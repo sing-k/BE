@@ -1,9 +1,13 @@
 package com.project.singk.domain.post.service;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.like.controller.port.FreeLikeService;
 import com.project.singk.domain.like.service.port.FreePostLikeRepository;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.controller.port.FreePostService;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
@@ -29,6 +33,7 @@ public class FreePostServiceImpl implements FreePostService {
     private final MemberRepository memberRepository;
     private final S3Repository s3Repository;
     private final FreeLikeService freeLikeService;
+    private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
     public PkResponseDto createFreePost(Long memberId, FreePostCreate freePostCreate) {
@@ -36,6 +41,17 @@ public class FreePostServiceImpl implements FreePostService {
 
         FreePost freePost = FreePost.from(freePostCreate, member);
         freePost = freePostRepository.save(freePost);
+
+        // 게시글 작성자 활동 점수 반영
+        ActivityHistory activity = ActivityHistory.from(ActivityType.WRITE_POST, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 반영
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateActivity(activity);
+        member = member.updateStatistic(memberStatistics);
+
+        member = memberRepository.save(member);
 
         return PkResponseDto.of(freePost.getId());
     }
@@ -103,6 +119,7 @@ public class FreePostServiceImpl implements FreePostService {
 
     @Override
     public void deleteFreePost(Long memberId, Long postId){
+        Member member = memberRepository.getById(memberId);
         FreePost freePost = freePostRepository.getById(postId);
 
         if (!freePost.getMember().getId().equals(memberId)) {
@@ -110,5 +127,16 @@ public class FreePostServiceImpl implements FreePostService {
         }
 
         freePostRepository.deleteById(postId);
+
+        // 게시글 작성자 활동 점수 반영
+        ActivityHistory activity = ActivityHistory.from(ActivityType.DELETE_POST, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 반영
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateActivity(activity);
+        member = member.updateStatistic(memberStatistics);
+
+        member = memberRepository.save(member);
     }
 }

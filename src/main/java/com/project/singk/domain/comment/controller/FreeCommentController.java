@@ -15,14 +15,14 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/free")
+@RequestMapping("/api/posts/free/{postId}")
 public class FreeCommentController {
 
     private final FreeCommentService commentService;
     private final AuthService authService;
 
-    @GetMapping("/{postId}/comments")
-    public BaseResponse<List<CommentResponse>> getComments(
+    @GetMapping("/comments")
+    public BaseResponse<List<CommentResponse>> getFreeComments(
             @PathVariable Long postId
     ) {
         return BaseResponse.ok(commentService.getFreeComments(
@@ -31,8 +31,18 @@ public class FreeCommentController {
         ));
     }
 
-    @PostMapping(value = {"/{postId}/comments", "/{postId}/comments/{parentId}"})
-    public BaseResponse<PkResponseDto> createComment(
+    @GetMapping("/comments/me")
+    public BaseResponse<List<CommentResponse>> getMyFreeComments(
+            @PathVariable Long postId
+    ) {
+        return BaseResponse.ok(commentService.getMyFreeComments(
+                authService.getLoginMemberId(),
+                postId
+        ));
+    }
+
+    @PostMapping(value = {"/comments", "/comments/{parentId}"})
+    public BaseResponse<PkResponseDto> createFreeComment(
             @RequestBody CommentCreate commentCreate,
             @PathVariable Long postId,
             @PathVariable(required = false) Long parentId
@@ -45,7 +55,7 @@ public class FreeCommentController {
         ));
     }
     @PutMapping("/comments/{commentId}")
-    public BaseResponse<PkResponseDto> updateComment(
+    public BaseResponse<PkResponseDto> updateFreeComment(
             @PathVariable Long commentId
             ,@RequestBody CommentCreate commentCreate){
         return BaseResponse.ok(commentService.updateFreeComment(
@@ -56,11 +66,13 @@ public class FreeCommentController {
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public BaseResponse<Void> deleteComment(
+    public BaseResponse<Void> deleteFreeComment(
+            @PathVariable Long postId,
             @PathVariable Long commentId
     ){
         commentService.deleteFreeComment(
                 authService.getLoginMemberId(),
+                postId,
                 commentId
         );
         return BaseResponse.ok();

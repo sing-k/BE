@@ -15,13 +15,13 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/recommend")
+@RequestMapping("/api/posts/recommend/{postId}")
 public class RecommendCommentController {
 
     private final RecommendCommentService commentService;
     private final AuthService authService;
 
-    @GetMapping("/{postId}/comments")
+    @GetMapping("/comments")
     public BaseResponse<List<CommentResponse>> getRecommendComments(
             @PathVariable Long postId
     ) {
@@ -30,8 +30,17 @@ public class RecommendCommentController {
                 postId
         ));
     }
+    @GetMapping("/comments/me")
+    public BaseResponse<List<CommentResponse>> getMyRecommendComments(
+            @PathVariable Long postId
+    ) {
+        return BaseResponse.ok(commentService.getMyRecommendComments(
+                authService.getLoginMemberId(),
+                postId
+        ));
+    }
 
-    @PostMapping(value = {"/{postId}/comments", "/{postId}/comments/{parentId}"})
+    @PostMapping(value = {"/comments", "/comments/{parentId}"})
     public BaseResponse<PkResponseDto> createRecommendComment(
             @RequestBody CommentCreate commentCreate,
             @PathVariable Long postId,
@@ -57,9 +66,13 @@ public class RecommendCommentController {
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public BaseResponse<Void> deleteRecommendComment(@PathVariable Long commentId){
+    public BaseResponse<Void> deleteRecommendComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ){
         commentService.deleteRecommendComment(
                 authService.getLoginMemberId(),
+                postId,
                 commentId
         );
         return BaseResponse.ok();

@@ -151,7 +151,6 @@ class ReviewServiceTest {
         List<Member> members = new ArrayList<>();
         for (long i = 1L; i <= 10L; i++) {
             members.add(Member.builder()
-                    .id(i)
                     .nickname("닉네임" + i)
                     .gender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE)
                     .statistics(MemberStatistics.empty())
@@ -178,7 +177,7 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
+        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
 
         // then
         assertAll(
@@ -223,14 +222,14 @@ class ReviewServiceTest {
         albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews("0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
+        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
 
         // then
         assertAll(
                 () -> assertThat(result.getOffset()).isEqualTo(0),
                 () -> assertThat(result.getLimit()).isEqualTo(5),
                 () -> assertThat(result.getTotal()).isEqualTo(10),
-                () -> assertThat(result.getItems().get(0).getPros()).isEqualTo(10)
+                () -> assertThat(result.getItems().get(0).getVote().getProsCount()).isEqualTo(10)
         );
     }
 
@@ -381,7 +380,7 @@ class ReviewServiceTest {
                 () -> assertThat(result.getOffset()).isEqualTo(0),
                 () -> assertThat(result.getLimit()).isEqualTo(5),
                 () -> assertThat(result.getTotal()).isEqualTo(10),
-                () -> assertThat(result.getItems().get(0).getPros()).isEqualTo(20)
+                () -> assertThat(result.getItems().get(0).getVote().getProsCount()).isEqualTo(20)
         );
     }
 }

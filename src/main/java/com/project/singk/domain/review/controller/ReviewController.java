@@ -46,7 +46,13 @@ public class ReviewController {
         @Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit,
         @RequestParam(name = "sort") @ValidEnum(enumClass = ReviewSort.class) String sort
 	) {
-		return BaseResponse.ok(reviewService.getAlbumReviews(albumId, offset, limit, sort));
+		return BaseResponse.ok(reviewService.getAlbumReviews(
+                authService.getLoginMemberId(),
+                albumId,
+                offset,
+                limit,
+                sort
+        ));
 	}
 
     @GetMapping("/albums/me")

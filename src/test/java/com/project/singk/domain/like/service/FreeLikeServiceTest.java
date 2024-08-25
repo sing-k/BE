@@ -137,6 +137,7 @@ class FreeLikeServiceTest {
 		// given
         Member writer = Member.builder()
                 .nickname("작성자")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
 
@@ -151,6 +152,7 @@ class FreeLikeServiceTest {
 
         Member liker = Member.builder()
                 .nickname("좋아요 누른 사람")
+                .statistics(MemberStatistics.empty())
                 .build();
         liker = tc.memberRepository.save(liker);
 
@@ -367,6 +369,7 @@ class FreeLikeServiceTest {
         // given
         Member writer = Member.builder()
                 .nickname("작성자")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
 
@@ -389,6 +392,7 @@ class FreeLikeServiceTest {
 
         Member liker = Member.builder()
                 .nickname("좋아요 누른 사람")
+                .statistics(MemberStatistics.empty())
                 .build();
         liker = tc.memberRepository.save(liker);
 

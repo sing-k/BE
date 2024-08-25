@@ -3,6 +3,7 @@ package com.project.singk.domain.post.service;
 import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.domain.GenreType;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
@@ -39,10 +40,16 @@ public class RecommendPostServiceTest {
         // given
         Long currentMemberId = 1L;
         Member writer = Member.builder()
-                .id(currentMemberId)
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
-        tc.memberRepository.save(writer);
+        writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        writer = tc.memberRepository.save(currentMember);
 
         RecommendPostCreate recommendPostCreate = RecommendPostCreate.builder()
                 .title("제목")
@@ -75,10 +82,16 @@ public class RecommendPostServiceTest {
         // given
         Long currentMemberId = 1L;
         Member writer = Member.builder()
-                .id(currentMemberId)
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
-        tc.memberRepository.save(writer);
+        writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        writer = tc.memberRepository.save(currentMember);
 
         AlbumImage albumImage = AlbumImage.builder()
                 .id(1L)
@@ -114,10 +127,16 @@ public class RecommendPostServiceTest {
         // given
         Long currentMemberId = 1L;
         Member writer = Member.builder()
-                .id(currentMemberId)
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
-        tc.memberRepository.save(writer);
+        writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        writer = tc.memberRepository.save(currentMember);
 
         RecommendPostCreate recommendPostCreate = RecommendPostCreate.builder()
                 .title("제목")
@@ -760,10 +779,16 @@ public class RecommendPostServiceTest {
     public void 내가_작성하지_않은_자유게시글을_삭제할_수_없다() {
         // given
         Member writer = Member.builder()
-                .id(1L)
                 .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        currentMember = tc.memberRepository.save(currentMember);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -776,8 +801,8 @@ public class RecommendPostServiceTest {
                 .build();
         post = tc.recommendPostRepository.save(post);
 
-        Long currentMemberId = 2L;
-        Long postId = 1L;
+        Long currentMemberId = currentMember.getId();
+        Long postId = post.getId();
 
         // when
         final ApiException result = assertThrows(ApiException.class,
@@ -794,10 +819,16 @@ public class RecommendPostServiceTest {
     public void 내가_작성한_자유게시글을_삭제할_수_있다() {
         // given
         Member writer = Member.builder()
-                .id(1L)
                 .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        currentMember = tc.memberRepository.save(currentMember);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -810,8 +841,9 @@ public class RecommendPostServiceTest {
                 .build();
         post = tc.recommendPostRepository.save(post);
 
-        Long currentMemberId = 1L;
-        Long postId = 1L;
+        Long currentMemberId = writer.getId();
+        Long postId = post.getId();
+
         // when
         tc.recommendPostService.deleteRecommendPost(currentMemberId, postId);
     }

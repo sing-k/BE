@@ -1,6 +1,7 @@
 package com.project.singk.domain.post.service;
 
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
@@ -36,10 +37,16 @@ public class FreePostServiceTest {
         // given
         Long writerId = 1L;
         Member writer = Member.builder()
-                .id(writerId)
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
-        tc.memberRepository.save(writer);
+        writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        writer = tc.memberRepository.save(currentMember);
 
         FreePostCreate freePostCreate = FreePostCreate.builder()
                 .title("제목")
@@ -453,10 +460,16 @@ public class FreePostServiceTest {
     public void 내가_작성하지_않은_자유게시글을_삭제할_수_없다() {
         // given
         Member writer = Member.builder()
-                .id(1L)
                 .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        currentMember = tc.memberRepository.save(currentMember);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -466,8 +479,8 @@ public class FreePostServiceTest {
                 .build();
         post = tc.freePostRepository.save(post);
 
-        Long currentMemberId = 2L;
-        Long postId = 1L;
+        Long currentMemberId = currentMember.getId();
+        Long postId = post.getId();
 
         // when
         final ApiException result = assertThrows(ApiException.class,
@@ -484,10 +497,16 @@ public class FreePostServiceTest {
     public void 내가_작성한_자유게시글을_삭제할_수_있다() {
         // given
         Member writer = Member.builder()
-                .id(1L)
                 .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member currentMember = Member.builder()
+                .nickname("현재 로그인한 회원")
+                .statistics(MemberStatistics.empty())
+                .build();
+        currentMember = tc.memberRepository.save(currentMember);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -497,8 +516,8 @@ public class FreePostServiceTest {
                 .build();
         post = tc.freePostRepository.save(post);
 
-        Long currentMemberId = 1L;
-        Long postId = 1L;
+        Long currentMemberId = writer.getId();
+        Long postId = post.getId();
         // when
         tc.freePostService.deleteFreePost(currentMemberId, postId);
     }

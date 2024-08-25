@@ -4,7 +4,6 @@ import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.infrastructure.MemberEntity;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.infrastructure.AlbumReviewEntity;
-import com.project.singk.domain.review.infrastructure.AlbumReviewJpaRepository;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
 import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
 import com.project.singk.global.api.ApiException;
@@ -31,8 +30,8 @@ public class AlbumReviewVoteRepositoryImpl implements AlbumReviewVoteRepository 
     }
 
     @Override
-    public AlbumReviewVote getByMemberAndAlbumReview(Member member, AlbumReview albumReview) {
-        return findByMemberAndAlbumReview(member, albumReview)
+    public AlbumReviewVote getByMemberIdAndAlbumReviewId(Long memberId, Long albumReviewId) {
+        return findByMemberIdAndAlbumReviewId(memberId, albumReviewId)
                 .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM_REVIEW_VOTE));
     }
 
@@ -42,10 +41,10 @@ public class AlbumReviewVoteRepositoryImpl implements AlbumReviewVoteRepository 
     }
 
     @Override
-    public Optional<AlbumReviewVote> findByMemberAndAlbumReview(Member member, AlbumReview albumReview) {
-        return albumReviewVoteJpaRepository.findByMemberAndAlbumReview(
-                MemberEntity.from(member),
-                AlbumReviewEntity.from(albumReview)
+    public Optional<AlbumReviewVote> findByMemberIdAndAlbumReviewId(Long memberId, Long albumReviewId) {
+        return albumReviewVoteJpaRepository.findByMemberIdAndAlbumReviewId(
+                memberId,
+                albumReviewId
         ).map(AlbumReviewVoteEntity::toModel);
     }
 

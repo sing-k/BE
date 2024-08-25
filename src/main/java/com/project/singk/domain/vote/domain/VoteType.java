@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum VoteType {
 	PROS,
-	CONS
+	CONS,
+    NONE
 }

@@ -51,4 +51,15 @@ public class RecommendCommentRepositoryImpl implements RecommendCommentRepositor
                 .map(RecommendCommentEntity::simplified)
                 .toList();
     }
+
+    @Override
+    public List<CommentSimplified> findAllByMemberIdAndPostId(Long memberId, Long postId) {
+        return queryFactory.selectFrom(recommendCommentEntity)
+                .where(recommendCommentEntity.post.id.eq(postId)
+                        .and(recommendCommentEntity.member.id.eq(memberId)))
+                .orderBy(recommendCommentEntity.parent.id.asc().nullsFirst())
+                .fetch().stream()
+                .map(RecommendCommentEntity::simplified)
+                .toList();
+    }
 }

@@ -1,11 +1,15 @@
 package com.project.singk.domain.post.service;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.service.port.AlbumImageRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
 import com.project.singk.domain.like.controller.port.RecommendLikeService;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.controller.port.RecommendPostService;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
@@ -38,6 +42,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     private final S3Repository s3Repository;
     private final UUIDHolder uuidHolder;
     private final RecommendLikeService recommendLikeService;
+    private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
     public PkResponseDto createRecommendPost(Long memberId, RecommendPostCreate recommendPostCreate, MultipartFile image) {
@@ -71,6 +76,17 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         }
 
         RecommendPost recommendPost = recommendPostRepository.save(post);
+
+        // 게시글 작성자 활동 점수 반영
+        ActivityHistory activity = ActivityHistory.from(ActivityType.WRITE_POST, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 반영
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateActivity(activity);
+        member = member.updateStatistic(memberStatistics);
+
+        member = memberRepository.save(member);
 
         return PkResponseDto.of(recommendPost.getId());
     }
@@ -161,12 +177,24 @@ public class RecommendPostServiceImpl implements RecommendPostService {
     @Override
     public void deleteRecommendPost(Long memberId, Long postId){
         RecommendPost recommendPost = recommendPostRepository.getById(postId);
+        Member member = memberRepository.getById(memberId);
 
         if (!recommendPost.getMember().getId().equals(memberId)) {
             throw new ApiException(AppHttpStatus.FORBIDDEN_POST);
         }
 
         recommendPostRepository.deleteById(postId);
+
+        // 게시글 작성자 활동 점수 반영
+        ActivityHistory activity = ActivityHistory.from(ActivityType.DELETE_POST, member);
+        activity = activityHistoryRepository.save(activity);
+
+        // 회원 통계 반영
+        MemberStatistics memberStatistics = member.getStatistics();
+        memberStatistics = memberStatistics.updateActivity(activity);
+        member = member.updateStatistic(memberStatistics);
+
+        member = memberRepository.save(member);
     }
 
 }

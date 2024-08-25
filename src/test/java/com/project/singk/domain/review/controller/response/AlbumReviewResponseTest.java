@@ -4,6 +4,8 @@ import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.review.domain.AlbumReview;
+import com.project.singk.domain.vote.domain.AlbumReviewVote;
+import com.project.singk.domain.vote.domain.VoteType;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -35,16 +37,22 @@ class AlbumReviewResponseTest {
                 .reviewer(member)
                 .build();
 
+        AlbumReviewVote albumReviewVote = AlbumReviewVote.builder()
+                .type(VoteType.NONE)
+                .build();
+
         // when
-        AlbumReviewResponse albumReviewResponse = AlbumReviewResponse.from(albumReview, imageUrl);
+        AlbumReviewResponse albumReviewResponse = AlbumReviewResponse.from(albumReview, albumReviewVote, imageUrl);
 
         // then
         assertAll(
                 () -> assertThat(albumReviewResponse.getId()).isEqualTo(1L),
                 () -> assertThat(albumReviewResponse.getContent()).isEqualTo("이것은 제가 제일 좋아하는 앨범에 대한 감상평 입니다."),
                 () -> assertThat(albumReviewResponse.getScore()).isEqualTo(5),
-                () -> assertThat(albumReviewResponse.getPros()).isEqualTo(0),
-                () -> assertThat(albumReviewResponse.getCons()).isEqualTo(0),
+                () -> assertThat(albumReviewResponse.getVote().getProsCount()).isEqualTo(0),
+                () -> assertThat(albumReviewResponse.getVote().getConsCount()).isEqualTo(0),
+                () -> assertThat(albumReviewResponse.getVote().isPros()).isEqualTo(false),
+                () -> assertThat(albumReviewResponse.getVote().isCons()).isEqualTo(false),
                 () -> assertThat(albumReviewResponse.getCreatedAt()).isEqualTo(LocalDateTime.of(2024, 6, 6, 0, 0, 0)),
                 () -> assertThat(albumReviewResponse.getReviewer().getNickname()).isEqualTo("SingK")
         );

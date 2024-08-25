@@ -10,7 +10,7 @@ import com.project.singk.global.domain.PkResponseDto;
 public interface ReviewService {
     PkResponseDto createAlbumReview(Long memberId, String albumId, AlbumReviewCreate albumReviewCreate);
     void deleteAlbumReview(Long memberId, String albumId, Long albumReviewId);
-    OffsetPageResponse<AlbumReviewResponse> getAlbumReviews(String albumId, int offset, int limit, String sort);
+    OffsetPageResponse<AlbumReviewResponse> getAlbumReviews(Long memberId, String albumId, int offset, int limit, String sort);
     AlbumReviewStatisticsResponse getAlbumReviewStatistics(String albumId);
     OffsetPageResponse<MyAlbumReviewResponse> getMyAlbumReview(Long memberId, int offset, int limit, String sort);
 }

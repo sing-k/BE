@@ -1,5 +1,8 @@
 package com.project.singk.domain.like.service;
 
+import com.project.singk.domain.activity.domain.ActivityHistory;
+import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.comment.domain.FreeComment;
 import com.project.singk.domain.comment.service.port.FreeCommentRepository;
 import com.project.singk.domain.like.controller.port.FreeLikeService;
@@ -8,6 +11,7 @@ import com.project.singk.domain.like.domain.FreePostLike;
 import com.project.singk.domain.like.service.port.FreeCommentLikeRepository;
 import com.project.singk.domain.like.service.port.FreePostLikeRepository;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.domain.FreePost;
 import com.project.singk.domain.post.service.port.FreePostRepository;
@@ -29,6 +33,7 @@ public class FreeLikeServiceImpl implements FreeLikeService {
     private final MemberRepository memberRepository;
     private final FreePostRepository freePostRepository;
     private final FreeCommentRepository freeCommentRepository;
+    private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +53,7 @@ public class FreeLikeServiceImpl implements FreeLikeService {
             throw new ApiException(AppHttpStatus.DUPLICATE_POST_LIKES);
         }
 
-        Member member = memberRepository.getById(memberId);
+        Member liker = memberRepository.getById(memberId);
         FreePost freePost = freePostRepository.getById(postId);
 
         // 자신의 게시글에는 공감 불가능
@@ -61,8 +66,30 @@ public class FreeLikeServiceImpl implements FreeLikeService {
         freePost = freePostRepository.save(freePost);
 
         // 게시글 공감 데이터 저장
-        FreePostLike like = FreePostLike.from(member, freePost);
+        FreePostLike like = FreePostLike.from(liker, freePost);
         like = freePostLikeRepository.save(like);
+
+        // 게시글 추천자 활동 점수 반영
+        ActivityHistory likerActivity = ActivityHistory.from(ActivityType.REACT_POST, liker);
+        likerActivity = activityHistoryRepository.save(likerActivity);
+
+        MemberStatistics likerStatistics = liker.getStatistics();
+        likerStatistics = likerStatistics.updateActivity(likerActivity);
+        liker = liker.updateStatistic(likerStatistics);
+
+        liker = memberRepository.save(liker);
+
+        // 게시글 작성자 활동 점수 반영
+        Member writer = freePost.getMember();
+
+        ActivityHistory writerActivity = ActivityHistory.from(ActivityType.RECOMMENDED_POST, writer);
+        writerActivity = activityHistoryRepository.save(writerActivity);
+
+        MemberStatistics writerStatistics = writer.getStatistics();
+        writerStatistics = writerStatistics.updateActivity(writerActivity);
+        writer = writer.updateStatistic(writerStatistics);
+
+        writer = memberRepository.save(writer);
 
         return PkResponseDto.of(like.getId());
     }
@@ -88,7 +115,7 @@ public class FreeLikeServiceImpl implements FreeLikeService {
             throw new ApiException(AppHttpStatus.DUPLICATE_COMMENT_LIKES);
         }
 
-        Member member = memberRepository.getById(memberId);
+        Member liker = memberRepository.getById(memberId);
         FreeComment comment = freeCommentRepository.getById(commentId);
 
         // 자신의 게시글에는 공감 불가능
@@ -101,8 +128,30 @@ public class FreeLikeServiceImpl implements FreeLikeService {
         comment = freeCommentRepository.save(comment);
 
         // 게시글 공감 데이터 저장
-        FreeCommentLike like = FreeCommentLike.from(member, comment);
+        FreeCommentLike like = FreeCommentLike.from(liker, comment);
         like = freeCommentLikeRepository.save(like);
+
+        // 댓글 추천자 활동 점수 반영
+        ActivityHistory likerActivity = ActivityHistory.from(ActivityType.REACT_COMMENT, liker);
+        likerActivity = activityHistoryRepository.save(likerActivity);
+
+        MemberStatistics likerStatistics = liker.getStatistics();
+        likerStatistics = likerStatistics.updateActivity(likerActivity);
+        liker = liker.updateStatistic(likerStatistics);
+
+        liker = memberRepository.save(liker);
+
+        // 게시글 작성자 활동 점수 반영
+        Member writer = comment.getMember();
+
+        ActivityHistory writerActivity = ActivityHistory.from(ActivityType.RECOMMENDED_COMMENT, writer);
+        writerActivity = activityHistoryRepository.save(writerActivity);
+
+        MemberStatistics writerStatistics = writer.getStatistics();
+        writerStatistics = writerStatistics.updateActivity(writerActivity);
+        writer = writer.updateStatistic(writerStatistics);
+
+        writer = memberRepository.save(writer);
 
         return PkResponseDto.of(like.getId());
     }
