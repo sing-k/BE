@@ -3,7 +3,6 @@ package com.project.singk.domain.vote.service.port;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
-import com.project.singk.domain.vote.domain.VoteType;
 
 import java.util.Optional;
 

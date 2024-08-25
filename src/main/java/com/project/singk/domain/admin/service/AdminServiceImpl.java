@@ -172,7 +172,6 @@ public class AdminServiceImpl implements AdminService {
         }
 
         ActivityHistoryEntity entity = ActivityHistoryEntity.from(activityHistories.get(0));
-        System.out.println(entity.getCreatedAt());
 
         return activityHistoryRepository.saveAll(activityHistories).stream()
                 .map(ActivityHistoryResponse::from)

@@ -1,7 +1,6 @@
 package com.project.singk.mock;
 
 import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
-import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.service.ActivityHistoryServiceImpl;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.controller.port.AlbumService;
@@ -29,7 +28,6 @@ import com.project.singk.domain.member.controller.port.MemberService;
 import com.project.singk.domain.member.service.AuthServiceImpl;
 import com.project.singk.domain.member.service.MailService;
 import com.project.singk.domain.member.service.MemberServiceImpl;
-import com.project.singk.domain.member.service.port.CodeGenerator;
 import com.project.singk.domain.member.service.port.MailSender;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.member.service.port.PasswordEncoderHolder;
@@ -46,7 +44,6 @@ import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.domain.vote.controller.port.VoteService;
 import com.project.singk.domain.vote.service.VoteServiceImpl;
 import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
-import com.project.singk.global.properties.S3Properties;
 import lombok.Builder;
 
 public class TestContainer {

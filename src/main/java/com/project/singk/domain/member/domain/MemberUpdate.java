@@ -17,6 +17,7 @@ public class MemberUpdate {
 
 	@Size(min = 1, max = 12, message = "올바르지 않은 닉네임 형식입니다.")
 	private final String nickname;
+
     @Date(message = "올바르지 않은 날짜 형식입니다. e.g. yyyy-MM-dd")
     private final String birthday;
 

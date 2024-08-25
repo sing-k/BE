@@ -30,7 +30,6 @@ import com.project.singk.global.jwt.JwtExceptionHandlingFilter;
 import com.project.singk.domain.member.infrastructure.JwtRepositoryImpl;
 import com.project.singk.global.jwt.JwtVerificationFilter;
 import com.project.singk.domain.common.infrastructure.RedisRepositoryImpl;
-import com.project.singk.global.security.SingKAccessDeniedHandler;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,7 +1,5 @@
 package com.project.singk.domain.member.service;
 
-import java.util.UUID;
-
 import com.project.singk.global.properties.S3Properties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

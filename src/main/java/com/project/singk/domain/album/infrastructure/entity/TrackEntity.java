@@ -1,7 +1,6 @@
 package com.project.singk.domain.album.infrastructure.entity;
 
 import com.project.singk.domain.album.domain.Track;
-import com.project.singk.domain.album.domain.TrackArtist;
 import com.project.singk.global.domain.BaseTimeEntity;
 
 import jakarta.persistence.*;

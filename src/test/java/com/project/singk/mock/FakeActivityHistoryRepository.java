@@ -12,7 +12,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FakeActivityHistoryRepository implements ActivityHistoryRepository {
 	private final List<ActivityHistory> data = Collections.synchronizedList(new ArrayList<>());

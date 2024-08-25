@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.singk.domain.album.domain.Album;
 
 import com.project.singk.domain.album.domain.AlbumArtist;
 import com.project.singk.domain.album.domain.AlbumSimplified;
-import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsSimpleResponse;
 import lombok.*;
 
