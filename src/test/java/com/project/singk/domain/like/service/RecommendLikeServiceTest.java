@@ -6,6 +6,7 @@ import com.project.singk.domain.comment.domain.RecommendComment;
 import com.project.singk.domain.like.domain.RecommendCommentLike;
 import com.project.singk.domain.like.domain.RecommendPostLike;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.post.domain.RecommendPost;
 import com.project.singk.domain.post.domain.RecommendType;
 import com.project.singk.global.api.ApiException;
@@ -147,9 +148,16 @@ class RecommendLikeServiceTest {
 	public void 추천게시글에_좋아요를_할_수_있다() {
 		// given
         Member writer = Member.builder()
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member liker = Member.builder()
+                .nickname("좋아요 누른 사람")
+                .statistics(MemberStatistics.empty())
+                .build();
+        liker = tc.memberRepository.save(liker);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("제목")
@@ -163,13 +171,12 @@ class RecommendLikeServiceTest {
                 .build();
         recommendPost = tc.recommendPostRepository.save(recommendPost);
 
-        Member liker = Member.builder()
-                .nickname("좋아요 누른 사람")
-                .build();
-        liker = tc.memberRepository.save(liker);
+
+        Long likerId = liker.getId();
+        Long postId = recommendPost.getId();
 
 		// when
-		PkResponseDto response = tc.recommendLikeService.createPostLike(liker.getId(), recommendPost.getId());
+		PkResponseDto response = tc.recommendLikeService.createPostLike(likerId, postId);
 
 		// then
 		assertAll(
@@ -394,9 +401,16 @@ class RecommendLikeServiceTest {
     public void 추천게시글_댓글에_좋아요를_할_수_있다() {
         // given
         Member writer = Member.builder()
-                .nickname("작성자")
+                .nickname("작성자A")
+                .statistics(MemberStatistics.empty())
                 .build();
         writer = tc.memberRepository.save(writer);
+
+        Member liker = Member.builder()
+                .nickname("좋아요 누른 사람")
+                .statistics(MemberStatistics.empty())
+                .build();
+        liker = tc.memberRepository.save(liker);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("제목")
@@ -418,13 +432,11 @@ class RecommendLikeServiceTest {
                 .build();
         recommendComment = tc.recommendCommentRepository.save(recommendComment);
 
-        Member liker = Member.builder()
-                .nickname("좋아요 누른 사람")
-                .build();
-        liker = tc.memberRepository.save(liker);
+        Long likerId = liker.getId();
+        Long commentId = recommendComment.getId();
 
         // when
-        PkResponseDto response = tc.recommendLikeService.createCommentLike(liker.getId(), recommendComment.getId());
+        PkResponseDto response = tc.recommendLikeService.createCommentLike(likerId, commentId);
 
         // then
         assertAll(

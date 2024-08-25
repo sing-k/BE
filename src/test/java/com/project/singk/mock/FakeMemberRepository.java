@@ -28,6 +28,7 @@ public class FakeMemberRepository implements MemberRepository {
 				.gender(member.getGender())
 				.birthday(member.getBirthday())
 				.role(member.getRole())
+                .statistics(member.getStatistics())
 				.build();
 			data.add(newMember);
 			return newMember;

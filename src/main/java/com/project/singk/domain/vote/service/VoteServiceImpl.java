@@ -87,7 +87,7 @@ public class VoteServiceImpl implements VoteService {
 		albumReview.validateVoter(member);
 
 		// 공감/비공감 했는지 확인
-		AlbumReviewVote albumReviewVote = albumReviewVoteRepository.getByMemberAndAlbumReview(member, albumReview);
+		AlbumReviewVote albumReviewVote = albumReviewVoteRepository.getByMemberIdAndAlbumReviewId(memberId, albumReviewId);
 
         // 삭제하려는 투표 유형과 DB에 저장되어 있는 투표 유형이 일치하는지 확인
         albumReviewVote.validateType(VoteType.valueOf(voteCreate.getType()));

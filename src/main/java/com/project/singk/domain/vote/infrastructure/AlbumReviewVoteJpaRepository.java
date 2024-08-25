@@ -9,5 +9,6 @@ import com.project.singk.domain.member.infrastructure.MemberEntity;
 
 public interface AlbumReviewVoteJpaRepository extends JpaRepository<AlbumReviewVoteEntity, Long> {
 	boolean existsByMemberAndAlbumReview(MemberEntity member, AlbumReviewEntity albumReviewEntity);
+    Optional<AlbumReviewVoteEntity> findByMemberIdAndAlbumReviewId(Long memberId, Long albumReviewId);
 	Optional<AlbumReviewVoteEntity> findByMemberAndAlbumReview(MemberEntity member, AlbumReviewEntity albumReviewEntity);
 }

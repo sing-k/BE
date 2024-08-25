@@ -54,4 +54,15 @@ public class FreeCommentRepositoryImpl implements FreeCommentRepository {
                 .toList();
     }
 
+    @Override
+    public List<CommentSimplified> findAllByMemberIdAndPostId(Long memberId, Long postId) {
+        return queryFactory.selectFrom(freeCommentEntity)
+                .where(freeCommentEntity.post.id.eq(postId)
+                        .and(freeCommentEntity.member.id.eq(memberId)))
+                .orderBy(freeCommentEntity.parent.id.asc().nullsFirst())
+                .fetch().stream()
+                .map(FreeCommentEntity::simplified)
+                .toList();
+    }
+
 }

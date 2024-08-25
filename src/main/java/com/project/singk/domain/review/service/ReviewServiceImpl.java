@@ -16,6 +16,7 @@ import com.project.singk.domain.review.controller.response.MyAlbumReviewResponse
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.domain.review.service.port.AlbumReviewRepository;
+import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.OffsetPageResponse;
@@ -39,6 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final AlbumReviewRepository albumReviewRepository;
 	private final MemberRepository memberRepository;
 	private final AlbumRepository albumRepository;
+    private final AlbumReviewVoteRepository albumReviewVoteRepository;
     private final ActivityHistoryRepository activityHistoryRepository;
 
     @Override
@@ -107,7 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public OffsetPageResponse<AlbumReviewResponse> getAlbumReviews(String albumId, int offset, int limit, String sort) {
+    public OffsetPageResponse<AlbumReviewResponse> getAlbumReviews(Long memberId, String albumId, int offset, int limit, String sort) {
         Page<AlbumReview> reviews = albumReviewRepository.getAllByAlbumId(albumId, offset, limit, sort);
 
         return OffsetPageResponse.of(
@@ -116,6 +118,7 @@ public class ReviewServiceImpl implements ReviewService {
                 (int) reviews.getTotalElements(),
                 reviews.stream().map(review -> AlbumReviewResponse.from(
                         review,
+                        albumReviewVoteRepository.findByMemberIdAndAlbumReviewId(memberId, review.getId()).orElse(null),
                         s3Repository.getPreSignedGetUrl(review.getReviewer().getImageUrl())
                 )).toList()
         );
@@ -138,7 +141,10 @@ public class ReviewServiceImpl implements ReviewService {
                 limit,
                 (int) reviews.getTotalElements(),
                 reviews.stream()
-                        .map(MyAlbumReviewResponse::from)
+                        .map(review -> MyAlbumReviewResponse.from(
+                                review,
+                                albumReviewVoteRepository.findByMemberIdAndAlbumReviewId(memberId, review.getId()).orElse(null)
+                        ))
                         .toList()
         );
     }

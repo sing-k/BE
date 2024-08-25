@@ -39,8 +39,8 @@ public class FakeAlbumReviewVoteRepository implements AlbumReviewVoteRepository 
     }
 
     @Override
-    public AlbumReviewVote getByMemberAndAlbumReview(Member member, AlbumReview albumReview) {
-        return findByMemberAndAlbumReview(member, albumReview)
+    public AlbumReviewVote getByMemberIdAndAlbumReviewId(Long memberId, Long albumReviewId) {
+        return findByMemberIdAndAlbumReviewId(memberId, albumReviewId)
                 .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM_REVIEW_VOTE));
     }
 
@@ -50,10 +50,10 @@ public class FakeAlbumReviewVoteRepository implements AlbumReviewVoteRepository 
     }
 
     @Override
-    public Optional<AlbumReviewVote> findByMemberAndAlbumReview(Member member, AlbumReview albumReview) {
+    public Optional<AlbumReviewVote> findByMemberIdAndAlbumReviewId(Long memberId, Long albumReviewId) {
         return data.stream().filter(item ->
-                item.getMember().getId().equals(member.getId()) &&
-                item.getAlbumReview().getId().equals(albumReview.getId()))
+                item.getMember().getId().equals(memberId) &&
+                item.getAlbumReview().getId().equals(albumReviewId))
                 .findAny();
     }
 

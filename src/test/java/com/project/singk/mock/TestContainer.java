@@ -132,6 +132,7 @@ public class TestContainer {
                 .build();
         this.reviewService = ReviewServiceImpl.builder()
                 .albumReviewRepository(this.albumReviewRepository)
+                .albumReviewVoteRepository(this.albumReviewVoteRepository)
                 .albumRepository(this.albumRepository)
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .memberRepository(this.memberRepository)
@@ -152,12 +153,14 @@ public class TestContainer {
                 .freePostLikeRepository(this.freePostLikeRepository)
                 .freeCommentRepository(this.freeCommentRepository)
                 .freeCommentLikeRepository(this.freeCommentLikeRepository)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.freePostService = FreePostServiceImpl.builder()
                 .memberRepository(this.memberRepository)
                 .s3Repository(this.s3Repository)
                 .freePostRepository(this.freePostRepository)
                 .freeLikeService(this.freeLikeService)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.freeCommentService = FreeCommentServiceImpl.builder()
                 .memberRepository(this.memberRepository)
@@ -165,6 +168,7 @@ public class TestContainer {
                 .freePostRepository(this.freePostRepository)
                 .freeCommentRepository(this.freeCommentRepository)
                 .freeLikeService(this.freeLikeService)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.recommendLikeService = RecommendLikeServiceImpl.builder()
                 .memberRepository(this.memberRepository)
@@ -172,6 +176,7 @@ public class TestContainer {
                 .recommendPostLikeRepository(this.recommendPostLikeRepository)
                 .recommendCommentRepository(this.recommendCommentRepository)
                 .recommendCommentLikeRepository(this.recommendCommentLikeRepository)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.recommendPostService = RecommendPostServiceImpl.builder()
                 .memberRepository(this.memberRepository)
@@ -180,6 +185,7 @@ public class TestContainer {
                 .uuidHolder(this.uuidHolder)
                 .albumImageRepository(this.albumImageRepository)
                 .recommendLikeService(this.recommendLikeService)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.recommendCommentService = RecommendCommentServiceImpl.builder()
                 .memberRepository(this.memberRepository)
@@ -187,8 +193,8 @@ public class TestContainer {
                 .recommendPostRepository(this.recommendPostRepository)
                 .recommendCommentRepository(this.recommendCommentRepository)
                 .recommendLikeService(this.recommendLikeService)
+                .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
-
 	}
 
 }
