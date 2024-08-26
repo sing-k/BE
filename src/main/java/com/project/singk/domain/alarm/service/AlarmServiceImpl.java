@@ -26,19 +26,19 @@ public class AlarmServiceImpl implements AlarmService {
     private final ClockHolder clockHolder;
 
     @Override
-    public SseEmitter subscribe(String username,String lastEventId){
-        String emitterId = makeTimeIncludeId(username);
+    public SseEmitter subscribe(Long memberId, String lastEventId){
+        String emitterId = makeTimeIncludeId(memberId);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(SSE_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 
-        String eventId = makeTimeIncludeId(username);
-        sendAlarm(emitter, eventId, emitterId, "EventStream Created. [userEmail=" + username + "]");
+        String eventId = makeTimeIncludeId(memberId);
+        sendAlarm(emitter, eventId, emitterId, "EventStream Created. [memberId=" + memberId + "]");
 
 
         if (hasLostData(lastEventId)) {
-            sendLostData(lastEventId, username, emitterId, emitter);
+            sendLostData(lastEventId, memberId, emitterId, emitter);
         }
 
         return emitter;
@@ -47,9 +47,9 @@ public class AlarmServiceImpl implements AlarmService {
     public void send(Member receiver, AlarmType alarmType, String content){
         Alarm alarm = alarmRepository.save(createAlarm(receiver, alarmType, content));
 
-        String receiverEmail = receiver.getEmail();
-        String eventId = makeTimeIncludeId(receiverEmail);
-        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverEmail);
+        String receiverId = String.valueOf(receiver.getId());
+        String eventId = makeTimeIncludeId(receiver.getId());
+        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverId);
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, alarm);
@@ -58,12 +58,12 @@ public class AlarmServiceImpl implements AlarmService {
         );
     }
     @Override
-    public Void delete(Long id){
+    public Void unsubscribe(Long id){
         alarmRepository.deleteById(id);
         return null;
     }
-    private String makeTimeIncludeId(String email) {
-        return email + "_" + clockHolder.millis();
+    private String makeTimeIncludeId(Long memberId) {
+        return memberId + "_" + clockHolder.millis();
     }
     private void sendAlarm(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
@@ -80,8 +80,8 @@ public class AlarmServiceImpl implements AlarmService {
         return !lastEventId.isEmpty();
     }
 
-    private void sendLostData(String lastEventId, String userEmail, String emitterId, SseEmitter emitter) {
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(String.valueOf(userEmail));
+    private void sendLostData(String lastEventId, Long memberId, String emitterId, SseEmitter emitter) {
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(String.valueOf(memberId));
         eventCaches.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                 .forEach(entry -> sendAlarm(emitter, entry.getKey(), emitterId, entry.getValue()));

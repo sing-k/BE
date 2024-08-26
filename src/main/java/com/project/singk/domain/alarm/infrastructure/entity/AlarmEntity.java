@@ -2,7 +2,7 @@ package com.project.singk.domain.alarm.infrastructure.entity;
 
 import com.project.singk.domain.alarm.domain.Alarm;
 import com.project.singk.domain.alarm.domain.AlarmType;
-import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.infrastructure.MemberEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,14 +29,14 @@ public class AlarmEntity {
     @ManyToOne
     @JoinColumn(name = "member_id", updatable = false, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member receiver;
+    private MemberEntity receiver;
 
     @Enumerated(EnumType.STRING)
     @Column(name="type", nullable = false)
     private AlarmType type;
 
     @Builder
-    public AlarmEntity(Long id, AlarmType type, Member receiver, Boolean isRead, String content) {
+    public AlarmEntity(Long id, AlarmType type, MemberEntity receiver, Boolean isRead, String content) {
         this.id = id;
         this.type = type;
         this.receiver = receiver;
@@ -50,7 +50,7 @@ public class AlarmEntity {
                 .content(alarm.getContent())
                 .isRead(alarm.getIsRead())
                 .type(alarm.getType())
-                .receiver(alarm.getReceiver())
+                .receiver(MemberEntity.from(alarm.getReceiver()))
                 .build();
     }
 
@@ -60,7 +60,7 @@ public class AlarmEntity {
                 .content(this.content)
                 .isRead(this.isRead)
                 .type(this.type)
-                .receiver(this.receiver)
+                .receiver(this.receiver.toModel())
                 .build();
     }
 
