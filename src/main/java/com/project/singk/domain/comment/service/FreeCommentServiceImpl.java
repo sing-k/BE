@@ -66,8 +66,8 @@ public class FreeCommentServiceImpl implements FreeCommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentResponse> getMyFreeComments(Long memberId, Long postId) {
-        List<CommentSimplified> comments = freeCommentRepository.findAllByMemberIdAndPostId(memberId, postId);
+    public List<CommentResponse> getMyFreeComments(Long memberId) {
+        List<CommentSimplified> comments = freeCommentRepository.findAllByMemberId(memberId);
 
         Map<Long, CommentResponse> m = new HashMap<>();
         List<CommentResponse> result = new ArrayList<>();

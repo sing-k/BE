@@ -78,6 +78,7 @@ public class RecommendCommentEntity extends BaseTimeEntity {
         return CommentSimplified.builder()
                 .id(this.id)
                 .parentId(this.parent == null ? null : this.parent.getId())
+                .postId(this.post.getId())
                 .content(this.content)
                 .likes(this.likes)
                 .member(this.member.toModel())

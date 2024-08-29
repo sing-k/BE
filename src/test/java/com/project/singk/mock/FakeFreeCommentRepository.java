@@ -60,10 +60,9 @@ public class FakeFreeCommentRepository implements FreeCommentRepository {
     }
 
     @Override
-    public List<CommentSimplified> findAllByMemberIdAndPostId(Long memberId, Long postId) {
+    public List<CommentSimplified> findAllByMemberId(Long memberId) {
         return data.stream()
-                .filter(item -> item.getPost().getId().equals(postId) &&
-                        item.getMember().getId().equals(memberId))
+                .filter(item -> item.getMember().getId().equals(memberId))
                 .map(this::simplified)
                 .toList();
     }

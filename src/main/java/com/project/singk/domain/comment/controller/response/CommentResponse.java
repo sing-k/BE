@@ -19,6 +19,7 @@ import java.util.List;
 public class CommentResponse {
     private Long id;
     private Long parentId;
+    private Long postId;
     private String type;
     private String content;
     private LikeResponse like;
@@ -33,6 +34,7 @@ public class CommentResponse {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .parentId(comment.getParentId())
+                .postId(comment.getPostId())
                 .type(CommentType.RECOMMEND.getName())
                 .content(comment.getContent())
                 .like(LikeResponse.from(comment.getLikes(), isLike))
@@ -47,6 +49,7 @@ public class CommentResponse {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .parentId(comment.getParentId())
+                .postId(comment.getPostId())
                 .type(CommentType.FREE.getName())
                 .content(comment.getContent())
                 .like(LikeResponse.from(comment.getLikes(), isLike))

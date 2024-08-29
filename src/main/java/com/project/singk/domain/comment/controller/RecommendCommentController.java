@@ -15,7 +15,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/recommend/{postId}")
+@RequestMapping(value = {"/api/posts/recommend/{postId}", "/api/posts/recommend/"})
 public class RecommendCommentController {
 
     private final RecommendCommentService commentService;
@@ -31,12 +31,9 @@ public class RecommendCommentController {
         ));
     }
     @GetMapping("/comments/me")
-    public BaseResponse<List<CommentResponse>> getMyRecommendComments(
-            @PathVariable Long postId
-    ) {
+    public BaseResponse<List<CommentResponse>> getMyRecommendComments() {
         return BaseResponse.ok(commentService.getMyRecommendComments(
-                authService.getLoginMemberId(),
-                postId
+                authService.getLoginMemberId()
         ));
     }
 

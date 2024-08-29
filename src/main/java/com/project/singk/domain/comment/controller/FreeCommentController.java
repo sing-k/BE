@@ -15,7 +15,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/free/{postId}")
+@RequestMapping(value = {"/api/posts/free/{postId}", "/api/posts/free"})
 public class FreeCommentController {
 
     private final FreeCommentService commentService;
@@ -32,12 +32,9 @@ public class FreeCommentController {
     }
 
     @GetMapping("/comments/me")
-    public BaseResponse<List<CommentResponse>> getMyFreeComments(
-            @PathVariable Long postId
-    ) {
+    public BaseResponse<List<CommentResponse>> getMyFreeComments() {
         return BaseResponse.ok(commentService.getMyFreeComments(
-                authService.getLoginMemberId(),
-                postId
+                authService.getLoginMemberId()
         ));
     }
 

@@ -234,7 +234,7 @@ public class FreeCommentServiceTest {
         Long viewerId = 1L;
 
         // when
-        List<CommentResponse> response = tc.freeCommentService.getMyFreeComments(viewerId, postId);
+        List<CommentResponse> response = tc.freeCommentService.getMyFreeComments(viewerId);
 
         // then
         int size = response.size();
