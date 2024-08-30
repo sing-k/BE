@@ -21,7 +21,6 @@ public class AlarmController {
     public BaseResponse<SseEmitter> subscribe(
             @RequestHeader(value="Last-Event-ID", required = false, defaultValue = "") String lastEventId
     ) {
-
         return BaseResponse.ok(alarmService.subscribe(
                 authService.getLoginMemberId(),
                 lastEventId
