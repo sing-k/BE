@@ -22,6 +22,7 @@ import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Builder
@@ -91,6 +93,63 @@ public class AdminServiceImpl implements AdminService {
                 limit,
                 spotifyAlbums.getTotal(),
                 albums
+        );
+    }
+
+    @Override
+    @Async
+    public OffsetPageResponse<AlbumDetailResponse> createAlbumsWithAsync(String query, int offset, int limit) {
+
+        OffsetPageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
+
+        List<CompletableFuture<AlbumDetailResponse>> futures = spotifyAlbums.getItems().stream()
+                .map(spotifyAlbum -> spotifyRepository.getAlbumByIdWithAsync(spotifyAlbum.getId())
+                        .thenApply(albumEntity -> {
+                            Album album = albumEntity.toModel();
+
+                            // 앨범 통계 생성
+                            AlbumReviewStatistics statistics = AlbumReviewStatistics.empty();
+                            album = album.updateStatistic(statistics);
+
+                            if (albumRepository.existsById(spotifyAlbum.getId())) {
+                                return AlbumDetailResponse.from(album);
+                            }
+
+                            // 아티스트 생성
+                            Set<Artist> artists = new HashSet<>();
+
+                            artists.addAll(album.getArtists().stream()
+                                    .map(AlbumArtist::getArtist)
+                                    .toList());
+
+                            for (Track track : album.getTracks()) {
+                                artists.addAll(track.getArtists().stream()
+                                        .map(TrackArtist::getArtist)
+                                        .toList());
+                            }
+
+                            for (Artist artist : artists) {
+                                if (!artistRepository.existById(artist.getId())) {
+                                    artistRepository.save(artist);
+                                }
+                            }
+
+                            album = albumRepository.save(album);
+
+                            return AlbumDetailResponse.from(album);
+                        })
+                ).toList();
+
+        // 모든 비동기 작업이 완료될 때까지 기다림
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        return OffsetPageResponse.of(
+                offset,
+                limit,
+                spotifyAlbums.getTotal(),
+                futures.stream()
+                        .map(CompletableFuture::join)
+                        .toList()
         );
     }
 

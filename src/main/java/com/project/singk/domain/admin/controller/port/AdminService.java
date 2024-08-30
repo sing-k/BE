@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface AdminService {
     OffsetPageResponse<AlbumDetailResponse> createAlbums(String query, int offset, int limit);
+    OffsetPageResponse<AlbumDetailResponse> createAlbumsWithAsync(String query, int offset, int limit);
     void deleteMember(Long memberId);
     List<MemberResponse> getMembers();
     List<AlbumListResponse> getAlbums();
