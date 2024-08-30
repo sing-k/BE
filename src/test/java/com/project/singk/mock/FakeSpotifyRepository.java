@@ -7,6 +7,7 @@ import com.project.singk.global.api.OffsetPageResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class FakeSpotifyRepository implements SpotifyRepository {
     @Override
@@ -52,6 +53,11 @@ public class FakeSpotifyRepository implements SpotifyRepository {
                 .tracks(tracks)
                 .images(images)
                 .build();
+    }
+
+    @Override
+    public CompletableFuture<AlbumEntity> getAlbumByIdWithAsync(String id) {
+        return null;
     }
 
     @Override

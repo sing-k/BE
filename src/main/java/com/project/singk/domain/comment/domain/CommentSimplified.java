@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class CommentSimplified {
     private final Long id;
     private final Long parentId;
+    private final Long postId;
     private final String content;
     private final int likes;
     private final Member member;
@@ -17,9 +18,10 @@ public class CommentSimplified {
     private final LocalDateTime modifiedAt;
 
     @Builder
-    public CommentSimplified(Long id, Long parentId, String content, int likes, Member member, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommentSimplified(Long id, Long parentId, Long postId, String content, int likes, Member member, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.parentId = parentId;
+        this.postId = postId;
         this.content = content;
         this.likes = likes;
         this.member = member;

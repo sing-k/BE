@@ -9,6 +9,7 @@ import com.project.singk.domain.album.domain.AlbumSimplified;
 import com.project.singk.domain.album.infrastructure.entity.*;
 import com.project.singk.domain.album.infrastructure.jpa.AlbumJpaRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
+import com.project.singk.domain.review.infrastructure.AlbumReviewStatisticsEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -107,12 +108,13 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public AlbumReviewStatistics getAlbumReviewStatisticsByAlbumId(String albumId) {
 
-        return queryFactory.select(albumReviewStatisticsEntity)
-                .from(albumEntity)
-                .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
-                .where(albumEntity.id.eq(albumId))
-                .fetchOne()
-                .toModel();
+        return Optional.ofNullable(queryFactory.select(albumReviewStatisticsEntity)
+                    .from(albumEntity)
+                    .innerJoin(albumEntity.statistics, albumReviewStatisticsEntity)
+                    .where(albumEntity.id.eq(albumId))
+                    .fetchOne())
+                .map(AlbumReviewStatisticsEntity::toModel)
+                .orElse(null);
     }
 
     @Override

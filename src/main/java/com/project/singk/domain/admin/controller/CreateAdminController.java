@@ -30,6 +30,14 @@ public class CreateAdminController {
 	) {
 		return BaseResponse.ok(adminService.createAlbums(query, offset, limit));
 	}
+    @PostMapping("/albums/async")
+	public BaseResponse<OffsetPageResponse<AlbumDetailResponse>> createAlbumsWithAsync(
+		@RequestParam(value = "query", required = false) String query,
+		@Range(min = 0, max = 1000, message = "offset은 0에서 1000사이의 값 이어야 합니다.") @RequestParam("offset") int offset,
+		@Range(min = 0, max = 50, message = "limit은 0에서 50사이의 값 이어야 합니다.") @RequestParam("limit") int limit
+	) {
+		return BaseResponse.ok(adminService.createAlbumsWithAsync(query, offset, limit));
+	}
 
     @PostMapping("/activity-histories")
     public BaseResponse<List<ActivityHistoryResponse>> createActivityHistories(

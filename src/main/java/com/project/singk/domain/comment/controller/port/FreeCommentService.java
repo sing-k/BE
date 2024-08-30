@@ -9,7 +9,7 @@ import java.util.List;
 public interface FreeCommentService {
 
     List<CommentResponse> getFreeComments(Long memberId, Long postId);
-    List<CommentResponse> getMyFreeComments(Long memberId, Long postId);
+    List<CommentResponse> getMyFreeComments(Long memberId);
     PkResponseDto createFreeComment(Long memberId, Long postId, Long parentId, CommentCreate commentCreate);
     PkResponseDto updateFreeComment(Long memberId, Long commentId, CommentCreate commentCreate);
     void deleteFreeComment(Long memberId, Long postId, Long commentId);

@@ -235,7 +235,7 @@ public class RecommendCommentServiceTest {
         Long viewerId = 1L;
 
         // when
-        List<CommentResponse> response = tc.recommendCommentService.getMyRecommendComments(viewerId, postId);
+        List<CommentResponse> response = tc.recommendCommentService.getMyRecommendComments(viewerId);
 
         // then
         int size = response.size();

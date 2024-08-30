@@ -87,7 +87,9 @@ public class AlbumServiceImpl implements AlbumService {
                 spotifyAlbums.getLimit(),
                 spotifyAlbums.getTotal(),
                 spotifyAlbums.getItems().stream()
-                        .map(album -> AlbumListResponse.from(album.simplified()))
+                        .map(album -> AlbumListResponse.from(album.simplified(
+                                albumRepository.getAlbumReviewStatisticsByAlbumId(album.getId())
+                        )))
                         .toList()
 
 		);

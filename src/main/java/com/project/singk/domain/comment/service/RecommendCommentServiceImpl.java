@@ -65,8 +65,8 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentResponse> getMyRecommendComments(Long memberId, Long postId) {
-        List<CommentSimplified> comments = recommendCommentRepository.findAllByPostId(postId);
+    public List<CommentResponse> getMyRecommendComments(Long memberId) {
+        List<CommentSimplified> comments = recommendCommentRepository.findAllByMemberId(memberId);
 
         Map<Long, CommentResponse> m = new HashMap<>();
         List<CommentResponse> result = new ArrayList<>();

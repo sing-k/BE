@@ -75,7 +75,8 @@ public class FakeAlbumRepository implements AlbumRepository {
         return data.stream()
                 .filter(item -> item.getId().equals(albumId))
                 .findAny()
-                .orElseThrow(() -> new ApiException(AppHttpStatus.NOT_FOUND_ALBUM)).getStatistics();
+                .map(Album::getStatistics)
+                .orElse(null);
     }
 
     @Override
