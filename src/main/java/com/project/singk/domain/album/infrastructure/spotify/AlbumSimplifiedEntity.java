@@ -64,7 +64,7 @@ public class AlbumSimplifiedEntity {
 			.build();
 	}
 
-    public com.project.singk.domain.album.domain.AlbumSimplified simplified() {
+    public com.project.singk.domain.album.domain.AlbumSimplified simplified(AlbumReviewStatistics statistics) {
 		return com.project.singk.domain.album.domain.AlbumSimplified.builder()
 			.id(this.id)
 			.name(this.name)
@@ -74,7 +74,7 @@ public class AlbumSimplifiedEntity {
                     .map(AlbumArtist::from)
                     .toList())
             .images(this.images.stream().map(ImageEntity::toModel).toList())
-            .statistics(AlbumReviewStatistics.empty())
+            .statistics(statistics == null ? AlbumReviewStatistics.empty() : statistics)
 			.build();
 	}
 }

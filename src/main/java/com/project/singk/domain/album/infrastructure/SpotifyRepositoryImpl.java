@@ -2,6 +2,7 @@ package com.project.singk.domain.album.infrastructure;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.stereotype.Repository;
@@ -41,7 +42,16 @@ public class SpotifyRepositoryImpl implements SpotifyRepository {
 		}
 	}
 
-	@Override
+    @Override
+    public CompletableFuture<AlbumEntity> getAlbumByIdWithAsync(String id) {
+        final GetAlbumRequest getAlbumRequest = spotifyApi.getAlbum(id)
+                .market(CountryCode.KR)
+                .build();
+
+        return getAlbumRequest.executeAsync().thenApply(AlbumEntity::from);
+    }
+
+    @Override
 	public OffsetPageResponse<AlbumSimplifiedEntity> searchAlbums(String query, int offset, int limit) {
 		final SearchAlbumsRequest searchAlbumsRequest = spotifyApi.searchAlbums(query)
 			.limit(limit)
