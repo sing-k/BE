@@ -156,6 +156,7 @@ public class TestContainer {
                 .memberRepository(this.memberRepository)
                 .s3Repository(this.s3Repository)
                 .freePostRepository(this.freePostRepository)
+                .freeCommentRepository(this.freeCommentRepository)
                 .freeLikeService(this.freeLikeService)
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
@@ -181,6 +182,7 @@ public class TestContainer {
                 .recommendPostRepository(this.recommendPostRepository)
                 .uuidHolder(this.uuidHolder)
                 .albumImageRepository(this.albumImageRepository)
+                .recommendCommentRepository(this.recommendCommentRepository)
                 .recommendLikeService(this.recommendLikeService)
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .build();

@@ -108,6 +108,7 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateRecommendComment(false);
         member = member.updateStatistic(memberStatistics);
 
         return PkResponseDto.of(recommendComment.getId());
@@ -149,6 +150,7 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateRecommendComment(true);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);

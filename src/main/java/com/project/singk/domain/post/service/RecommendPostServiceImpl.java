@@ -5,6 +5,7 @@ import com.project.singk.domain.activity.domain.ActivityType;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.service.port.AlbumImageRepository;
+import com.project.singk.domain.comment.service.port.RecommendCommentRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
 import com.project.singk.domain.like.controller.port.RecommendLikeService;
@@ -37,6 +38,7 @@ import java.util.List;
 @Transactional
 public class RecommendPostServiceImpl implements RecommendPostService {
     private final RecommendPostRepository recommendPostRepository;
+    private final RecommendCommentRepository recommendCommentRepository;
     private final MemberRepository memberRepository;
     private final AlbumImageRepository albumImageRepository;
     private final S3Repository s3Repository;
@@ -84,6 +86,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateRecommendPost(false);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);
@@ -183,6 +186,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
             throw new ApiException(AppHttpStatus.FORBIDDEN_POST);
         }
 
+        recommendCommentRepository.deleteByPostId(postId);
         recommendPostRepository.deleteById(postId);
 
         // 게시글 작성자 활동 점수 반영
@@ -192,6 +196,7 @@ public class RecommendPostServiceImpl implements RecommendPostService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateRecommendPost(true);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);

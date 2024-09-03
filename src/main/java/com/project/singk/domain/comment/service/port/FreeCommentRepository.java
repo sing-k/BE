@@ -11,6 +11,7 @@ public interface FreeCommentRepository {
     Optional<FreeComment> findById(Long commentId);
     FreeComment getById(Long commentId);
     void deleteById(Long commentId);
+    void deleteByPostId(Long postId);
     List<CommentSimplified> findAllByPostId(Long postId);
     List<CommentSimplified> findAllByMemberId(Long memberId);
 }

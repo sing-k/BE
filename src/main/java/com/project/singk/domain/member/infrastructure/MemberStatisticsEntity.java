@@ -30,12 +30,32 @@ public class MemberStatisticsEntity extends BaseTimeEntity {
     @Column(name = "total_review_score")
     private int totalReviewScore;
 
+    @ColumnDefault("0")
+    @Column(name = "total_free_post")
+    private int totalFreePost;
+
+    @ColumnDefault("0")
+    @Column(name = "total_free_comment")
+    private int totalFreeComment;
+
+    @ColumnDefault("0")
+    @Column(name = "total_recommend_post")
+    private int totalRecommendPost;
+
+    @ColumnDefault("0")
+    @Column(name = "total_recommend_comment")
+    private int totalRecommendComment;
+
     @Builder
-    public MemberStatisticsEntity(Long id, int totalActivityScore, int totalReview, int totalReviewScore) {
+    public MemberStatisticsEntity(Long id, int totalActivityScore, int totalReview, int totalReviewScore, int totalFreePost, int totalFreeComment, int totalRecommendPost, int totalRecommendComment) {
         this.id = id;
         this.totalActivityScore = totalActivityScore;
         this.totalReview = totalReview;
         this.totalReviewScore = totalReviewScore;
+        this.totalFreePost = totalFreePost;
+        this.totalFreeComment = totalFreeComment;
+        this.totalRecommendPost = totalRecommendPost;
+        this.totalRecommendComment = totalRecommendComment;
     }
 
     public static MemberStatisticsEntity from(MemberStatistics statistics) {
@@ -44,6 +64,10 @@ public class MemberStatisticsEntity extends BaseTimeEntity {
                 .totalActivityScore(statistics.getTotalActivityScore())
                 .totalReview(statistics.getTotalReview())
                 .totalReviewScore(statistics.getTotalReviewScore())
+                .totalFreePost(statistics.getTotalFreePost())
+                .totalFreeComment(statistics.getTotalFreeComment())
+                .totalRecommendPost(statistics.getTotalRecommendPost())
+                .totalRecommendComment(statistics.getTotalRecommendComment())
                 .build();
     }
 
@@ -53,6 +77,10 @@ public class MemberStatisticsEntity extends BaseTimeEntity {
                 .totalActivityScore(this.totalActivityScore)
                 .totalReview(this.totalReview)
                 .totalReviewScore(this.totalReviewScore)
+                .totalFreePost(this.totalFreePost)
+                .totalFreeComment(this.totalFreeComment)
+                .totalRecommendPost(this.totalRecommendPost)
+                .totalRecommendComment(this.totalRecommendComment)
                 .build();
     }
 }

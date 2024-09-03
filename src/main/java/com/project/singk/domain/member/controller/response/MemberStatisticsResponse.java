@@ -12,6 +12,10 @@ public class MemberStatisticsResponse {
     private int totalActivityScore;
     private int totalReview;
     private int totalReviewScore;
+    private int totalFreePost;
+    private int totalFreeComment;
+    private int totalRecommendPost;
+    private int totalRecommendComment;
     private double averageReviewScore;
 
     public static MemberStatisticsResponse from (MemberStatistics statistics) {
@@ -19,6 +23,10 @@ public class MemberStatisticsResponse {
                 .totalActivityScore(statistics.getTotalActivityScore())
                 .totalReview(statistics.getTotalReview())
                 .totalReviewScore(statistics.getTotalReviewScore())
+                .totalFreePost(statistics.getTotalFreePost())
+                .totalFreeComment(statistics.getTotalFreeComment())
+                .totalRecommendPost(statistics.getTotalRecommendPost())
+                .totalRecommendComment(statistics.getTotalRecommendComment())
                 .averageReviewScore(statistics.calculateAverage(statistics.getTotalReviewScore(), statistics.getTotalReview()))
                 .build();
     }

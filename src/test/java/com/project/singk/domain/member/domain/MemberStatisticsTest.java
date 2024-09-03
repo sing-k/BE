@@ -26,7 +26,7 @@ class MemberStatisticsTest {
     }
 
     @Test
-    public void ActivityHistory를_받아서_MemberStatistics에_반영할_수_있다() {
+    public void ActivityHistory를_받아서_MemberStatistics에_활동_히스토리를_반영할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.empty();
 
@@ -44,7 +44,7 @@ class MemberStatisticsTest {
     }
 
     @Test
-    public void AlbumReview를_받아서_MemberStatistics에_추가할_수_있다() {
+    public void AlbumReview를_받아서_MemberStatistics에_앨범감상평을_추가할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.empty();
 
@@ -60,7 +60,7 @@ class MemberStatisticsTest {
         assertThat(statistics.getTotalReviewScore()).isEqualTo(5);
     }
     @Test
-    public void AlbumReview와_ActivityHistory를_받아서_MemberStatistics에_삭제할_수_있다() {
+    public void AlbumReview를_받아서_MemberStatistics에_앨범감상평을_삭제할_수_있다() {
         // given
         MemberStatistics statistics = MemberStatistics.builder()
                 .totalActivityScore(10)
@@ -78,6 +78,109 @@ class MemberStatisticsTest {
         // then
         assertThat(statistics.getTotalReview()).isEqualTo(0);
         assertThat(statistics.getTotalReviewScore()).isEqualTo(0);
+    }
+    @Test
+    public void MemberStatistics에_자유게시글을_추가할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.empty();
+
+        // when
+        statistics = statistics.updateFreePost(false);
+
+        // then
+        assertThat(statistics.getTotalFreePost()).isEqualTo(1);
+    }
+
+    @Test
+    public void MemberStatistics에_자유게시글을_삭제할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.builder()
+                .totalFreePost(1)
+                .build();
+
+        // when
+        statistics = statistics.updateFreePost(true);
+
+        // then
+        assertThat(statistics.getTotalFreePost()).isEqualTo(0);
+    }
+
+    @Test
+    public void MemberStatistics에_자유댓글을_추가할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.empty();
+
+        // when
+        statistics = statistics.updateFreeComment(false);
+
+        // then
+        assertThat(statistics.getTotalFreeComment()).isEqualTo(1);
+    }
+
+    @Test
+    public void MemberStatistics에_자유댓글을_삭제할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.builder()
+                .totalFreeComment(1)
+                .build();
+
+        // when
+        statistics = statistics.updateFreeComment(true);
+
+        // then
+        assertThat(statistics.getTotalFreeComment()).isEqualTo(0);
+    }
+
+    @Test
+    public void MemberStatistics에_추천게시글을_추가할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.empty();
+
+        // when
+        statistics = statistics.updateRecommendPost(false);
+
+        // then
+        assertThat(statistics.getTotalRecommendPost()).isEqualTo(1);
+    }
+
+    @Test
+    public void MemberStatistics에_추천게시글을_삭제할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.builder()
+                .totalRecommendPost(1)
+                .build();
+
+        // when
+        statistics = statistics.updateRecommendPost(true);
+
+        // then
+        assertThat(statistics.getTotalRecommendPost()).isEqualTo(0);
+    }
+
+    @Test
+    public void MemberStatistics에_추천댓글을_추가할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.empty();
+
+        // when
+        statistics = statistics.updateRecommendComment(false);
+
+        // then
+        assertThat(statistics.getTotalRecommendComment()).isEqualTo(1);
+    }
+
+    @Test
+    public void MemberStatistics에_추천댓글을_삭제할_수_있다() {
+        // given
+        MemberStatistics statistics = MemberStatistics.builder()
+                .totalRecommendComment(1)
+                .build();
+
+        // when
+        statistics = statistics.updateRecommendComment(true);
+
+        // then
+        assertThat(statistics.getTotalRecommendComment()).isEqualTo(0);
     }
 
     @Test

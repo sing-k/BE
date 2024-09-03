@@ -43,6 +43,13 @@ public class RecommendCommentRepositoryImpl implements RecommendCommentRepositor
     }
 
     @Override
+    public void deleteByPostId(Long postId) {
+        queryFactory.delete(recommendCommentEntity)
+                .where(recommendCommentEntity.post.id.eq(postId))
+                .execute();
+    }
+
+    @Override
     public List<CommentSimplified> findAllByPostId(Long postId) {
         return queryFactory.selectFrom(recommendCommentEntity)
                 .where(recommendCommentEntity.post.id.eq(postId))
