@@ -33,13 +33,11 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
 			oAuthResponse = GoogleResponse.of(oAuth2User.getAttributes());
 		} else if (AuthType.NAVER.getId().equals(registrationId)) {
 			oAuthResponse = NaverResponse.of(oAuth2User.getAttributes());
-		} else if (AuthType.KAKAO.getId().equals(registrationId)) {
-			oAuthResponse = KakaoResponse.of(oAuth2User.getAttributes());
 		} else {
 			throw new OAuth2AuthenticationException(new OAuth2Error(AppHttpStatus.INVALID_OAUTH_TYPE.getMessage()));
 		}
 
-		Member member = memberRepository.findByEmail(oAuthResponse.getEmail()).orElse(null);
+		Member member = memberRepository.findByEmail(oAuthResponse.getProviderId()).orElse(null);
 		if (member != null) {
 			return SingKOAuth2User.of(member.getId(), oAuthResponse, false);
 		}
@@ -47,7 +45,7 @@ public class SingKOAuth2UserService extends DefaultOAuth2UserService {
         MemberStatistics statistics = MemberStatistics.empty();
 
         Member newbie = Member.builder()
-                .email(oAuthResponse.getEmail())
+                .email(oAuthResponse.getProviderId())
                 .statistics(statistics)
                 .build();
         newbie = memberRepository.save(newbie);

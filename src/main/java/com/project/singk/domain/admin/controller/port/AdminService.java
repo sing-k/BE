@@ -8,10 +8,11 @@ import com.project.singk.global.api.CursorPageResponse;
 import com.project.singk.global.api.OffsetPageResponse;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface AdminService {
     OffsetPageResponse<AlbumDetailResponse> createAlbums(String query, int offset, int limit);
-    OffsetPageResponse<AlbumDetailResponse> createAlbumsWithAsync(String query, int offset, int limit);
+    CompletableFuture<OffsetPageResponse<AlbumDetailResponse>> createAlbumsWithAsync(String query, int offset, int limit);
     void deleteMember(Long memberId);
     List<MemberResponse> getMembers();
     List<AlbumListResponse> getAlbums();

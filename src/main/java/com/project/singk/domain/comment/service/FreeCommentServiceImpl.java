@@ -106,6 +106,7 @@ public class FreeCommentServiceImpl implements FreeCommentService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateFreeComment(false);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);
@@ -149,6 +150,7 @@ public class FreeCommentServiceImpl implements FreeCommentService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateFreeComment(true);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);

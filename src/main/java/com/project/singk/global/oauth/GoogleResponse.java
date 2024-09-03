@@ -34,14 +34,4 @@ public class GoogleResponse implements OAuthResponse {
 		return attributes.get("sub").toString();
 	}
 
-	@Override
-	public String getEmail() {
-		return attributes.get("email").toString();
-	}
-
-	@Override
-	public String getName() {
-		return attributes.get("name").toString();
-	}
-
 }

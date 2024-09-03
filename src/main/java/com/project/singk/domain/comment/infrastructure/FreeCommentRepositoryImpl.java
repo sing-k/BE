@@ -45,6 +45,13 @@ public class FreeCommentRepositoryImpl implements FreeCommentRepository {
     }
 
     @Override
+    public void deleteByPostId(Long postId) {
+        queryFactory.delete(freeCommentEntity)
+                .where(freeCommentEntity.post.id.eq(postId))
+                .execute();
+    }
+
+    @Override
     public List<CommentSimplified> findAllByPostId(Long postId) {
         return queryFactory.selectFrom(freeCommentEntity)
                 .where(freeCommentEntity.post.id.eq(postId))

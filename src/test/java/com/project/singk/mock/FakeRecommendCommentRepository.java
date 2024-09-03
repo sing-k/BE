@@ -47,8 +47,13 @@ public class FakeRecommendCommentRepository implements RecommendCommentRepositor
 
 
     @Override
-    public void deleteById(Long postId) {
-        data.removeIf(item -> item.getId().equals(postId));
+    public void deleteById(Long commentId) {
+        data.removeIf(item -> item.getId().equals(commentId));
+    }
+
+    @Override
+    public void deleteByPostId(Long postId) {
+        data.removeIf(item -> item.getPost().getId().equals(postId));
     }
 
     @Override

@@ -11,6 +11,7 @@ public interface RecommendCommentRepository {
     RecommendComment getById(Long commentId);
     Optional<RecommendComment> findById(Long commentId);
     void deleteById(Long commentId);
+    void deleteByPostId(Long postId);
     List<CommentSimplified> findAllByPostId(Long postId);
     List<CommentSimplified> findAllByMemberId(Long memberId);
 }

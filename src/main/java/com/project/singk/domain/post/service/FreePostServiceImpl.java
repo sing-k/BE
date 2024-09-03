@@ -3,6 +3,7 @@ package com.project.singk.domain.post.service;
 import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.domain.ActivityType;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
+import com.project.singk.domain.comment.service.port.FreeCommentRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.like.controller.port.FreeLikeService;
 import com.project.singk.domain.like.service.port.FreePostLikeRepository;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class FreePostServiceImpl implements FreePostService {
     private final FreePostRepository freePostRepository;
+    private final FreeCommentRepository freeCommentRepository;
     private final MemberRepository memberRepository;
     private final S3Repository s3Repository;
     private final FreeLikeService freeLikeService;
@@ -49,6 +51,7 @@ public class FreePostServiceImpl implements FreePostService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateFreePost(false);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);
@@ -125,7 +128,7 @@ public class FreePostServiceImpl implements FreePostService {
         if (!freePost.getMember().getId().equals(memberId)) {
             throw new ApiException(AppHttpStatus.FORBIDDEN_POST);
         }
-
+        freeCommentRepository.deleteByPostId(postId);
         freePostRepository.deleteById(postId);
 
         // 게시글 작성자 활동 점수 반영
@@ -135,6 +138,7 @@ public class FreePostServiceImpl implements FreePostService {
         // 회원 통계 반영
         MemberStatistics memberStatistics = member.getStatistics();
         memberStatistics = memberStatistics.updateActivity(activity);
+        memberStatistics = memberStatistics.updateFreePost(true);
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);

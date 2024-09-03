@@ -19,27 +19,23 @@ import lombok.NoArgsConstructor;
 public class SingKOAuth2User extends MemberEntity implements OAuth2User {
 	private Long id;
 	private String email;
-	private String name;
 	private Role role;
 	private boolean isNewbie;
 
-	private SingKOAuth2User(String email, String name, Role role, boolean isNewbie) {
+	private SingKOAuth2User(String email, Role role, boolean isNewbie) {
 		this.email = email;
-		this.name = name;
 		this.role = role;
 		this.isNewbie = isNewbie;
 	}
-	private SingKOAuth2User(Long id, String email, String name, Role role, boolean isNewbie) {
+	private SingKOAuth2User(Long id, String email, Role role, boolean isNewbie) {
 		this.id = id;
 		this.email = email;
-		this.name = name;
 		this.role = role;
 		this.isNewbie = isNewbie;
 	}
 	public static SingKOAuth2User of(OAuthResponse response, boolean isNewbie) {
 		return new SingKOAuth2User(
-			response.getEmail(),
-			response.getName(),
+			response.getProviderId(),
 			Role.ROLE_USER,
 			isNewbie
 		);
@@ -48,8 +44,7 @@ public class SingKOAuth2User extends MemberEntity implements OAuth2User {
 	public static SingKOAuth2User of(Long id, OAuthResponse response, boolean isNewbie) {
 		return new SingKOAuth2User(
 			id,
-			response.getEmail(),
-			response.getName(),
+            response.getProviderId(),
 			Role.ROLE_USER,
 			isNewbie
 		);
@@ -67,7 +62,7 @@ public class SingKOAuth2User extends MemberEntity implements OAuth2User {
 
 	@Override
 	public String getName() {
-		return this.name;
+		return this.email;
 	}
 
 }
