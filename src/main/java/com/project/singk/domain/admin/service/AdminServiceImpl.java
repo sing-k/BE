@@ -98,12 +98,18 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Async
-    public OffsetPageResponse<AlbumDetailResponse> createAlbumsWithAsync(String query, int offset, int limit) {
+    public CompletableFuture<OffsetPageResponse<AlbumDetailResponse>> createAlbumsWithAsync(String query, int offset, int limit) {
 
+        // 외부 API 앨범 목록 조회 요청
         OffsetPageResponse<AlbumSimplifiedEntity> spotifyAlbums = spotifyRepository.searchAlbums(query, offset, limit);
 
+        // 비동기 작업
         List<CompletableFuture<AlbumDetailResponse>> futures = spotifyAlbums.getItems().stream()
+
+                // 외부 API 앨범 상세 조회 요청 (비동기)
                 .map(spotifyAlbum -> spotifyRepository.getAlbumByIdWithAsync(spotifyAlbum.getId())
+
+                        // 앨범 저장
                         .thenApply(albumEntity -> {
                             Album album = albumEntity.toModel();
 
@@ -111,28 +117,26 @@ public class AdminServiceImpl implements AdminService {
                             AlbumReviewStatistics statistics = AlbumReviewStatistics.empty();
                             album = album.updateStatistic(statistics);
 
+                            // 이미 DB에 존재하는 경우 리턴
                             if (albumRepository.existsById(spotifyAlbum.getId())) {
                                 return AlbumDetailResponse.from(album);
                             }
 
-                            // 아티스트 생성
-                            Set<Artist> artists = new HashSet<>();
-
-                            artists.addAll(album.getArtists().stream()
+                            // 아티스트 저장
+                            Set<Artist> artists = new HashSet<>(album.getArtists().stream()
                                     .map(AlbumArtist::getArtist)
                                     .toList());
 
-                            for (Track track : album.getTracks()) {
-                                artists.addAll(track.getArtists().stream()
-                                        .map(TrackArtist::getArtist)
-                                        .toList());
-                            }
+                            album.getTracks()
+                                    .forEach(track -> artists.addAll(track.getArtists().stream()
+                                            .map(TrackArtist::getArtist)
+                                            .toList()));
 
-                            for (Artist artist : artists) {
+                            artists.forEach(artist -> {
                                 if (!artistRepository.existById(artist.getId())) {
                                     artistRepository.save(artist);
                                 }
-                            }
+                            });
 
                             album = albumRepository.save(album);
 
@@ -143,14 +147,15 @@ public class AdminServiceImpl implements AdminService {
         // 모든 비동기 작업이 완료될 때까지 기다림
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-        return OffsetPageResponse.of(
-                offset,
-                limit,
-                spotifyAlbums.getTotal(),
-                futures.stream()
+        return CompletableFuture.completedFuture(
+                OffsetPageResponse.of(
+                    offset,
+                    limit,
+                    spotifyAlbums.getTotal(),
+                    futures.stream()
                         .map(CompletableFuture::join)
                         .toList()
-        );
+        ));
     }
 
     @Override
