@@ -13,6 +13,7 @@ import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @Service
 @Builder
+@Slf4j
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
     private static final Long SSE_TIMEOUT = 120L * 1000 * 60;
@@ -60,6 +62,8 @@ public class AlarmServiceImpl implements AlarmService {
             sendLostData(lastEventId, memberId, emitterId, emitter);
         }
 
+        log.info(String.format("[memberId:%d has subscribe emitterId:%s]", memberId, emitterId));
+
         return emitter;
     }
 
@@ -77,6 +81,7 @@ public class AlarmServiceImpl implements AlarmService {
 
         // emitters가 비어 있는 경우 이벤트를 저장
         if (emitters.isEmpty()) {
+            log.info("emitter is empty");
             eventCacheRepository.saveEvent(receiverId, eventId, AlarmResponse.from(alarm));
             return;
         }
@@ -84,6 +89,7 @@ public class AlarmServiceImpl implements AlarmService {
         emitters.forEach((key, emitter) -> {
             // 전송 시도, 전송할 수 있는 emitter만 전송
             sendAlarm(emitter, eventId, key, AlarmResponse.from(alarm));
+            log.info(String.format("[alarmtype:%s senderId:%d send to receiverId:%d emitterId:%s]", alarm.getType().toString(), sender.getId(), receiver.getId(), key));
         });
     }
 
@@ -95,6 +101,7 @@ public class AlarmServiceImpl implements AlarmService {
             emitterRepository.deleteById(key);
         });
         eventCacheRepository.deleteEventsByMemberId(String.valueOf(memberId));
+        log.info(String.format("[memberId:%d has unsubscribe]"));
     }
 
     private String makeTimeIncludeId(Long memberId) {
