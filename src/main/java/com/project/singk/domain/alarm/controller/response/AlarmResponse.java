@@ -22,6 +22,8 @@ public class AlarmResponse {
                 .id(alarm.getId().toString())
                 .content(alarm.getType().getContent().apply(alarm.getSender().getNickname()))
                 .url(alarm.getType().getUrl().apply(alarm.getTargetId()))
+                .isRead(alarm.isRead())
+                .createdAt(alarm.getCreatedAt())
                 .build();
 
     }
