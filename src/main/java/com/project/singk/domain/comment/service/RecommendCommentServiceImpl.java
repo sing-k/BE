@@ -111,6 +111,8 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
         memberStatistics = memberStatistics.updateRecommendComment(false);
         member = member.updateStatistic(memberStatistics);
 
+        member = memberRepository.save(member);
+
         return PkResponseDto.of(recommendComment.getId());
     }
 

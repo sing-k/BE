@@ -17,14 +17,14 @@ public class AlarmController {
     private final AlarmService alarmService;
     private final AuthService authService;
 
-    @GetMapping(value="/subscribe",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public BaseResponse<SseEmitter> subscribe(
+    @GetMapping(value="/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribe(
             @RequestHeader(value="Last-Event-ID", required = false, defaultValue = "") String lastEventId
     ) {
-        return BaseResponse.ok(alarmService.subscribe(
+        return alarmService.subscribe(
                 authService.getLoginMemberId(),
                 lastEventId
-        ));
+        );
     }
 
     @DeleteMapping(value="/{alarmId}")
