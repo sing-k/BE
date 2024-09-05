@@ -21,14 +21,15 @@ public class JwtExceptionHandlingFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		response.setContentType(CONTENT_TYPE);
 		try {
 			filterChain.doFilter(request, response);
 		} catch (JwtException e) {
+            response.setContentType(CONTENT_TYPE);
 			String body = objectMapper.writeValueAsString(
             BaseResponse.fail(AppHttpStatus.INVALID_TOKEN, e.getMessage()));
 			response.getWriter().write(body);
 		} catch (OAuth2AuthenticationException e) {
+            response.setContentType(CONTENT_TYPE);
 			String body = objectMapper.writeValueAsString(
             BaseResponse.fail(AppHttpStatus.OAUTH_UNAUTHORIZED, e.getMessage()));
 			response.getWriter().write(body);

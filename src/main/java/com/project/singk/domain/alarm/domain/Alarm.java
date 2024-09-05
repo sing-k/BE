@@ -36,4 +36,14 @@ public class Alarm {
                 .isRead(false)
                 .build();
     }
+
+    public Alarm read() {
+        return Alarm.builder()
+                .type(this.type)
+                .sender(this.sender)
+                .receiver(this.receiver)
+                .targetId(this.targetId)
+                .isRead(true)
+                .build();
+    }
 }
