@@ -4,16 +4,17 @@ import com.project.singk.domain.alarm.controller.port.AlarmService;
 import com.project.singk.domain.alarm.controller.response.AlarmResponse;
 import com.project.singk.domain.alarm.domain.Alarm;
 import com.project.singk.domain.alarm.domain.AlarmCreate;
-import com.project.singk.domain.alarm.domain.AlarmType;
 import com.project.singk.domain.alarm.service.port.AlarmRepository;
 import com.project.singk.domain.alarm.service.port.EmitterRepository;
 import com.project.singk.domain.alarm.service.port.EventCacheRepository; // 이벤트 캐시 저장소 추가
 import com.project.singk.domain.common.service.port.ClockHolder;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.service.port.MemberRepository;
+import com.project.singk.global.api.OffsetPageResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Builder
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class AlarmServiceImpl implements AlarmService {
     private static final Long SSE_TIMEOUT = 120L * 1000 * 60;
 
@@ -68,7 +70,6 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    @Transactional
     public void send(AlarmCreate alarmCreate) {
         Member sender = memberRepository.getById(alarmCreate.getSenderId());
         Member receiver = memberRepository.getById(alarmCreate.getReceiverId());
@@ -88,8 +89,8 @@ public class AlarmServiceImpl implements AlarmService {
 
         emitters.forEach((key, emitter) -> {
             // 전송 시도, 전송할 수 있는 emitter만 전송
-            sendAlarm(emitter, eventId, key, AlarmResponse.from(alarm));
-            log.info(String.format("[alarmtype:%s senderId:%d send to receiverId:%d emitterId:%s]", alarm.getType().toString(), sender.getId(), receiver.getId(), key));
+            sendAlarm(emitter, eventId, key, AlarmResponse.from(alarm, alarmRepository.countIsReadFalseByMemberId(receiver.getId())));
+            log.info(String.format("[alarm type:%s senderId:%d send to receiverId:%d emitterId:%s]", alarm.getType().toString(), sender.getId(), receiver.getId(), key));
         });
     }
 
@@ -102,6 +103,22 @@ public class AlarmServiceImpl implements AlarmService {
         });
         eventCacheRepository.deleteEventsByMemberId(String.valueOf(memberId));
         log.info(String.format("[memberId:%d has unsubscribe]"));
+    }
+
+    @Override
+    public OffsetPageResponse<AlarmResponse> getMyAlarms(Long memberId, int offset, int limit) {
+        Page<Alarm> alarms = alarmRepository.findAllByMemberId(memberId, offset, limit);
+
+        return OffsetPageResponse.of(
+                offset,
+                limit,
+                (int) alarms.getTotalElements(),
+                alarms.stream()
+                        .map(Alarm::read)
+                        .map(alarmRepository::save)
+                        .map(AlarmResponse::from)
+                        .toList()
+        );
     }
 
     private String makeTimeIncludeId(Long memberId) {

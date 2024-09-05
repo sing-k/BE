@@ -66,6 +66,7 @@ public class AlarmEntity extends BaseTimeEntity {
         return  Alarm.builder()
                 .id(this.id)
                 .type(this.type)
+                .targetId(this.targetId)
                 .receiver(this.receiver.toModel())
                 .sender(this.sender.toModel())
                 .isRead(this.isRead)

@@ -3,6 +3,13 @@ package com.project.singk.mock;
 import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
 import com.project.singk.domain.activity.service.ActivityHistoryServiceImpl;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
+import com.project.singk.domain.alarm.controller.port.AlarmService;
+import com.project.singk.domain.alarm.infrastructure.EmitterRepositoryImpl;
+import com.project.singk.domain.alarm.infrastructure.EventCacheRepositoryImpl;
+import com.project.singk.domain.alarm.service.AlarmServiceImpl;
+import com.project.singk.domain.alarm.service.port.AlarmRepository;
+import com.project.singk.domain.alarm.service.port.EmitterRepository;
+import com.project.singk.domain.alarm.service.port.EventCacheRepository;
 import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.service.AlbumServiceImpl;
 import com.project.singk.domain.album.service.port.*;
@@ -12,6 +19,7 @@ import com.project.singk.domain.comment.service.FreeCommentServiceImpl;
 import com.project.singk.domain.comment.service.RecommendCommentServiceImpl;
 import com.project.singk.domain.comment.service.port.FreeCommentRepository;
 import com.project.singk.domain.comment.service.port.RecommendCommentRepository;
+import com.project.singk.domain.common.service.port.ClockHolder;
 import com.project.singk.domain.common.service.port.RedisRepository;
 import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.common.service.port.UUIDHolder;
@@ -49,6 +57,7 @@ import lombok.Builder;
 public class TestContainer {
 	public final MailSender mailSender;
 	public final UUIDHolder uuidHolder;
+    public final ClockHolder clockHolder;
 	public final PasswordEncoderHolder passwordEncoderHolder;
 	public final MemberRepository memberRepository;
     public final AlbumRepository albumRepository;
@@ -69,6 +78,10 @@ public class TestContainer {
     public final SpotifyRepository spotifyRepository;
 	public final S3Repository s3Repository;
 	public final RedisRepository redisRepository;
+    public final AlarmRepository alarmRepository;
+    public final EmitterRepository emitterRepository;
+    public final EventCacheRepository eventCacheRepository;
+    public final AlarmService alarmService;
 	public final MailService mailService;
 	public final MemberService memberService;
 	public final AuthService authService;
@@ -86,6 +99,7 @@ public class TestContainer {
 	public TestContainer() {
 		this.mailSender = new FakeMailSender();
 		this.uuidHolder = new FakeUUIDHolder("uuid");
+        this.clockHolder = new FakeClockHolder(12345678);
 		this.passwordEncoderHolder = new FakePasswordEncoderHolder("encodedPassword");
 		this.memberRepository = new FakeMemberRepository();
         this.albumRepository = new FakeAlbumRepository();
@@ -106,6 +120,14 @@ public class TestContainer {
         this.spotifyRepository = new FakeSpotifyRepository();
 		this.s3Repository = new FakeS3Repository();
 		this.redisRepository = new FakeRedisRepository();
+        this.emitterRepository = new EmitterRepositoryImpl();
+        this.eventCacheRepository = new EventCacheRepositoryImpl();
+        this.alarmRepository = new FakeAlarmRepository();
+        this.alarmService = AlarmServiceImpl.builder()
+                .alarmRepository(this.alarmRepository)
+                .clockHolder(this.clockHolder)
+                .memberRepository(this.memberRepository)
+                .build();
 		this.mailService = MailService.builder()
 			.mailSender(this.mailSender)
 			.build();
@@ -166,6 +188,7 @@ public class TestContainer {
                 .freePostRepository(this.freePostRepository)
                 .freeCommentRepository(this.freeCommentRepository)
                 .freeLikeService(this.freeLikeService)
+                .alarmService(this.alarmService)
                 .activityHistoryRepository(this.activityHistoryRepository)
                 .build();
         this.recommendLikeService = RecommendLikeServiceImpl.builder()
