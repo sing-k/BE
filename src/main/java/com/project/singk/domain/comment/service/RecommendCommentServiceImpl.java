@@ -68,20 +68,13 @@ public class RecommendCommentServiceImpl implements RecommendCommentService {
     public List<CommentResponse> getMyRecommendComments(Long memberId) {
         List<CommentSimplified> comments = recommendCommentRepository.findAllByMemberId(memberId);
 
-        Map<Long, CommentResponse> m = new HashMap<>();
-        List<CommentResponse> result = new ArrayList<>();
-        comments.forEach(comment -> {
-            CommentResponse c = CommentResponse.recommendType(
-                    comment,
-                    recommendLikeService.getCommentLike(memberId, comment.getId()),
-                    s3Repository.getPreSignedGetUrl(comment.getMember().getImageUrl())
-            );
-            m.put(c.getId(), c);
-            if (c.getParentId() == null) result.add(c);
-            else m.get(c.getParentId()).getChildren().add(c);
-        });
-
-        return result;
+        return comments.stream()
+                .map(comment -> CommentResponse.recommendType(
+                        comment,
+                        recommendLikeService.getCommentLike(memberId, comment.getId()),
+                        s3Repository.getPreSignedGetUrl(comment.getMember().getImageUrl())
+                ))
+                .toList();
     }
 
     @Override
