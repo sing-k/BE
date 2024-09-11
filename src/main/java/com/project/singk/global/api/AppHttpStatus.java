@@ -20,6 +20,7 @@ public enum AppHttpStatus {
 	BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	FAILED_VALIDATION(400, HttpStatus.BAD_REQUEST, "유효성 검사에 실패하였습니다."),
 	FAILED_VERIFY_CERTIFICATION_CODE(400, HttpStatus.BAD_REQUEST, "인증 코드가 만료되었거나 일치하지 않습니다."),
+	FAILED_LOGIN(400, HttpStatus.BAD_REQUEST, "아이디와 비밀번호를 정확히 입력해 주세요."),
 	NOT_SUPPORT_EMAIL_FORMAT(400, HttpStatus.BAD_REQUEST, "지원하지 않는 이메일 형식입니다."),
     NOT_MATCH_ALBUM_REVIEW_VOTE_TYPE(400, HttpStatus.BAD_REQUEST, "공감/비공감과 저장되어 있는 공감/비공감이 일치하지 않습니다."),
 	INVALID_OAUTH_TYPE(400, HttpStatus.BAD_REQUEST, "유효하지 않은 OAuth 타입입니다."),
