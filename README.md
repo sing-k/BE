@@ -8,8 +8,8 @@
   - [1-3. 개발 환경](#1-3-개발-환경)
 - [2. 개발 결과물](#2-개발-결과물)
   - [2-1. 시스템 아키텍처](#2-1-시스템-아키텍처)
-  - [2-2. ERD](#2-2-ERD)
-  - [2-3. API 문서](#2-3-API-문서)
+  - [2-2. ERD](#2-2-erd)
+  - [2-3. API 문서](#2-3-api-문서)
 - [3. 수행 방법 및 프로젝트 관리](#3-수행-방법-및-프로젝트-관리)
   - [3-1. 개발 프로세스](#3-1-개발-프로세스)
  
@@ -20,7 +20,8 @@
 음악 감상에 관심이 있고 서로 의견을 나누고 싶은 사람들을 위한 음악 앨범애 대한 리뷰와 통계를 쉽게 확인하고 공유할 수 있는 웹 기반 커뮤티니입니다. 
 
 > 개발 기간 : 2024.04 - 2024.08 <br>
-> 개발 인원 : BE 3명, FE 3명
+> 개발 인원 : BE 3명, FE 3명 <br>
+> Site : https://dev-singk.vercel.app
 
 ### 1-2. 주요 기능
 <details>
@@ -62,7 +63,7 @@
 </div>  
 </details>
 
-### 1-3. 개발환경
+### 1-3. 개발 환경
 `Java`, `Spring Boot`, `Spring Security`, `JPA`, `MySQL`, `AWS`, `Docker`
 
 ## 2. 개발 결과물
@@ -71,9 +72,15 @@
 
 ![System Architecture](https://github.com/user-attachments/assets/549a46c7-3e95-48a0-be2d-ec3a665f2717)
 
-### 2-2. ERD
+### 2-2. ERD 
 
 ![SingK](https://github.com/user-attachments/assets/9b255bff-c22f-4015-85b4-b18623edbcfd)
+
+### 2-3. API 문서
+
+Site : https://documenter.getpostman.com/view/17481271/2sA3Bn7sd9#intro
+
+![image](https://github.com/user-attachments/assets/48819848-ce11-4830-a1c4-b06fa787af5c)
 
 ## 3. 수행 방법 및 프로젝트 관리
 
