@@ -1,14 +1,20 @@
 package com.project.singk.domain.album.service;
 
+import com.project.singk.domain.album.controller.port.AlbumService;
 import com.project.singk.domain.album.controller.response.AlbumDetailResponse;
 import com.project.singk.domain.album.controller.response.AlbumListResponse;
 import com.project.singk.domain.album.domain.*;
 import com.project.singk.domain.album.infrastructure.spotify.AlbumEntity;
+import com.project.singk.domain.album.service.port.AlbumRepository;
+import com.project.singk.domain.album.service.port.SpotifyRepository;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
 import com.project.singk.global.api.CursorPageResponse;
 import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,7 +23,15 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@SpringBootTest
+@Transactional
 class AlbumServiceTest {
+    @Autowired
+    private SpotifyRepository spotifyRepository;
+    @Autowired
+    private AlbumRepository albumRepository;
+    @Autowired
+    private AlbumService albumService;
 
     /**
      * getAlbum
@@ -25,11 +39,10 @@ class AlbumServiceTest {
     @Test
     public void 앨범을_상세조회할_때_DB에_해당_앨범이_존재하지_않으면_Spotify_API를_사용하여_데이터를_가져온다() {
         // given
-        TestContainer testContainer = TestContainer.builder().build();
-        AlbumEntity spotifyEntity = testContainer.spotifyRepository.getAlbumById("id");
+        AlbumEntity spotifyEntity = spotifyRepository.getAlbumById("id");
 
         // when
-        AlbumDetailResponse response = testContainer.albumService.getAlbum("id");
+        AlbumDetailResponse response = albumService.getAlbum("id");
 
         // then
         assertAll(
@@ -47,7 +60,6 @@ class AlbumServiceTest {
     @Test
     public void 앨범을_상세조회할_때_DB에_해당_앨범이_존재하는_경우_DB_데이터를_가져온다() {
         // given
-        TestContainer testContainer = TestContainer.builder().build();
 
         List<Artist> artists = List.of(
                 Artist.builder()
@@ -104,10 +116,10 @@ class AlbumServiceTest {
                 .statistics(AlbumReviewStatistics.empty())
                 .build();
 
-        testContainer.albumRepository.save(album);
+        albumRepository.save(album);
 
         // when
-        AlbumDetailResponse response = testContainer.albumService.getAlbum("0EhZEM4RRz0yioTgucDhJq");
+        AlbumDetailResponse response = albumService.getAlbum("0EhZEM4RRz0yioTgucDhJq");
 
         // then
         assertAll(
@@ -128,10 +140,9 @@ class AlbumServiceTest {
     @Test
     public void 앨범을_검색할_수_있다() {
         // given
-        TestContainer testContainer = TestContainer.builder().build();
 
         // when
-        OffsetPageResponse<AlbumListResponse> response = testContainer.albumService.searchAlbums("query", 0, 20);
+        OffsetPageResponse<AlbumListResponse> response = albumService.searchAlbums("query", 0, 20);
 
         // then
         assertAll(
@@ -169,14 +180,13 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = null;
         String cursorDate = null;
         int limit = 5;
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByDate(cursorId, cursorDate, limit);
 
         // then
         assertAll(
@@ -210,15 +220,14 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = 7L;
         String cursorDate = "2024-06-04 00:00:00";
         int limit = 5;
 
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByDate(cursorId, cursorDate, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByDate(cursorId, cursorDate, limit);
 
         // then
         assertAll(
@@ -262,15 +271,14 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = null;
         String cursorDate = null;
         int limit = 5;
 
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorDate, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByAverageScore(cursorId, cursorDate, limit);
 
         // then
         assertAll(
@@ -310,15 +318,14 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = 1L;
         String cursorScore = "3.6";
         int limit = 5;
 
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByAverageScore(cursorId, cursorScore, limit);
 
         // then
         assertAll(
@@ -356,15 +363,14 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = null;
         String cursorReviewCount = null;
         int limit = 5;
 
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
 
         // then
         assertAll(
@@ -398,15 +404,14 @@ class AlbumServiceTest {
                     .build()
             );
         }
-        TestContainer testContainer = TestContainer.builder().build();
-        albums = testContainer.albumRepository.saveAll(albums);
+        albums = albumRepository.saveAll(albums);
 
         Long cursorId = 1L;
         String cursorReviewCount = "9";
         int limit = 5;
 
         // when
-        CursorPageResponse<AlbumListResponse> response = testContainer.albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
+        CursorPageResponse<AlbumListResponse> response = albumService.getAlbumsByReviewCount(cursorId, cursorReviewCount, limit);
 
         // then
         assertAll(

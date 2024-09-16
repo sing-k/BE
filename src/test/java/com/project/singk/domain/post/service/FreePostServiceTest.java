@@ -2,11 +2,14 @@ package com.project.singk.domain.post.service;
 
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
+import com.project.singk.domain.member.service.port.MemberRepository;
+import com.project.singk.domain.post.controller.port.FreePostService;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
 import com.project.singk.domain.post.controller.response.FreePostResponse;
 import com.project.singk.domain.post.domain.FreePost;
 import com.project.singk.domain.post.domain.FreePostCreate;
+import com.project.singk.domain.post.service.port.FreePostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.OffsetPageResponse;
@@ -14,6 +17,9 @@ import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,15 +29,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@Transactional
 public class FreePostServiceTest {
-
-    private TestContainer tc;
-
-    @BeforeEach
-    public void init() {
-        tc = TestContainer.builder().build();
-    }
-
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private FreePostRepository freePostRepository;
+    @Autowired
+    private FreePostService freePostService;
     @Test
     public void 자유게시글을_생성할_수_있다() {
         // given
@@ -40,13 +46,13 @@ public class FreePostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(currentMember);
+        writer = memberRepository.save(currentMember);
 
         FreePostCreate freePostCreate = FreePostCreate.builder()
                 .title("제목")
@@ -54,7 +60,7 @@ public class FreePostServiceTest {
                 .build();
 
         // when
-        PkResponseDto result = tc.freePostService.createFreePost(
+        PkResponseDto result = freePostService.createFreePost(
                 writerId,
                 freePostCreate
         );
@@ -71,7 +77,7 @@ public class FreePostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -84,12 +90,12 @@ public class FreePostServiceTest {
                 .modifiedAt(LocalDateTime.of(2024, 8, 16, 13, 0, 0))
                 .build();
 
-        post = tc.freePostRepository.save(post);
+        post = freePostRepository.save(post);
 
         Long postId = 1L;
         Long viewerId = 1L;
         // when
-        FreePostResponse response = tc.freePostService.getFreePost(viewerId, postId);
+        FreePostResponse response = freePostService.getFreePost(viewerId, postId);
 
         // then
         assertAll(
@@ -112,7 +118,7 @@ public class FreePostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -126,7 +132,7 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -134,7 +140,7 @@ public class FreePostServiceTest {
         String filter = null;
         String keyword = null;
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getFreePosts(
                 viewerId,
                 offset,
                 limit,
@@ -160,7 +166,7 @@ public class FreePostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -174,7 +180,7 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -182,7 +188,7 @@ public class FreePostServiceTest {
         String filter = null;
         String keyword = null;
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getFreePosts(
                 viewerId,
                 offset,
                 limit,
@@ -208,7 +214,7 @@ public class FreePostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -222,7 +228,7 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -230,7 +236,7 @@ public class FreePostServiceTest {
         String filter = FilterSort.TITLE.toString();
         String keyword = "검색용";
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getFreePosts(
                 viewerId,
                 offset,
                 limit,
@@ -254,7 +260,7 @@ public class FreePostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -268,7 +274,7 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -276,7 +282,7 @@ public class FreePostServiceTest {
         String filter = FilterSort.CONTENT.toString();
         String keyword = "검색용";
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getFreePosts(
                 viewerId,
                 offset,
                 limit,
@@ -299,12 +305,12 @@ public class FreePostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writerA = tc.memberRepository.save(writerA);
+        writerA = memberRepository.save(writerA);
         Member writerB = Member.builder()
                 .id(2L)
                 .nickname("작성자B")
                 .build();
-        writerB = tc.memberRepository.save(writerB);
+        writerB = memberRepository.save(writerB);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -318,7 +324,7 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -326,7 +332,7 @@ public class FreePostServiceTest {
         String filter = FilterSort.WRITER.toString();
         String keyword = "A";
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getFreePosts(
                 viewerId,
                 offset,
                 limit,
@@ -349,12 +355,12 @@ public class FreePostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writerA = tc.memberRepository.save(writerA);
+        writerA = memberRepository.save(writerA);
         Member writerB = Member.builder()
                 .id(2L)
                 .nickname("작성자B")
                 .build();
-        writerB = tc.memberRepository.save(writerB);
+        writerB = memberRepository.save(writerB);
 
         List<FreePost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0, 0, 0);
@@ -368,12 +374,12 @@ public class FreePostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.freePostRepository.saveAll(posts);
+        posts = freePostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
         // when
-        OffsetPageResponse<FreePostResponse> response = tc.freePostService.getMyFreePosts(
+        OffsetPageResponse<FreePostResponse> response = freePostService.getMyFreePosts(
                 viewerId,
                 offset,
                 limit
@@ -394,7 +400,7 @@ public class FreePostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -402,7 +408,7 @@ public class FreePostServiceTest {
                 .content("내용")
                 .member(writer)
                 .build();
-        post = tc.freePostRepository.save(post);
+        post = freePostRepository.save(post);
 
         Long currentMemberId = 2L;
         Long postId = 1L;
@@ -412,7 +418,7 @@ public class FreePostServiceTest {
                 .build();
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.freePostService.updateFreePost(
+                () -> freePostService.updateFreePost(
                         currentMemberId,
                         postId,
                         freePostCreate
@@ -429,7 +435,7 @@ public class FreePostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -437,7 +443,7 @@ public class FreePostServiceTest {
                 .content("내용")
                 .member(writer)
                 .build();
-        post = tc.freePostRepository.save(post);
+        post = freePostRepository.save(post);
 
         Long currentMemberId = 1L;
         Long postId = 1L;
@@ -446,7 +452,7 @@ public class FreePostServiceTest {
                 .content("수정할 내용")
                 .build();
         // when
-        PkResponseDto response = tc.freePostService.updateFreePost(
+        PkResponseDto response = freePostService.updateFreePost(
                 currentMemberId,
                 postId,
                 freePostCreate
@@ -463,13 +469,13 @@ public class FreePostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        currentMember = tc.memberRepository.save(currentMember);
+        currentMember = memberRepository.save(currentMember);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -477,14 +483,14 @@ public class FreePostServiceTest {
                 .content("내용")
                 .member(writer)
                 .build();
-        post = tc.freePostRepository.save(post);
+        post = freePostRepository.save(post);
 
         Long currentMemberId = currentMember.getId();
         Long postId = post.getId();
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.freePostService.deleteFreePost(
+                () -> freePostService.deleteFreePost(
                         currentMemberId,
                         postId
                 )
@@ -500,13 +506,13 @@ public class FreePostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        currentMember = tc.memberRepository.save(currentMember);
+        currentMember = memberRepository.save(currentMember);
 
         FreePost post = FreePost.builder()
                 .id(1L)
@@ -514,11 +520,11 @@ public class FreePostServiceTest {
                 .content("내용")
                 .member(writer)
                 .build();
-        post = tc.freePostRepository.save(post);
+        post = freePostRepository.save(post);
 
         Long currentMemberId = writer.getId();
         Long postId = post.getId();
         // when
-        tc.freePostService.deleteFreePost(currentMemberId, postId);
+        freePostService.deleteFreePost(currentMemberId, postId);
     }
 }

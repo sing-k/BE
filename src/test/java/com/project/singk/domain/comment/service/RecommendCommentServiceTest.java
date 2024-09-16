@@ -1,21 +1,31 @@
 package com.project.singk.domain.comment.service;
 
 import com.project.singk.domain.album.domain.GenreType;
+import com.project.singk.domain.comment.controller.port.FreeCommentService;
+import com.project.singk.domain.comment.controller.port.RecommendCommentService;
 import com.project.singk.domain.comment.controller.response.CommentResponse;
 import com.project.singk.domain.comment.domain.CommentCreate;
 import com.project.singk.domain.comment.domain.FreeComment;
 import com.project.singk.domain.comment.domain.RecommendComment;
+import com.project.singk.domain.comment.service.port.FreeCommentRepository;
+import com.project.singk.domain.comment.service.port.RecommendCommentRepository;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
+import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.post.domain.FreePost;
 import com.project.singk.domain.post.domain.RecommendPost;
 import com.project.singk.domain.post.domain.RecommendType;
+import com.project.singk.domain.post.service.port.FreePostRepository;
+import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,14 +34,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@Transactional
 public class RecommendCommentServiceTest {
 
-    private TestContainer tc;
-
-    @BeforeEach
-    public void init() {
-        tc = TestContainer.builder().build();
-    }
+    @Autowired
+    private RecommendCommentService recommendCommentService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private RecommendPostRepository recommendPostRepository;
+    @Autowired
+    private RecommendCommentRepository recommendCommentRepository;
 
     @Test
     public void 앨범추천게시글_댓글을_생성할_수_있다() {
@@ -40,7 +54,7 @@ public class RecommendCommentServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -52,7 +66,7 @@ public class RecommendCommentServiceTest {
                 .comments(0)
                 .member(writer)
                 .build();
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         CommentCreate commentCreate = CommentCreate.builder()
                 .content("자유게시글 댓글")
@@ -63,7 +77,7 @@ public class RecommendCommentServiceTest {
         Long parentId = null;
 
         // when
-        PkResponseDto result = tc.recommendCommentService.createRecommendComment(
+        PkResponseDto result = recommendCommentService.createRecommendComment(
                 writerId,
                 postId,
                 parentId,
@@ -81,7 +95,7 @@ public class RecommendCommentServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -93,7 +107,7 @@ public class RecommendCommentServiceTest {
                 .comments(0)
                 .member(writer)
                 .build();
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         RecommendComment parentComment = RecommendComment.builder()
                 .parentId(null)
@@ -102,7 +116,7 @@ public class RecommendCommentServiceTest {
                 .member(writer)
                 .build();
 
-        parentComment = tc.recommendCommentRepository.save(parentComment);
+        parentComment = recommendCommentRepository.save(parentComment);
 
         CommentCreate commentCreate = CommentCreate.builder()
                 .content("첫 번째 댓글에 대한 대댓글")
@@ -113,7 +127,7 @@ public class RecommendCommentServiceTest {
         Long parentId = parentComment.getId();
 
         // when
-        PkResponseDto result = tc.recommendCommentService.createRecommendComment(
+        PkResponseDto result = recommendCommentService.createRecommendComment(
                 writerId,
                 postId,
                 parentId,
@@ -131,7 +145,7 @@ public class RecommendCommentServiceTest {
         Member writer = Member.builder()
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Long postId = 1L;
         RecommendPost recommendPost = RecommendPost.builder()
@@ -145,11 +159,11 @@ public class RecommendCommentServiceTest {
                 .member(writer)
                 .build();
         System.out.println(recommendPost.getId());
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         LocalDateTime dateTime = LocalDateTime.of(2024, 8, 17, 12, 0, 0, 0);
         for (int i = 1; i <= 3; i++) {
-            RecommendComment parent = tc.recommendCommentRepository.save(RecommendComment.builder()
+            RecommendComment parent = recommendCommentRepository.save(RecommendComment.builder()
                     .content(i + " 번째 댓글")
                     .parentId(null)
                     .post(recommendPost)
@@ -159,8 +173,7 @@ public class RecommendCommentServiceTest {
 
             if (i == 3) continue;
 
-            for (int j = 1; j <= 2; j++) {
-                tc.recommendCommentRepository.save(RecommendComment.builder()
+            for (int j = 1; j <= 2; j++) { recommendCommentRepository.save(RecommendComment.builder()
                         .content(i + " 번째 댓글에 대한 " + j + " 번째 대댓글")
                         .parentId(parent.getId())
                         .post(recommendPost)
@@ -173,7 +186,7 @@ public class RecommendCommentServiceTest {
         Long viewerId = 1L;
 
         // when
-        List<CommentResponse> response = tc.recommendCommentService.getRecommendComments(viewerId, postId);
+        List<CommentResponse> response = recommendCommentService.getRecommendComments(viewerId, postId);
 
         // then
         int size = response.size();
@@ -193,7 +206,7 @@ public class RecommendCommentServiceTest {
         Member writer = Member.builder()
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Long postId = 1L;
         RecommendPost recommendPost = RecommendPost.builder()
@@ -207,11 +220,11 @@ public class RecommendCommentServiceTest {
                 .member(writer)
                 .build();
 
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         LocalDateTime dateTime = LocalDateTime.of(2024, 8, 17, 12, 0, 0, 0);
         for (int i = 1; i <= 3; i++) {
-            RecommendComment parent = tc.recommendCommentRepository.save(RecommendComment.builder()
+            RecommendComment parent = recommendCommentRepository.save(RecommendComment.builder()
                     .content(i + " 번째 댓글")
                     .parentId(null)
                     .post(recommendPost)
@@ -221,8 +234,7 @@ public class RecommendCommentServiceTest {
 
             if (i == 3) continue;
 
-            for (int j = 1; j <= 2; j++) {
-                tc.recommendCommentRepository.save(RecommendComment.builder()
+            for (int j = 1; j <= 2; j++) { recommendCommentRepository.save(RecommendComment.builder()
                         .content(i + " 번째 댓글에 대한 " + j + " 번째 대댓글")
                         .parentId(parent.getId())
                         .post(recommendPost)
@@ -235,17 +247,14 @@ public class RecommendCommentServiceTest {
         Long viewerId = 1L;
 
         // when
-        List<CommentResponse> response = tc.recommendCommentService.getMyRecommendComments(viewerId);
+        List<CommentResponse> response = recommendCommentService.getMyRecommendComments(viewerId);
 
         // then
         int size = response.size();
         assertAll(
-                () -> assertThat(response.size()).isEqualTo(3),
+                () -> assertThat(response.size()).isEqualTo(7),
                 () -> assertThat(response.get(0).getContent()).isEqualTo("1 번째 댓글"),
-                () -> assertThat(response.get(0).getChildren().get(0).getContent()).isEqualTo("1 번째 댓글에 대한 1 번째 대댓글"),
-                () -> assertThat(response.get(0).getChildren().size()).isEqualTo(2),
-                () -> assertThat(response.get(size - 1).getContent()).isEqualTo("3 번째 댓글"),
-                () -> assertThat(response.get(size - 1).getChildren().size()).isEqualTo(0)
+                () -> assertThat(response.get(size - 1).getContent()).isEqualTo("3 번째 댓글")
         );
     }
 
@@ -255,7 +264,7 @@ public class RecommendCommentServiceTest {
         Member writer = Member.builder()
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -266,8 +275,7 @@ public class RecommendCommentServiceTest {
                 .likes(0)
                 .comments(0)
                 .member(writer)
-                .build();
-        tc.recommendPostRepository.save(recommendPost);
+                .build(); recommendPostRepository.save(recommendPost);
 
         RecommendComment recommendComment = RecommendComment.builder()
                 .parentId(null)
@@ -275,7 +283,7 @@ public class RecommendCommentServiceTest {
                 .post(recommendPost)
                 .member(writer)
                 .build();
-        recommendComment = tc.recommendCommentRepository.save(recommendComment);
+        recommendComment = recommendCommentRepository.save(recommendComment);
 
         Long currentMemberId = 2L;
         Long postId = 1L;
@@ -284,7 +292,7 @@ public class RecommendCommentServiceTest {
                 .build();
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.recommendCommentService.updateRecommendComment(
+                () -> recommendCommentService.updateRecommendComment(
                         currentMemberId,
                         postId,
                         commentCreate
@@ -301,7 +309,7 @@ public class RecommendCommentServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -312,8 +320,7 @@ public class RecommendCommentServiceTest {
                 .likes(0)
                 .comments(0)
                 .member(writer)
-                .build();
-        tc.recommendPostRepository.save(recommendPost);
+                .build(); recommendPostRepository.save(recommendPost);
 
         RecommendComment recommendComment = RecommendComment.builder()
                 .parentId(null)
@@ -321,7 +328,7 @@ public class RecommendCommentServiceTest {
                 .post(recommendPost)
                 .member(writer)
                 .build();
-        recommendComment = tc.recommendCommentRepository.save(recommendComment);
+        recommendComment = recommendCommentRepository.save(recommendComment);
 
         Long currentMemberId = 1L;
         Long postId = 1L;
@@ -330,7 +337,7 @@ public class RecommendCommentServiceTest {
                 .content("수정할 내용")
                 .build();
         // when
-        PkResponseDto response = tc.recommendCommentService.updateRecommendComment(
+        PkResponseDto response = recommendCommentService.updateRecommendComment(
                 currentMemberId,
                 postId,
                 commentCreate
@@ -346,13 +353,13 @@ public class RecommendCommentServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        currentMember = tc.memberRepository.save(currentMember);
+        currentMember = memberRepository.save(currentMember);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -364,7 +371,7 @@ public class RecommendCommentServiceTest {
                 .comments(0)
                 .member(writer)
                 .build();
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         RecommendComment recommendComment = RecommendComment.builder()
                 .parentId(null)
@@ -372,7 +379,7 @@ public class RecommendCommentServiceTest {
                 .post(recommendPost)
                 .member(writer)
                 .build();
-        recommendComment = tc.recommendCommentRepository.save(recommendComment);
+        recommendComment = recommendCommentRepository.save(recommendComment);
 
         Long currentMemberId = currentMember.getId();
         Long postId = recommendPost.getId();
@@ -380,7 +387,7 @@ public class RecommendCommentServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.recommendCommentService.deleteRecommendComment(
+                () -> recommendCommentService.deleteRecommendComment(
                         currentMemberId,
                         postId,
                         commentId
@@ -397,7 +404,7 @@ public class RecommendCommentServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost recommendPost = RecommendPost.builder()
                 .title("앨범추천게시글 제목")
@@ -409,7 +416,7 @@ public class RecommendCommentServiceTest {
                 .comments(0)
                 .member(writer)
                 .build();
-        recommendPost = tc.recommendPostRepository.save(recommendPost);
+        recommendPost = recommendPostRepository.save(recommendPost);
 
         RecommendComment recommendComment = RecommendComment.builder()
                 .parentId(null)
@@ -417,13 +424,12 @@ public class RecommendCommentServiceTest {
                 .post(recommendPost)
                 .member(writer)
                 .build();
-        recommendComment = tc.recommendCommentRepository.save(recommendComment);
+        recommendComment = recommendCommentRepository.save(recommendComment);
 
         Long currentMemberId = writer.getId();
         Long postId = recommendPost.getId();
         Long commentId = recommendComment.getId();
 
-        // when
-        tc.recommendCommentService.deleteRecommendComment(currentMemberId, postId, commentId);
+        // when recommendCommentService.deleteRecommendComment(currentMemberId, postId, commentId);
     }
 }

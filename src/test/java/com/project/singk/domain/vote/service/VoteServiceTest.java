@@ -1,48 +1,123 @@
 package com.project.singk.domain.vote.service;
 
-import com.project.singk.domain.album.domain.Album;
+import com.project.singk.domain.album.domain.*;
+import com.project.singk.domain.album.service.port.AlbumRepository;
+import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
+import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.domain.review.domain.AlbumReview;
+import com.project.singk.domain.review.domain.AlbumReviewStatistics;
+import com.project.singk.domain.review.service.port.AlbumReviewRepository;
+import com.project.singk.domain.vote.controller.port.VoteService;
 import com.project.singk.domain.vote.domain.AlbumReviewVote;
 import com.project.singk.domain.vote.domain.VoteCreate;
 import com.project.singk.domain.vote.domain.VoteType;
+import com.project.singk.domain.vote.service.port.AlbumReviewVoteRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
+@Transactional
 class VoteServiceTest {
 
-    private TestContainer testContainer;
-
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private AlbumReviewVoteRepository albumReviewVoteRepository;
+    @Autowired
+    private AlbumRepository albumRepository;
+    @Autowired
+    private AlbumReviewRepository albumReviewRepository;
+    @Autowired
+    private VoteService voteService;
     @BeforeEach
     public void init() {
-        testContainer = TestContainer.builder().build();
-        List<Member> members = testContainer.memberRepository.saveAll(List.of(
+        List<Member> members = memberRepository.saveAll(List.of(
                 Member.builder()
-                        .id(1L)
+                        .gender(Gender.MALE)
                         .statistics(MemberStatistics.empty())
                         .build(),
                 Member.builder()
-                        .id(2L)
+                        .gender(Gender.FEMALE)
                         .statistics(MemberStatistics.empty())
                         .build()
         ));
 
-        Album album = testContainer.albumRepository.save(Album.builder()
-                .id("0EhZEM4RRz0yioTgucDhJq")
-                .build());
+        List<Artist> artists = List.of(
+                Artist.builder()
+                        .name("NewJeans")
+                        .build()
+        );
 
-        testContainer.albumReviewRepository.save(AlbumReview.builder()
+        List<Track> tracks = List.of(
+                Track.builder()
+                        .id("1")
+                        .name("Bubble Gum")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
+                        .build(),
+                Track.builder()
+                        .id("2")
+                        .name("How Sweet")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
+                        .build(),
+                Track.builder()
+                        .id("3")
+                        .name("How Sweet (Instrumental)")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
+                        .build(),
+                Track.builder()
+                        .id("4")
+                        .name("Bubble Gum (Instrumental)")
+                        .artists(artists.stream()
+                                .map(TrackArtist::from)
+                                .toList())
+                        .build()
+        );
+
+        List<AlbumImage> images = List.of(
+                AlbumImage.builder()
+                        .imageUrl("https://i.scdn.co/image/ab67616d0000b273b657fbb27b17e7bd4691c2b2")
+                        .build()
+        );
+        Album album = Album.builder()
+                .id("0EhZEM4RRz0yioTgucDhJq")
+                .name("How Sweet")
+                .type(AlbumType.EP)
+                .releasedAt(LocalDateTime.of(2024, 5, 24, 0, 0, 0))
+                .tracks(tracks)
+                .artists(artists.stream()
+                        .map(AlbumArtist::from)
+                        .toList())
+                .images(images)
+                .statistics(AlbumReviewStatistics.empty())
+                .build();
+
+        album = albumRepository.save(album);
+
+        albumReviewRepository.save(AlbumReview.builder()
                 .id(1L)
+                .content("content")
+                .score(5)
                 .album(album)
                 .reviewer(members.get(0))
                 .build());
@@ -60,7 +135,7 @@ class VoteServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.voteService.createAlbumReviewVote(
+                () -> voteService.createAlbumReviewVote(
                         1L,
                         1L,
                         voteCreate));
@@ -76,7 +151,7 @@ class VoteServiceTest {
                 .type("PROS")
                 .build();
 
-        testContainer.albumReviewVoteRepository.save(AlbumReviewVote.builder()
+        albumReviewVoteRepository.save(AlbumReviewVote.builder()
                 .member(Member.builder()
                         .id(2L)
                         .build())
@@ -87,7 +162,7 @@ class VoteServiceTest {
         );
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.voteService.createAlbumReviewVote(2L, 1L, voteCreate));
+                () -> voteService.createAlbumReviewVote(2L, 1L, voteCreate));
 
         // then
         assertThat(result.getStatus()).isEqualTo(AppHttpStatus.DUPLICATE_ALBUM_REVIEW_VOTE);
@@ -101,7 +176,7 @@ class VoteServiceTest {
                 .build();
 
         // when
-        PkResponseDto result = testContainer.voteService.createAlbumReviewVote(
+        PkResponseDto result = voteService.createAlbumReviewVote(
                 2L,
                 1L,
                 voteCreate);
@@ -122,7 +197,7 @@ class VoteServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.voteService.deleteAlbumReviewVote(
+                () -> voteService.deleteAlbumReviewVote(
                         1L,
                         1L,
                         voteCreate));
@@ -140,7 +215,7 @@ class VoteServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.voteService.deleteAlbumReviewVote(
+                () -> voteService.deleteAlbumReviewVote(
                         2L,
                         1L,
                         voteCreate));
@@ -156,7 +231,7 @@ class VoteServiceTest {
                 .type("CONS")
                 .build();
 
-        testContainer.albumReviewVoteRepository.save(AlbumReviewVote.builder()
+        albumReviewVoteRepository.save(AlbumReviewVote.builder()
                 .type(VoteType.PROS)
                 .member(Member.builder().id(2L).build())
                 .albumReview(AlbumReview.builder().id(1L).build())
@@ -165,7 +240,7 @@ class VoteServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.voteService.deleteAlbumReviewVote(
+                () -> voteService.deleteAlbumReviewVote(
                         2L,
                         1L,
                         voteCreate));
@@ -181,7 +256,7 @@ class VoteServiceTest {
                 .type("PROS")
                 .build();
 
-        testContainer.albumReviewVoteRepository.save(AlbumReviewVote.builder()
+        albumReviewVoteRepository.save(AlbumReviewVote.builder()
                 .type(VoteType.PROS)
                 .member(Member.builder().id(2L).build())
                 .albumReview(AlbumReview.builder().id(1L).build())
@@ -189,7 +264,7 @@ class VoteServiceTest {
         );
 
         // when
-        testContainer.voteService.deleteAlbumReviewVote(
+        voteService.deleteAlbumReviewVote(
                 2L,
                 1L,
                 voteCreate

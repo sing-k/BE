@@ -2,12 +2,19 @@ package com.project.singk.domain.post.service;
 
 import com.project.singk.domain.album.domain.AlbumImage;
 import com.project.singk.domain.album.domain.GenreType;
+import com.project.singk.domain.album.service.port.AlbumImageRepository;
+import com.project.singk.domain.common.service.port.S3Repository;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
+import com.project.singk.domain.member.service.port.MemberRepository;
+import com.project.singk.domain.post.controller.port.FreePostService;
+import com.project.singk.domain.post.controller.port.RecommendPostService;
 import com.project.singk.domain.post.controller.request.FilterSort;
 import com.project.singk.domain.post.controller.request.PostSort;
 import com.project.singk.domain.post.controller.response.RecommendPostResponse;
 import com.project.singk.domain.post.domain.*;
+import com.project.singk.domain.post.service.port.FreePostRepository;
+import com.project.singk.domain.post.service.port.RecommendPostRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.OffsetPageResponse;
@@ -15,8 +22,11 @@ import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,15 +36,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@Transactional
 public class RecommendPostServiceTest {
-
-    private TestContainer tc;
-
-    @BeforeEach
-    public void init() {
-        tc = TestContainer.builder().build();
-    }
-
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private RecommendPostRepository recommendPostRepository;
+    @Autowired
+    private AlbumImageRepository albumImageRepository;
+    @Autowired
+    private S3Repository s3Repository;
+    @Autowired
+    private RecommendPostService recommendPostService;
     @Test
     public void 이미지타입의_추천게시글을_생성할_수_있다() {
         // given
@@ -43,13 +57,13 @@ public class RecommendPostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(currentMember);
+        writer = memberRepository.save(currentMember);
 
         RecommendPostCreate recommendPostCreate = RecommendPostCreate.builder()
                 .title("제목")
@@ -67,7 +81,7 @@ public class RecommendPostServiceTest {
         );
 
         // when
-        PkResponseDto result = tc.recommendPostService.createRecommendPost(
+        PkResponseDto result = recommendPostService.createRecommendPost(
                 currentMemberId,
                 recommendPostCreate,
                 image
@@ -85,13 +99,13 @@ public class RecommendPostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(currentMember);
+        writer = memberRepository.save(currentMember);
 
         AlbumImage albumImage = AlbumImage.builder()
                 .id(1L)
@@ -99,7 +113,7 @@ public class RecommendPostServiceTest {
                 .height(360)
                 .imageUrl("albumImageUrl")
                 .build();
-        tc.albumImageRepository.save(albumImage);
+        albumImageRepository.save(albumImage);
 
         RecommendPostCreate recommendPostCreate = RecommendPostCreate.builder()
                 .title("제목")
@@ -112,7 +126,7 @@ public class RecommendPostServiceTest {
         MockMultipartFile image = null;
 
         // when
-        PkResponseDto result = tc.recommendPostService.createRecommendPost(
+        PkResponseDto result = recommendPostService.createRecommendPost(
                 currentMemberId,
                 recommendPostCreate,
                 image
@@ -130,13 +144,13 @@ public class RecommendPostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(currentMember);
+        writer = memberRepository.save(currentMember);
 
         RecommendPostCreate recommendPostCreate = RecommendPostCreate.builder()
                 .title("제목")
@@ -149,7 +163,7 @@ public class RecommendPostServiceTest {
         MockMultipartFile image = null;
 
         // when
-        PkResponseDto result = tc.recommendPostService.createRecommendPost(
+        PkResponseDto result = recommendPostService.createRecommendPost(
                 currentMemberId,
                 recommendPostCreate,
                 image
@@ -167,7 +181,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         MockMultipartFile image = new MockMultipartFile(
                 "image",
@@ -175,7 +189,7 @@ public class RecommendPostServiceTest {
                 MediaType.IMAGE_JPEG_VALUE,
                 "test".getBytes()
         );
-        tc.s3Repository.putObject("image", image);
+        s3Repository.putObject("image", image);
 
         RecommendPost post = RecommendPost.builder()
                 .title("제목")
@@ -190,12 +204,12 @@ public class RecommendPostServiceTest {
                 .modifiedAt(LocalDateTime.of(2024, 8, 16, 13, 0, 0))
                 .build();
 
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long postId = 1L;
         Long currentMemberId = 1L;
         // when
-        RecommendPostResponse response = tc.recommendPostService.getRecommendPost(currentMemberId, postId);
+        RecommendPostResponse response = recommendPostService.getRecommendPost(currentMemberId, postId);
 
         // then
         assertAll(
@@ -221,7 +235,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         AlbumImage albumImage = AlbumImage.builder()
                 .id(1L)
@@ -229,7 +243,7 @@ public class RecommendPostServiceTest {
                 .height(360)
                 .imageUrl("imageUrl")
                 .build();
-        tc.albumImageRepository.save(albumImage);
+        albumImageRepository.save(albumImage);
 
         RecommendPost post = RecommendPost.builder()
                 .title("제목")
@@ -244,12 +258,12 @@ public class RecommendPostServiceTest {
                 .modifiedAt(LocalDateTime.of(2024, 8, 16, 13, 0, 0))
                 .build();
 
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long postId = 1L;
         Long currentMemberId = 1L;
         // when
-        RecommendPostResponse response = tc.recommendPostService.getRecommendPost(currentMemberId, postId);
+        RecommendPostResponse response = recommendPostService.getRecommendPost(currentMemberId, postId);
 
         // then
         assertAll(
@@ -275,7 +289,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost post = RecommendPost.builder()
                 .title("제목")
@@ -290,12 +304,12 @@ public class RecommendPostServiceTest {
                 .modifiedAt(LocalDateTime.of(2024, 8, 16, 13, 0, 0))
                 .build();
 
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long postId = 1L;
         Long currentMemberId = 1L;
         // when
-        RecommendPostResponse response = tc.recommendPostService.getRecommendPost(currentMemberId, postId);
+        RecommendPostResponse response = recommendPostService.getRecommendPost(currentMemberId, postId);
 
         // then
         assertAll(
@@ -320,7 +334,7 @@ public class RecommendPostServiceTest {
         Member writer = Member.builder()
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         MockMultipartFile image = new MockMultipartFile(
                 "image",
@@ -328,7 +342,7 @@ public class RecommendPostServiceTest {
                 MediaType.IMAGE_JPEG_VALUE,
                 "test".getBytes()
         );
-        tc.s3Repository.putObject("image", image);
+        s3Repository.putObject("image", image);
 
         AlbumImage albumImage = AlbumImage.builder()
                 .id(1L)
@@ -336,7 +350,7 @@ public class RecommendPostServiceTest {
                 .height(360)
                 .imageUrl("albumImageUrl")
                 .build();
-        tc.albumImageRepository.save(albumImage);
+        albumImageRepository.save(albumImage);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -377,7 +391,7 @@ public class RecommendPostServiceTest {
                 .member(writer)
                 .createdAt(createdAt.plusDays(2))
                 .build());
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
 
         Long currentMemberId = 1L;
         int offset = 0;
@@ -386,7 +400,7 @@ public class RecommendPostServiceTest {
         String filter = null;
         String keyword = null;
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getRecommendPosts(
                 currentMemberId,
                 offset,
                 limit,
@@ -414,7 +428,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         MockMultipartFile image = new MockMultipartFile(
                 "image",
@@ -422,7 +436,7 @@ public class RecommendPostServiceTest {
                 MediaType.IMAGE_JPEG_VALUE,
                 "test".getBytes()
         );
-        tc.s3Repository.putObject("image", image);
+        s3Repository.putObject("image", image);
 
         AlbumImage albumImage = AlbumImage.builder()
                 .id(1L)
@@ -430,7 +444,7 @@ public class RecommendPostServiceTest {
                 .height(360)
                 .imageUrl("albumImageUrl")
                 .build();
-        tc.albumImageRepository.save(albumImage);
+        albumImageRepository.save(albumImage);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -472,7 +486,7 @@ public class RecommendPostServiceTest {
                 .createdAt(createdAt.plusDays(2))
                 .build());
 
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
 
         Long currentMemberId = 1L;
         int offset = 0;
@@ -481,7 +495,7 @@ public class RecommendPostServiceTest {
         String filter = null;
         String keyword = null;
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getRecommendPosts(
                 currentMemberId,
                 offset,
                 limit,
@@ -509,7 +523,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -526,7 +540,7 @@ public class RecommendPostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -534,7 +548,7 @@ public class RecommendPostServiceTest {
         String filter = FilterSort.TITLE.toString();
         String keyword = "검색용";
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getRecommendPosts(
                 viewerId,
                 offset,
                 limit,
@@ -558,7 +572,7 @@ public class RecommendPostServiceTest {
                 .id(writerId)
                 .nickname("작성자")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -575,7 +589,7 @@ public class RecommendPostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -583,7 +597,7 @@ public class RecommendPostServiceTest {
         String filter = FilterSort.CONTENT.toString();
         String keyword = "검색용";
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getRecommendPosts(
                 viewerId,
                 offset,
                 limit,
@@ -606,12 +620,12 @@ public class RecommendPostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writerA = tc.memberRepository.save(writerA);
+        writerA = memberRepository.save(writerA);
         Member writerB = Member.builder()
                 .id(2L)
                 .nickname("작성자B")
                 .build();
-        writerB = tc.memberRepository.save(writerB);
+        writerB = memberRepository.save(writerB);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0,0,0);
@@ -628,7 +642,7 @@ public class RecommendPostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
@@ -636,7 +650,7 @@ public class RecommendPostServiceTest {
         String filter = FilterSort.WRITER.toString();
         String keyword = "A";
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getRecommendPosts(
                 viewerId,
                 offset,
                 limit,
@@ -659,12 +673,12 @@ public class RecommendPostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writerA = tc.memberRepository.save(writerA);
+        writerA = memberRepository.save(writerA);
         Member writerB = Member.builder()
                 .id(2L)
                 .nickname("작성자B")
                 .build();
-        writerB = tc.memberRepository.save(writerB);
+        writerB = memberRepository.save(writerB);
 
         List<RecommendPost> posts = new ArrayList<>();
         LocalDateTime createdAt = LocalDateTime.of(2024, 8, 16, 12, 0, 0, 0);
@@ -681,12 +695,12 @@ public class RecommendPostServiceTest {
                     .build());
             createdAt = createdAt.minusDays(1);
         }
-        posts = tc.recommendPostRepository.saveAll(posts);
+        posts = recommendPostRepository.saveAll(posts);
         Long viewerId = 1L;
         int offset = 0;
         int limit = 5;
         // when
-        OffsetPageResponse<RecommendPostResponse> response = tc.recommendPostService.getMyRecommendPosts(
+        OffsetPageResponse<RecommendPostResponse> response = recommendPostService.getMyRecommendPosts(
                 viewerId,
                 offset,
                 limit
@@ -707,7 +721,7 @@ public class RecommendPostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -718,7 +732,7 @@ public class RecommendPostServiceTest {
                 .genre(GenreType.POP)
                 .member(writer)
                 .build();
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long currentMemberId = 2L;
         Long postId = 1L;
@@ -728,7 +742,7 @@ public class RecommendPostServiceTest {
                 .build();
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.recommendPostService.updateRecommendPost(
+                () -> recommendPostService.updateRecommendPost(
                         currentMemberId,
                         postId,
                         recommendPostUpdate
@@ -745,7 +759,7 @@ public class RecommendPostServiceTest {
                 .id(1L)
                 .nickname("작성자A")
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -756,7 +770,7 @@ public class RecommendPostServiceTest {
                 .genre(GenreType.POP)
                 .member(writer)
                 .build();
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long currentMemberId = 1L;
         Long postId = 1L;
@@ -765,7 +779,7 @@ public class RecommendPostServiceTest {
                 .content("수정할 내용")
                 .build();
         // when
-        PkResponseDto response = tc.recommendPostService.updateRecommendPost(
+        PkResponseDto response = recommendPostService.updateRecommendPost(
                 currentMemberId,
                 postId,
                 recommendPostUpdate
@@ -782,13 +796,13 @@ public class RecommendPostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        currentMember = tc.memberRepository.save(currentMember);
+        currentMember = memberRepository.save(currentMember);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -799,14 +813,14 @@ public class RecommendPostServiceTest {
                 .genre(GenreType.POP)
                 .member(writer)
                 .build();
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long currentMemberId = currentMember.getId();
         Long postId = post.getId();
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> tc.recommendPostService.deleteRecommendPost(
+                () -> recommendPostService.deleteRecommendPost(
                         currentMemberId,
                         postId
                 )
@@ -822,13 +836,13 @@ public class RecommendPostServiceTest {
                 .nickname("작성자A")
                 .statistics(MemberStatistics.empty())
                 .build();
-        writer = tc.memberRepository.save(writer);
+        writer = memberRepository.save(writer);
 
         Member currentMember = Member.builder()
                 .nickname("현재 로그인한 회원")
                 .statistics(MemberStatistics.empty())
                 .build();
-        currentMember = tc.memberRepository.save(currentMember);
+        currentMember = memberRepository.save(currentMember);
 
         RecommendPost post = RecommendPost.builder()
                 .id(1L)
@@ -839,12 +853,12 @@ public class RecommendPostServiceTest {
                 .genre(GenreType.POP)
                 .member(writer)
                 .build();
-        post = tc.recommendPostRepository.save(post);
+        post = recommendPostRepository.save(post);
 
         Long currentMemberId = writer.getId();
         Long postId = post.getId();
 
         // when
-        tc.recommendPostService.deleteRecommendPost(currentMemberId, postId);
+        recommendPostService.deleteRecommendPost(currentMemberId, postId);
     }
 }

@@ -44,7 +44,6 @@ public class FreeCommentServiceImpl implements FreeCommentService {
     private final S3Repository s3Repository;
     private final FreeLikeService freeLikeService;
     private final ActivityHistoryRepository activityHistoryRepository;
-    private final AlarmService alarmService;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,14 +105,6 @@ public class FreeCommentServiceImpl implements FreeCommentService {
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);
-
-        // 알람 보내기
-        alarmService.send(AlarmCreate.from(
-                AlarmType.WRITE_COMMENT_FREE_POST,
-                memberId,
-                freePost.getMember().getId(),
-                postId
-        ));
 
         return PkResponseDto.of(freeComment.getId());
     }

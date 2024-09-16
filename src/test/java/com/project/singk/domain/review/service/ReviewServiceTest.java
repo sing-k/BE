@@ -2,16 +2,20 @@ package com.project.singk.domain.review.service;
 
 import com.project.singk.domain.album.domain.Album;
 import com.project.singk.domain.album.domain.AlbumType;
+import com.project.singk.domain.album.service.port.AlbumRepository;
 import com.project.singk.domain.member.domain.Gender;
 import com.project.singk.domain.member.domain.Member;
 import com.project.singk.domain.member.domain.MemberStatistics;
 import com.project.singk.domain.member.domain.Role;
+import com.project.singk.domain.member.service.port.MemberRepository;
+import com.project.singk.domain.review.controller.port.ReviewService;
 import com.project.singk.domain.review.controller.response.AlbumReviewResponse;
 import com.project.singk.domain.review.controller.response.AlbumReviewStatisticsResponse;
 import com.project.singk.domain.review.controller.response.MyAlbumReviewResponse;
 import com.project.singk.domain.review.domain.AlbumReview;
 import com.project.singk.domain.review.domain.AlbumReviewCreate;
 import com.project.singk.domain.review.domain.AlbumReviewStatistics;
+import com.project.singk.domain.review.service.port.AlbumReviewRepository;
 import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.api.OffsetPageResponse;
@@ -19,6 +23,9 @@ import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,14 +36,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@Transactional
 class ReviewServiceTest {
 
-    private TestContainer testContainer;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private AlbumReviewRepository albumReviewRepository;
+    @Autowired
+    private AlbumRepository albumRepository;
+    @Autowired
+    private ReviewService reviewService;
 
     @BeforeEach
     public void init() {
-        testContainer = TestContainer.builder().build();
-        testContainer.memberRepository.save(Member.builder()
+        memberRepository.save(Member.builder()
                 .id(1L)
                 .email("singk@gmail.com")
                 .password("encodedPassword")
@@ -47,7 +62,7 @@ class ReviewServiceTest {
                 .role(Role.ROLE_USER)
                 .statistics(MemberStatistics.empty())
                 .build());
-        testContainer.albumRepository.save(Album.builder()
+        albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .name("How Sweet")
                 .type(AlbumType.EP)
@@ -63,7 +78,7 @@ class ReviewServiceTest {
     @Test
     public void 동일한_Album에_작성한_AlbumReview가_있다면_생성할_수_없다() {
         // given
-        testContainer.albumReviewRepository.save(AlbumReview.builder()
+        albumReviewRepository.save(AlbumReview.builder()
                 .album(Album.builder().id("0EhZEM4RRz0yioTgucDhJq").build())
                 .reviewer(Member.builder().id(1L).build())
                 .build()
@@ -76,7 +91,7 @@ class ReviewServiceTest {
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.reviewService.createAlbumReview(
+                () -> reviewService.createAlbumReview(
                         1L,
                         "0EhZEM4RRz0yioTgucDhJq",
                         albumReviewCreate));
@@ -94,7 +109,7 @@ class ReviewServiceTest {
                 .build();
 
         // when
-        PkResponseDto result = testContainer.reviewService.createAlbumReview(
+        PkResponseDto result = reviewService.createAlbumReview(
                 1L,
                 "0EhZEM4RRz0yioTgucDhJq",
                 albumReviewCreate
@@ -110,19 +125,19 @@ class ReviewServiceTest {
     @Test
     public void 본인의_AlbumReview가_아니라면_삭제할_수_없다() {
         // given
-        testContainer.albumReviewRepository.save(AlbumReview.builder()
+        albumReviewRepository.save(AlbumReview.builder()
                 .id(1L)
                 .reviewer(Member.builder().id(1L).build())
                 .album(Album.builder().id("0EhZEM4RRz0yioTgucDhJq").build())
                 .build());
 
-        testContainer.memberRepository.save(Member.builder()
+        memberRepository.save(Member.builder()
                 .id(2L)
                 .build());
 
         // when
         final ApiException result = assertThrows(ApiException.class,
-                () -> testContainer.reviewService.deleteAlbumReview(2L, "0EhZEM4RRz0yioTgucDhJq", 1L));
+                () -> reviewService.deleteAlbumReview(2L, "0EhZEM4RRz0yioTgucDhJq", 1L));
 
         // then
         assertThat(result.getStatus()).isEqualTo(AppHttpStatus.FORBIDDEN_ALBUM_REVIEW);
@@ -131,13 +146,13 @@ class ReviewServiceTest {
     @Test
     public void 본인의_AlbumReview를_삭제할_수_있다() {
         // given
-        testContainer.albumReviewRepository.save(AlbumReview.builder()
+        albumReviewRepository.save(AlbumReview.builder()
                 .id(1L)
                 .reviewer(Member.builder().id(1L).build())
                 .album(Album.builder().id("0EhZEM4RRz0yioTgucDhJq").build())
                 .build());
         // when
-        testContainer.reviewService.deleteAlbumReview(1L, "0EhZEM4RRz0yioTgucDhJq", 1L);
+        reviewService.deleteAlbumReview(1L, "0EhZEM4RRz0yioTgucDhJq", 1L);
     }
 
     /**
@@ -147,7 +162,6 @@ class ReviewServiceTest {
     @Test
     public void AlbumId로_AlbumReview_목록을_최신순으로_조회할_수_있다() {
         // given
-        TestContainer tc = TestContainer.builder().build();
         List<Member> members = new ArrayList<>();
         for (long i = 1L; i <= 10L; i++) {
             members.add(Member.builder()
@@ -156,8 +170,8 @@ class ReviewServiceTest {
                     .statistics(MemberStatistics.empty())
                     .build());
         }
-        tc.memberRepository.saveAll(members);
-        Album album = tc.albumRepository.save(Album.builder()
+        memberRepository.saveAll(members);
+        Album album = albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .build());
 
@@ -174,10 +188,10 @@ class ReviewServiceTest {
                     .album(album)
                     .build());
         }
-        albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
+        albumReviews = albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
+        OffsetPageResponse<AlbumReviewResponse> result = reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq", 0, 5,"NEW");
 
         // then
         assertAll(
@@ -191,7 +205,6 @@ class ReviewServiceTest {
     @Test
     public void AlbumId로_AlbumReview_목록을_공감순으로_조회할_수_있다() {
         // given
-        TestContainer tc = TestContainer.builder().build();
         List<Member> members = new ArrayList<>();
         for (long i = 1L; i <= 10L; i++) {
             members.add(Member.builder()
@@ -201,8 +214,8 @@ class ReviewServiceTest {
                     .statistics(MemberStatistics.empty())
                     .build());
         }
-        tc.memberRepository.saveAll(members);
-        Album album = tc.albumRepository.save(Album.builder()
+        memberRepository.saveAll(members);
+        Album album = albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .build());
 
@@ -219,10 +232,10 @@ class ReviewServiceTest {
                     .album(album)
                     .build());
         }
-        albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
+        albumReviews = albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<AlbumReviewResponse> result = tc.reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
+        OffsetPageResponse<AlbumReviewResponse> result = reviewService.getAlbumReviews(1L,"0EhZEM4RRz0yioTgucDhJq",0, 5, "LIKES");
 
         // then
         assertAll(
@@ -239,7 +252,6 @@ class ReviewServiceTest {
     @Test
     public void AlbumReview_대한_통계를_조회할_수_있다() {
         // given
-        TestContainer tc = TestContainer.builder().build();
         List<Member> members = new ArrayList<>();
         for (long i = 1L; i <= 5L; i++) {
             members.add(Member.builder()
@@ -248,15 +260,15 @@ class ReviewServiceTest {
                     .gender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE)
                     .build());
         }
-        tc.memberRepository.saveAll(members);
-        Album album = tc.albumRepository.save(Album.builder()
+        memberRepository.saveAll(members);
+        Album album = albumRepository.save(Album.builder()
                 .id("0EhZEM4RRz0yioTgucDhJq")
                 .statistics(AlbumReviewStatistics.empty())
                 .build());
-        album = tc.albumRepository.save(album);
+        album = albumRepository.save(album);
 
         // when
-        AlbumReviewStatisticsResponse result = tc.reviewService.getAlbumReviewStatistics("0EhZEM4RRz0yioTgucDhJq");
+        AlbumReviewStatisticsResponse result = reviewService.getAlbumReviewStatistics("0EhZEM4RRz0yioTgucDhJq");
 
         // then
         assertAll(
@@ -275,14 +287,13 @@ class ReviewServiceTest {
     @Test
     public void MemberId로_AlbumReview_목록을_최신순으로_조회할_수_있다() {
         // given
-        TestContainer tc = TestContainer.builder().build();
-        Member member1 = tc.memberRepository.save(Member.builder()
+        Member member1 = memberRepository.save(Member.builder()
                 .id(1L)
                 .nickname("SingK1")
                 .gender(Gender.MALE)
                 .statistics(MemberStatistics.empty())
                 .build());
-        Member member2 = tc.memberRepository.save(Member.builder()
+        Member member2 = memberRepository.save(Member.builder()
                 .id(2L)
                 .nickname("SingK2")
                 .gender(Gender.FEMALE)
@@ -298,7 +309,7 @@ class ReviewServiceTest {
                     .images(new ArrayList<>())
                     .build());
         }
-        tc.albumRepository.saveAll(albums);
+        albumRepository.saveAll(albums);
 
 
         List<AlbumReview> albumReviews = new ArrayList<>();
@@ -314,10 +325,10 @@ class ReviewServiceTest {
                     .album(albums.get(i - 1))
                     .build());
         }
-        albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
+        albumReviews = albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"NEW");
+        OffsetPageResponse<MyAlbumReviewResponse> result = reviewService.getMyAlbumReview(1L, 0, 5,"NEW");
 
         // then
         assertAll(
@@ -331,14 +342,13 @@ class ReviewServiceTest {
     @Test
     public void MemberId로_AlbumReview_목록을_공감순으로_조회할_수_있다() {
         // given
-        TestContainer tc = TestContainer.builder().build();
-        Member member1 = tc.memberRepository.save(Member.builder()
+        Member member1 = memberRepository.save(Member.builder()
                 .id(1L)
                 .nickname("SingK1")
                 .gender(Gender.MALE)
                 .statistics(MemberStatistics.empty())
                 .build());
-        Member member2 = tc.memberRepository.save(Member.builder()
+        Member member2 = memberRepository.save(Member.builder()
                 .id(2L)
                 .nickname("SingK2")
                 .gender(Gender.FEMALE)
@@ -354,7 +364,7 @@ class ReviewServiceTest {
                     .images(new ArrayList<>())
                     .build());
         }
-        tc.albumRepository.saveAll(albums);
+        albumRepository.saveAll(albums);
 
 
         List<AlbumReview> albumReviews = new ArrayList<>();
@@ -370,10 +380,10 @@ class ReviewServiceTest {
                     .album(albums.get(i - 1))
                     .build());
         }
-        albumReviews = tc.albumReviewRepository.saveAll(albumReviews);
+        albumReviews = albumReviewRepository.saveAll(albumReviews);
 
         // when
-        OffsetPageResponse<MyAlbumReviewResponse> result = tc.reviewService.getMyAlbumReview(1L, 0, 5,"LIKES");
+        OffsetPageResponse<MyAlbumReviewResponse> result = reviewService.getMyAlbumReview(1L, 0, 5,"LIKES");
 
         // then
         assertAll(

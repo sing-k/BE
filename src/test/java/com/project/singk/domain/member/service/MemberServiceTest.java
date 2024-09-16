@@ -5,9 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
+import com.project.singk.domain.common.service.port.RedisRepository;
+import com.project.singk.domain.member.controller.port.AuthService;
+import com.project.singk.domain.member.controller.port.MemberService;
 import com.project.singk.domain.member.domain.*;
+import com.project.singk.domain.member.service.port.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -16,15 +22,19 @@ import com.project.singk.global.api.ApiException;
 import com.project.singk.global.api.AppHttpStatus;
 import com.project.singk.global.domain.PkResponseDto;
 import com.project.singk.mock.TestContainer;
+import org.springframework.transaction.annotation.Transactional;
 
+@SpringBootTest
+@Transactional
 class MemberServiceTest {
-
-	private TestContainer testContainer;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private MemberService memberService;
 
 	@BeforeEach
 	public void init() {
-		testContainer = TestContainer.builder().build();
-		testContainer.memberRepository.save(Member.builder()
+		memberRepository.save(Member.builder()
 			.id(1L)
 			.email("singk@gmail.com")
 			.password("encodedPassword")
@@ -42,7 +52,7 @@ class MemberServiceTest {
 		// given
 		Long loginMemberId = 1L;
 		// when
-		MyProfileResponse response = testContainer.memberService.getMyProfile(loginMemberId);
+		MyProfileResponse response = memberService.getMyProfile(loginMemberId);
 		// then
 		assertAll(
 			() -> assertThat(response.getId()).isEqualTo(1L),
@@ -67,7 +77,7 @@ class MemberServiceTest {
 			.build();
 
 		// when
-		PkResponseDto result = testContainer.memberService.update(
+		PkResponseDto result = memberService.update(
 			loginMemberId,
 			memberUpdate
 		);
@@ -87,7 +97,7 @@ class MemberServiceTest {
 
 		// when
 		final ApiException result = assertThrows(ApiException.class,
-			() -> testContainer.memberService.update(loginMemberId, memberUpdate));
+			() -> memberService.update(loginMemberId, memberUpdate));
 
 		// then
 		assertThat(result.getStatus()).isEqualTo(AppHttpStatus.DUPLICATE_NICKNAME);
@@ -106,7 +116,7 @@ class MemberServiceTest {
 		);
 
 		// when
-		PkResponseDto result = testContainer.memberService.uploadProfileImage(
+		PkResponseDto result = memberService.uploadProfileImage(
 			loginMemberId,
 			file
 		);
@@ -122,7 +132,7 @@ class MemberServiceTest {
 
 		// when
 		final ApiException result = assertThrows(ApiException.class,
-			() -> testContainer.memberService.uploadProfileImage(
+			() -> memberService.uploadProfileImage(
 				loginMemberId,
 				null
 		));
@@ -138,7 +148,7 @@ class MemberServiceTest {
 
 		// when
 		final ApiException result = assertThrows(ApiException.class,
-			() -> testContainer.memberService.deleteProfileImage(
+			() -> memberService.deleteProfileImage(
 				loginMemberId
 			));
 

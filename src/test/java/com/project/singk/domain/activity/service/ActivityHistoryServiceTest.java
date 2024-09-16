@@ -1,14 +1,21 @@
 package com.project.singk.domain.activity.service;
 
+import com.project.singk.domain.activity.controller.port.ActivityHistoryService;
 import com.project.singk.domain.activity.controller.response.ActivityGraphResponse;
 import com.project.singk.domain.activity.controller.response.ActivityHistoryResponse;
 import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.domain.ActivityType;
+import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
 import com.project.singk.domain.member.domain.Member;
+import com.project.singk.domain.member.domain.MemberStatistics;
+import com.project.singk.domain.member.service.port.MemberRepository;
 import com.project.singk.global.api.OffsetPageResponse;
 import com.project.singk.mock.TestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,7 +27,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@SpringBootTest
+@Transactional
 public class ActivityHistoryServiceTest {
+
+    @Autowired
+    private ActivityHistoryRepository activityHistoryRepository;
+    @Autowired
+    private ActivityHistoryService activityHistoryService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     private TestContainer tc;
     @BeforeEach
@@ -31,10 +47,10 @@ public class ActivityHistoryServiceTest {
         LocalDateTime date = LocalDateTime.of(2024, 8, 10, 12, 0, 0);
 
         Member member = Member.builder()
-                .id(1L)
+                .statistics(MemberStatistics.empty())
                 .build();
 
-        tc.memberRepository.save(member);
+        member = memberRepository.save(member);
 
         // 2024년 8월 10일을 포함한 100일 전 까지의
         for (int i = 1; i <= 100; i++) {
@@ -48,7 +64,7 @@ public class ActivityHistoryServiceTest {
             date = date.minusDays(1);
         }
 
-        histories = tc.activityHistoryRepository.saveAll(histories);
+        histories = activityHistoryRepository.saveAll(histories);
     }
 
     /**
@@ -64,7 +80,7 @@ public class ActivityHistoryServiceTest {
         String dateType = "DAILY";
 
         // when
-        List<ActivityGraphResponse> response = tc.activityHistoryService.getActivityGraph(
+        List<ActivityGraphResponse> response = activityHistoryService.getActivityGraph(
                 memberId,
                 startDate,
                 endDate,
@@ -91,7 +107,7 @@ public class ActivityHistoryServiceTest {
         String dateType = "WEEKLY";
 
         // when
-        List<ActivityGraphResponse> response = tc.activityHistoryService.getActivityGraph(
+        List<ActivityGraphResponse> response = activityHistoryService.getActivityGraph(
                 memberId,
                 startDate,
                 endDate,
@@ -121,7 +137,7 @@ public class ActivityHistoryServiceTest {
         String dateType = "MONTHLY";
 
         // when
-        List<ActivityGraphResponse> response = tc.activityHistoryService.getActivityGraph(
+        List<ActivityGraphResponse> response = activityHistoryService.getActivityGraph(
                 memberId,
                 startDate,
                 endDate,
@@ -156,7 +172,7 @@ public class ActivityHistoryServiceTest {
         int offset = 0;
         int limit = 5;
         // when
-        OffsetPageResponse<ActivityHistoryResponse> response = tc.activityHistoryService.getActivityHistories(
+        OffsetPageResponse<ActivityHistoryResponse> response = activityHistoryService.getActivityHistories(
                 memberId,
                 offset,
                 limit
