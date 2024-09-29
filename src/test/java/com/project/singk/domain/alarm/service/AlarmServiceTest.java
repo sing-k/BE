@@ -1,7 +1,6 @@
 package com.project.singk.domain.alarm.service;
 
 import com.project.singk.domain.alarm.infrastructure.EmitterRepositoryImpl;
-import com.project.singk.mock.FakeAlarmRepository;
 import com.project.singk.mock.TestClockHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

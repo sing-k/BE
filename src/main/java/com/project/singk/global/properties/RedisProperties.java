@@ -15,6 +15,7 @@ public class RedisProperties {
 
 	private final String host;
 	private final int port;
+    private final String password;
     private final Cache cache;
     @Getter @ToString
     @AllArgsConstructor

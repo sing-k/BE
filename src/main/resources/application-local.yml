@@ -16,12 +16,13 @@ spring:
         default_batch_fetch_size: 100
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
     # defer-datasource-initialization: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      cache:
-        ttl: 300000
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+#      cache:
+#        ttl: 300000
+
 #  sql:
 #   init:
 #    mode: always
