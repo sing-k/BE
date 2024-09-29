@@ -52,7 +52,7 @@ jobs:
 
     - name: Deploy to EC2 API SERVER 2
       if: contains(github.ref, 'develop')
-      uses: appleboy/ssh-action@  master
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEV_EC2_HOST_2 }}
         username: ${{ secrets.DEV_EC2_USERNAME }}
