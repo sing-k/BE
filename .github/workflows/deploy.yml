@@ -66,3 +66,18 @@ jobs:
           docker-compose up -d
           docker image prune -f
 
+    - name: Deploy to EC2 API SERVER 3
+      if: contains(github.ref, 'develop')
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DEV_EC2_HOST_3 }}
+        username: ${{ secrets.DEV_EC2_USERNAME }}
+        port: 22
+        key: ${{ secrets.DEV_EC2_SSH_KEY }}
+        script: |
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/singk-web-dev
+          cd ~/dockers
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./config/application-secret.yml
+          docker-compose down
+          docker-compose up -d
+          docker image prune -f
