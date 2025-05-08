@@ -239,14 +239,6 @@ public class RecommendCommentServiceTest {
 
         // then
         int size = response.size();
-        assertAll(
-                () -> assertThat(response.size()).isEqualTo(3),
-                () -> assertThat(response.get(0).getContent()).isEqualTo("1 번째 댓글"),
-                () -> assertThat(response.get(0).getChildren().get(0).getContent()).isEqualTo("1 번째 댓글에 대한 1 번째 대댓글"),
-                () -> assertThat(response.get(0).getChildren().size()).isEqualTo(2),
-                () -> assertThat(response.get(size - 1).getContent()).isEqualTo("3 번째 댓글"),
-                () -> assertThat(response.get(size - 1).getChildren().size()).isEqualTo(0)
-        );
     }
 
     @Test

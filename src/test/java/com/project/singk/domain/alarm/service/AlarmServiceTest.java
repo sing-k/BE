@@ -11,11 +11,9 @@ public class AlarmServiceTest {
 
     @BeforeEach
     void init(){
-        FakeAlarmRepository fakeAlarmRepository = new FakeAlarmRepository();
         EmitterRepositoryImpl emitterRepository = new EmitterRepositoryImpl();
         TestClockHolder clockHolder = new TestClockHolder(1234567890L);
         this.alarmService = AlarmServiceImpl.builder()
-                .alarmRepository(fakeAlarmRepository)
                 .emitterRepository(emitterRepository)
                 .clockHolder(clockHolder)
                 .build();

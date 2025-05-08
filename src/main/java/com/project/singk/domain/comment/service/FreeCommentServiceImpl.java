@@ -3,9 +3,6 @@ package com.project.singk.domain.comment.service;
 import com.project.singk.domain.activity.domain.ActivityHistory;
 import com.project.singk.domain.activity.domain.ActivityType;
 import com.project.singk.domain.activity.service.port.ActivityHistoryRepository;
-import com.project.singk.domain.alarm.controller.port.AlarmService;
-import com.project.singk.domain.alarm.domain.AlarmCreate;
-import com.project.singk.domain.alarm.domain.AlarmType;
 import com.project.singk.domain.comment.controller.port.FreeCommentService;
 import com.project.singk.domain.comment.controller.response.CommentResponse;
 import com.project.singk.domain.comment.domain.CommentCreate;
@@ -44,7 +41,6 @@ public class FreeCommentServiceImpl implements FreeCommentService {
     private final S3Repository s3Repository;
     private final FreeLikeService freeLikeService;
     private final ActivityHistoryRepository activityHistoryRepository;
-    private final AlarmService alarmService;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,14 +102,6 @@ public class FreeCommentServiceImpl implements FreeCommentService {
         member = member.updateStatistic(memberStatistics);
 
         member = memberRepository.save(member);
-
-        // 알람 보내기
-        alarmService.send(AlarmCreate.from(
-                AlarmType.WRITE_COMMENT_FREE_POST,
-                memberId,
-                freePost.getMember().getId(),
-                postId
-        ));
 
         return PkResponseDto.of(freeComment.getId());
     }
